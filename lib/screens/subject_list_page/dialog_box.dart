@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 class NewSubjectDialog extends StatefulWidget {
   final String title, text, subjectName;
 
-  final void Function(String newSubjectName) updateSubjects;
+  final void Function(String newSubjectName) addSubject;
 
   const NewSubjectDialog({
     Key? key,
     required this.title,
     required this.subjectName,
     required this.text,
-    required this.updateSubjects,
+    required this.addSubject,
   }) : super(key: key);
 
   @override
@@ -29,96 +29,107 @@ class _NewSubjectDialogState extends State<NewSubjectDialog> {
       // appBar: AppBar(
       //   title: Text('Dialog'),
       // ),
-      body: Container(
-        // color: Colors.white,
-        margin: const EdgeInsets.all(8),
-        child: Center(
-          child: Hero(
-            tag: "fab_to_dialogbox",
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              padding: const EdgeInsets.all(8),
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                color: Colors.grey[900],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  Container(
-                    margin: const EdgeInsets.all(8),
-                    child: TextField(
-                      controller: _subjectNameController,
-                      maxLines: 1,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.only(bottom: -24),
-                        hintText: "Subject Name",
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 22,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          "Cancel",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.red,
+      body: Hero(
+        tag: "fab_to_dialogbox",
+        child: Container(
+          margin: const EdgeInsets.all(8),
+          child: Container(
+            color: Colors.transparent,
+            child: Center(
+              child: Container(
+                margin: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: Colors.grey[900],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Flexible(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 16, bottom: 8),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Text(
+                            "Add New Subject",
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          widget.updateSubjects(_subjectNameController.text);
-                          _subjectNameController.text = "";
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          "Create",
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8, bottom: 8),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Container(
+                            margin: const EdgeInsets.all(8),
+                            child: TextField(
+                              controller: _subjectNameController,
+                              maxLines: 1,
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.only(bottom: -24),
+                                hintText: "Subject Name",
+                              ),
+                            ),
+                          ),
                         ),
-                        style: ElevatedButton.styleFrom(
-                            // backgroundColor: MaterialStateColor.resolveWith(
-                            //   (states) => Colors.green,
-                            // ),
-                            primary: Colors.blue),
                       ),
-                      const SizedBox(width: 8),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 22,
-                  ),
-                ],
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8, bottom: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Flexible(
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Flexible(child: SizedBox(width: 8)),
+                            Flexible(
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    widget.addSubject(_subjectNameController.text);
+                                    _subjectNameController.text = "";
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    "Create",
+                                    style: TextStyle(fontSize: 18, color: Colors.white),
+                                  ),
+                                  style: ElevatedButton.styleFrom(primary: Colors.blue)),
+                            ),
+                            const Flexible(child: SizedBox(width: 8)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
+      // ),
     );
   }
 }

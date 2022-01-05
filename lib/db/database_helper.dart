@@ -1,7 +1,6 @@
 import 'dart:io';
 
-import 'package:frontend/models/subject_overview_model.dart';
-import 'package:frontend/screens/subject_list_page.dart';
+import 'package:frontend/models/subject_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';

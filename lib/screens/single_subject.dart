@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:frontend/db/database.dart';
 import 'package:frontend/models/message_model.dart';
 import 'package:frontend/screens/single_subject/each_message.dart';
@@ -12,11 +13,13 @@ import 'package:uuid/uuid.dart';
 
 class SingleSubject extends StatefulWidget {
   // CameraDescription camera;
+  final int subjectRowId;
   final String subjectName;
 
   const SingleSubject({
     Key? key,
     required this.subjectName,
+    required this.subjectRowId,
     // required this.camera,
   }) : super(key: key);
 
@@ -30,37 +33,42 @@ class _SingleSubjectState extends State<SingleSubject> {
   List<Message> messages = [];
   // late List<String> images = chatItems.removeWhere((element) => element.contains(".jpg"));
 
+  // AppBar Stuff
+  bool _showHoldMessageIcons = false;
+  List<Message> _selectedMessages = [];
+
   Future<void> addMessage(String newChat) async {
     if (newChat == "") return;
 
     // database stuff
     await DBHelper().addMessageDatabase(Message(
+      rowId: null,
       id: const Uuid().v1(),
       body: newChat,
       subjectName: widget.subjectName,
+      subjectRowId: widget.subjectRowId,
       timeCreated: DateTime.now().millisecondsSinceEpoch,
+      timeUpdated: DateTime.now().millisecondsSinceEpoch,
     ));
-    List<Message> newMessages = await DBHelper().getMessagesDatabase(widget.subjectName);
+    List<Message> newMessages = await DBHelper().getMessagesDatabase(widget.subjectRowId);
 
     setState(() {
       messages = newMessages;
 
       // Other Stuff
-      _selectedMessageIndexes = [];
       _showHoldMessageIcons = false;
     });
   }
 
   Future<void> deleteMessages() async {
     // database stuff
-    if (await DBHelper().deleteMessagesDatabase(_selectedMessageTimestamps) < 1) return;
-    List<Message> newMessages = await DBHelper().getMessagesDatabase(widget.subjectName);
+    if (await DBHelper().deleteMessagesDatabase(_selectedMessages) < 1) return;
+    List<Message> newMessages = await DBHelper().getMessagesDatabase(widget.subjectRowId);
 
     setState(() {
       messages = newMessages;
       // Other Stuff
-      _selectedMessageIndexes = [];
-      _selectedMessageTimestamps = [];
+      _selectedMessages = [];
       _showHoldMessageIcons = false;
     });
   }
@@ -100,30 +108,28 @@ class _SingleSubjectState extends State<SingleSubject> {
     }
   }
 
-// AppBar Stuff
-  bool _showHoldMessageIcons = false;
-  List<int> _selectedMessageIndexes = [];
-  List<int> _selectedMessageTimestamps = [];
+  // helper function for displaying the appbad icons which depend onuser hold or taps
+  bool hasSelectedMessages() {
+    return _selectedMessages.isNotEmpty;
+  }
 
-  void _messageOnLongPress(int index, int timestamp) {
-    _selectedMessageTimestamps.add(timestamp);
-
+  void _messageOnLongPress(Message message) {
+    HapticFeedback.vibrate();
     setState(() {
-      _showHoldMessageIcons = true;
-      _selectedMessageIndexes.add(index);
+      _selectedMessages.add(message);
+      _showHoldMessageIcons = hasSelectedMessages();
     });
   }
 
-  void _messageOnTap(int index, int timestamp) {
-    if (_selectedMessageIndexes.contains(index)) {
-      _showHoldMessageIcons = false;
-      _selectedMessageIndexes = [];
-      _selectedMessageTimestamps = [];
-    } else {
-      _selectedMessageIndexes.add(index);
-      _selectedMessageTimestamps.add(timestamp);
-    }
+  void _messageOnTap(Message message) {
+    if (_selectedMessages.isNotEmpty && !_selectedMessages.contains(message)) {
+      _selectedMessages.add(message);
 
+      _showHoldMessageIcons = hasSelectedMessages();
+    } else {
+      _selectedMessages.remove(message);
+      _showHoldMessageIcons = hasSelectedMessages();
+    }
     setState(() {});
   }
 
@@ -134,13 +140,19 @@ class _SingleSubjectState extends State<SingleSubject> {
     retrieveLostData();
 
     void getData() async {
-      var result = await DBHelper().getMessagesDatabase(widget.subjectName);
+      var result = await DBHelper().getMessagesDatabase(widget.subjectRowId);
       setState(() {
         messages = result;
       });
     }
 
     getData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _selectedMessages = [];
   }
 
   @override
@@ -188,7 +200,8 @@ class _SingleSubjectState extends State<SingleSubject> {
       body: Container(
         decoration: const BoxDecoration(
           // color: Color(0xFF555a5d),
-          color: Color(0xFFe5ddd5),
+          // color: Color(0xFFe5ddd5),
+          color: Color(0xFFECE5DD),
         ),
         child: Column(
           children: [
@@ -201,13 +214,18 @@ class _SingleSubjectState extends State<SingleSubject> {
                   itemCount: messages.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Material(
-                      color: _selectedMessageIndexes.contains(index) ? Colors.grey : Colors.transparent,
+                      color: _selectedMessages.contains(
+                        messages.elementAt(index),
+                      )
+                          ? Colors.grey[400]
+                          : Colors.transparent,
                       child: InkWell(
+                        splashColor: Colors.black12,
                         onLongPress: () {
-                          _messageOnLongPress(index, messages.elementAt(index).timeCreated);
+                          _messageOnLongPress(messages.elementAt(index));
                         },
                         onTap: () {
-                          _messageOnTap(index, messages.elementAt(index).timeCreated);
+                          _messageOnTap(messages.elementAt(index));
                         },
                         child: Container(
                           alignment: Alignment.centerRight,

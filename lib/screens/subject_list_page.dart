@@ -1,14 +1,30 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:frontend/db/database.dart';
-import 'package:frontend/models/subject_overview_model.dart';
+import 'package:frontend/models/subject_model.dart';
+import 'package:frontend/screens/single_subject.dart';
 import 'package:frontend/screens/subject_list_page/single_subject_tile.dart';
 import 'package:frontend/screens/subject_list_page/dialog_box.dart';
+import 'package:uuid/uuid.dart';
 
 class SubjectListPage extends StatefulWidget {
   // CameraDescription camera;
-  const SubjectListPage({
+  final bool showHoldSubjectIcons;
+  final Function subjectOnLongPress;
+  final List<Subject> selectedSubjects;
+  final Function setAfterSubjectOnTap;
+
+  List<Subject> subjects;
+  final Function updateSubjects;
+
+  SubjectListPage({
     Key? key,
+    required this.showHoldSubjectIcons,
+    required this.subjectOnLongPress,
+    required this.selectedSubjects,
+    required this.setAfterSubjectOnTap,
+    required this.subjects,
+    required this.updateSubjects,
     // required this.camera,
   }) : super(key: key);
 
@@ -30,37 +46,36 @@ Color pickBgColor() {
 class _SubjectListPageState extends State<SubjectListPage> with AutomaticKeepAliveClientMixin {
   late String subjectName = "";
 
-  Future<void> updateSubjects(String subjectName) async {
-    if (subjectName == "") return;
+  // Adds a new subject
+  Future<void> addSubject(String subjectName) async {
+    if (subjectName.isEmpty) return;
     // Database Stuff
     WidgetsFlutterBinding.ensureInitialized();
-    int status = await DBHelper().addSubject(Subject(name: subjectName, avatarColor: pickBgColor().value.toString()));
-    List<Subject> newSubjects = [];
-    if (status != -1) {
-      newSubjects = await DBHelper().getSubjects();
-    }
-
-    debugPrint("*******************" + subjectName);
-    setState(() {
-      subjects = newSubjects;
-    });
+    int status = await DBHelper().addSubject(Subject(
+      rowId: null,
+      id: const Uuid().v1(),
+      name: subjectName,
+      avatarColor: pickBgColor().value.toString(),
+      timeCreated: DateTime.now().millisecondsSinceEpoch,
+      timeUpdated: DateTime.now().millisecondsSinceEpoch,
+    ));
+    widget.updateSubjects(status);
   }
 
-  List<Subject> subjects = [];
-
-  @override
-  void initState() {
-    super.initState();
-
-    void getData() async {
-      // var result = await DatabaseHelper.instance.getSubjects();
-      var result = await DBHelper().getSubjects();
-      setState(() {
-        subjects = result;
-      });
+  void _onTap(BuildContext context, Subject subject) {
+    if (widget.setAfterSubjectOnTap(subject)) {
+      return;
     }
 
-    getData();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SingleSubject(
+          subjectName: subject.name,
+          subjectRowId: subject.rowId!,
+        ),
+      ),
+    );
   }
 
   @override
@@ -69,16 +84,27 @@ class _SubjectListPageState extends State<SubjectListPage> with AutomaticKeepAli
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Flutter Demo Home Page'),
-      // ),
+      backgroundColor: const Color(0xFFECE5DD),
       body: Container(
+        // margin: const EdgeInsets.only(left: 8, right: 8),
         child: ListView.builder(
-          itemCount: subjects.length,
+          itemCount: widget.subjects.length,
           itemBuilder: (BuildContext context, int index) {
-            return SingleSubjectTile(
-              subjectOverview: subjects[index],
-              // camera: widget.camera,
+            // Material because "chat on hold" tasks
+            return Material(
+              color: widget.selectedSubjects.contains(widget.subjects[index]) ? Colors.grey[400] : Colors.transparent,
+              child: InkWell(
+                splashColor: Colors.grey[400],
+                onLongPress: () {
+                  widget.subjectOnLongPress(widget.subjects[index]);
+                },
+                onTap: () {
+                  _onTap(context, widget.subjects[index]);
+                },
+                child: SingleSubjectTile(
+                  subject: widget.subjects[index],
+                ),
+              ),
             );
           },
         ),
@@ -86,7 +112,7 @@ class _SubjectListPageState extends State<SubjectListPage> with AutomaticKeepAli
 
       // FAB
       floatingActionButton: FloatingActionButton(
-        // heroTag: "fab_to_dialogbox",
+        heroTag: "fab_to_dialogbox",
         child: const Icon(Icons.add),
         onPressed: () async {
           Navigator.of(context).push(
@@ -96,7 +122,7 @@ class _SubjectListPageState extends State<SubjectListPage> with AutomaticKeepAli
                 title: "Add New Subject",
                 subjectName: subjectName,
                 text: "text",
-                updateSubjects: updateSubjects,
+                addSubject: addSubject,
               ),
             ),
           );
