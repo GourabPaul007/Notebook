@@ -1,18 +1,21 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/db/database.dart';
 import 'package:frontend/models/subject_model.dart';
 import 'package:frontend/screens/single_subject.dart';
 import 'package:frontend/screens/subject_list_page/single_subject_tile.dart';
 import 'package:frontend/screens/subject_list_page/dialog_box.dart';
+import 'package:frontend/services/single_subject_service.dart';
 import 'package:uuid/uuid.dart';
 
-class SubjectListPage extends StatefulWidget {
+class SubjectListPage extends ConsumerStatefulWidget {
   // CameraDescription camera;
   final bool showHoldSubjectIcons;
   final Function subjectOnLongPress;
   final List<Subject> selectedSubjects;
   final Function setAfterSubjectOnTap;
+  final Function resetHoldSubjectEffects;
 
   List<Subject> subjects;
   final Function updateSubjects;
@@ -23,13 +26,14 @@ class SubjectListPage extends StatefulWidget {
     required this.subjectOnLongPress,
     required this.selectedSubjects,
     required this.setAfterSubjectOnTap,
+    required this.resetHoldSubjectEffects,
     required this.subjects,
     required this.updateSubjects,
     // required this.camera,
   }) : super(key: key);
 
   @override
-  State<SubjectListPage> createState() => _SubjectListPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SubjectListPageState();
 }
 
 Color pickBgColor() {
@@ -43,11 +47,12 @@ Color pickBgColor() {
   ][Random().nextInt(6)]!;
 }
 
-class _SubjectListPageState extends State<SubjectListPage> with AutomaticKeepAliveClientMixin {
+class _SubjectListPageState extends ConsumerState<SubjectListPage> with AutomaticKeepAliveClientMixin {
   late String subjectName = "";
+  late String subjectDescription = "";
 
   // Adds a new subject
-  Future<void> addSubject(String subjectName) async {
+  Future<void> addSubject(String subjectName, String subjectDescription) async {
     if (subjectName.isEmpty) return;
     // Database Stuff
     WidgetsFlutterBinding.ensureInitialized();
@@ -55,6 +60,7 @@ class _SubjectListPageState extends State<SubjectListPage> with AutomaticKeepAli
       rowId: null,
       id: const Uuid().v1(),
       name: subjectName,
+      description: subjectDescription,
       avatarColor: pickBgColor().value.toString(),
       timeCreated: DateTime.now().millisecondsSinceEpoch,
       timeUpdated: DateTime.now().millisecondsSinceEpoch,
@@ -66,6 +72,9 @@ class _SubjectListPageState extends State<SubjectListPage> with AutomaticKeepAli
     if (widget.setAfterSubjectOnTap(subject)) {
       return;
     }
+
+    // ref.read(singleSubjectProvider).setSubjectName(subject.name);
+    // ref.read(singleSubjectProvider).setSubjectRowId(subject.rowId!);
 
     Navigator.push(
       context,
@@ -84,7 +93,9 @@ class _SubjectListPageState extends State<SubjectListPage> with AutomaticKeepAli
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFECE5DD),
+      // backgroundColor: const Color(0xFFECE5DD),
+      backgroundColor: Theme.of(context).backgroundColor,
+
       body: Container(
         // margin: const EdgeInsets.only(left: 8, right: 8),
         child: ListView.builder(
@@ -113,15 +124,19 @@ class _SubjectListPageState extends State<SubjectListPage> with AutomaticKeepAli
       // FAB
       floatingActionButton: FloatingActionButton(
         heroTag: "fab_to_dialogbox",
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add_rounded,
+          size: 32,
+        ),
         onPressed: () async {
+          widget.resetHoldSubjectEffects();
           Navigator.of(context).push(
             PageRouteBuilder(
               opaque: false,
               pageBuilder: (context, _, __) => NewSubjectDialog(
-                title: "Add New Subject",
                 subjectName: subjectName,
-                text: "text",
+                subjectDescription: subjectDescription,
+                type: "add",
                 addSubject: addSubject,
               ),
             ),

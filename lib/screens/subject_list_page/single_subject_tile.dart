@@ -23,18 +23,26 @@ class SingleSubjectTile extends StatelessWidget {
             child: Text(
               subject.name[0].toUpperCase(),
               style: const TextStyle(
-                fontSize: 24,
+                fontSize: 22,
                 color: Colors.white,
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 16, top: 16),
+            padding: const EdgeInsets.only(left: 16, top: 14, bottom: 14),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   subject.name,
-                  style: const TextStyle(fontSize: 20, color: Colors.black),
+                  style: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  subject.description,
+                  style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                 ),
               ],
             ),

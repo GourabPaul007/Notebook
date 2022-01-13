@@ -29,7 +29,6 @@ class Message {
       );
 
   Map<String, dynamic> toMap() {
-    print(body);
     return {
       // 'row_id': rowId,
       'id': id,

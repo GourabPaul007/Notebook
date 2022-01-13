@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:frontend/db/database.dart';
 import 'package:frontend/models/subject_model.dart';
 import 'package:frontend/screens/subject_list_page.dart';
+import 'package:frontend/screens/subject_list_page/subject_delete_button.dart';
+import 'package:frontend/screens/subject_list_page/dialog_box.dart';
+import 'package:frontend/screens/subject_list_page/subject_edit_button.dart';
 
 class MyHomePage extends StatefulWidget {
   // CameraDescription camera;
@@ -14,43 +17,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _showHoldSubjectIcons = false;
-  List<Subject> _selectedSubjects = [];
-
-  bool hasSelectedSubjects() {
-    return _selectedSubjects.isNotEmpty;
-  }
-
-  void _subjectOnLongPress(Subject subject) {
-    HapticFeedback.vibrate();
-    setState(() {
-      _selectedSubjects = [subject];
-      _showHoldSubjectIcons = hasSelectedSubjects();
-    });
-  }
-
-  //When you tap on the already selected message, it should unselect, not go inside the page
-  bool _setAfterSubjectOnTap(Subject subject) {
-    if (_selectedSubjects.isNotEmpty) {
-      setState(() {
-        _selectedSubjects = [];
-        _showHoldSubjectIcons = hasSelectedSubjects();
-      });
-      return true;
-    } else {
-      setState(() {
-        _selectedSubjects = [];
-        _showHoldSubjectIcons = hasSelectedSubjects();
-      });
-      return false;
-    }
-  }
-
-  // Subjects Area
   List<Subject> subjects = [];
+  List<Subject> _selectedSubjects = [];
+  bool _subjectOnHold = false;
 
+  // =================================Main Features===================================
+  // Delete Subject
   Future<void> deleteSubject(Subject subject) async {
     int status = await DBHelper().deleteSubject(subject);
+    updateSubjects(status);
+  }
+
+  // Update Subject(eg. subjectName, subjectAbout etc. )
+  Future<void> editSubject(int rowId, String name, String about) async {
+    int status = await DBHelper().updateSubject(rowId, name, about);
     updateSubjects(status);
   }
 
@@ -60,9 +40,41 @@ class _MyHomePageState extends State<MyHomePage> {
     if (status != -1) {
       newSubjects = await DBHelper().getSubjects();
     }
-
     setState(() {
       subjects = newSubjects;
+    });
+    _resetHoldSubjectEffects();
+  }
+  // ============================================================================
+
+// ************** can not be in subject-list-page cause the functionality is called by things on this page ***************
+  bool hasSelectedSubjects() {
+    return _selectedSubjects.isNotEmpty;
+  }
+
+  void _subjectOnLongPress(Subject subject) {
+    HapticFeedback.vibrate();
+    setState(() {
+      _selectedSubjects = [subject];
+      _subjectOnHold = hasSelectedSubjects();
+    });
+  }
+
+  //When you tap on the already selected message, it should unselect, not go inside the page
+  bool _setAfterSubjectOnTap(Subject subject) {
+    if (_selectedSubjects.isNotEmpty) {
+      _resetHoldSubjectEffects();
+      return true;
+    } else {
+      _resetHoldSubjectEffects();
+      return false;
+    }
+  }
+
+  void _resetHoldSubjectEffects() {
+    setState(() {
+      _selectedSubjects = [];
+      _subjectOnHold = hasSelectedSubjects();
     });
   }
 
@@ -86,11 +98,17 @@ class _MyHomePageState extends State<MyHomePage> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          systemOverlayStyle: Theme.of(context).appBarTheme.systemOverlayStyle,
+          backgroundColor:
+              _subjectOnHold ? Colors.deepPurpleAccent[400] : Theme.of(context).appBarTheme.backgroundColor,
+          systemOverlayStyle: _subjectOnHold
+              ? SystemUiOverlayStyle(statusBarColor: Colors.deepPurpleAccent[400])
+              : Theme.of(context).appBarTheme.systemOverlayStyle,
           // toolbarHeight: 0,
           elevation: Theme.of(context).appBarTheme.elevation,
+
+          // TAB BAR
           bottom: const TabBar(
             indicatorColor: Colors.white,
             // indicatorPadding: EdgeInsets.all(8),
@@ -102,30 +120,42 @@ class _MyHomePageState extends State<MyHomePage> {
               Tab(icon: Icon(Icons.directions_bike)),
             ],
           ),
-          title: const Text(
-            'WhatsNote',
-            style: TextStyle(fontSize: 24),
-          ),
+          title: const Text('WhatsNote', style: TextStyle(fontSize: 24)),
           actions: <Widget>[
-            _showHoldSubjectIcons
-                ? Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: Material(
-                      shape: const CircleBorder(),
-                      clipBehavior: Clip.hardEdge,
-                      color: Colors.transparent,
-                      child: IconButton(
-                        onPressed: () {
-                          deleteSubject(_selectedSubjects[0]);
-                        },
-                        icon: const Icon(
-                          Icons.delete_rounded,
-                          size: 26.0,
-                        ),
-                      ),
-                    ),
-                  )
-                : const SizedBox(),
+            // Delete Button
+            SubjectDeleteButton(
+              subjectOnHold: _subjectOnHold,
+              selectedSubjects: _selectedSubjects,
+              deleteSubject: deleteSubject,
+            ),
+
+            // Edit Button
+            SubjectEditButton(
+              subjectOnHold: _subjectOnHold,
+              selectedSubjects: _selectedSubjects,
+              editSubject: editSubject,
+            ),
+
+            // Search Button
+            Padding(
+              padding: const EdgeInsets.all(0),
+              child: Material(
+                shape: const CircleBorder(),
+                clipBehavior: Clip.hardEdge,
+                color: Colors.transparent,
+                child: IconButton(
+                  onPressed: () async {
+                    // showSearch(context: context, delegate: SearchDelegate<Subject>);
+                  },
+                  icon: const Icon(
+                    Icons.search_rounded,
+                    size: 26.0,
+                  ),
+                ),
+              ),
+            ),
+
+            // Popup Menu Button
             Padding(
               padding: const EdgeInsets.only(right: 6),
               child: Material(
@@ -133,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 clipBehavior: Clip.hardEdge,
                 color: Colors.transparent,
                 child: PopupMenuButton(
-                  color: const Color(0xFFECE5DD),
+                  color: Colors.white,
                   elevation: 5,
                   itemBuilder: (context) => [
                     const PopupMenuItem(
@@ -144,8 +174,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       value: 1,
                     ),
                     const PopupMenuItem(
-                      child: Text("Second",
-                          style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400)),
+                      child: Text(
+                        "Second",
+                        style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400),
+                      ),
                       value: 2,
                     )
                   ],
@@ -159,10 +191,11 @@ class _MyHomePageState extends State<MyHomePage> {
             // Icon(Icons.directions_car),
             SubjectListPage(
               // camera: camera,
-              showHoldSubjectIcons: _showHoldSubjectIcons,
+              showHoldSubjectIcons: _subjectOnHold,
               subjectOnLongPress: _subjectOnLongPress,
               selectedSubjects: _selectedSubjects,
               setAfterSubjectOnTap: _setAfterSubjectOnTap,
+              resetHoldSubjectEffects: _resetHoldSubjectEffects,
 
               subjects: subjects,
               updateSubjects: updateSubjects,

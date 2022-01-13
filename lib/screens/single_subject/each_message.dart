@@ -18,7 +18,6 @@ class EachMessage extends StatelessWidget {
   }) : super(key: key);
 
   // int messageColor = 0xFF3777f0;
-  Color? messageColor = Colors.indigoAccent;
 
   late List<String> images =
       messages.where((value) => value.body.contains(".jpg") || value.body.length > 10).map((e) => e.body).toList();
@@ -30,7 +29,7 @@ class EachMessage extends StatelessWidget {
       margin: const EdgeInsets.only(left: 60, right: 4, top: 2, bottom: 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: messageColor,
+        color: Theme.of(context).primaryColor,
         // border: Border.all(width: 12),
       ),
       child: Container(

@@ -38,7 +38,7 @@ class MessagesDatabaseHelper {
       whereArgs: [subjectName],
       orderBy: 'time DESC',
     );
-    print(messages);
+    // print(messages);
     List<Message> messageList = messages.isNotEmpty ? messages.map((c) => Message.fromMap(c)).toList() : [];
     return messageList;
   }

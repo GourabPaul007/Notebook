@@ -9,6 +9,9 @@ import 'package:path_provider/path_provider.dart';
 class DBHelper {
   static Database? _db;
 
+  String subjectsTable = "subjects_table";
+  String messagesTable = "messages_table";
+
   // Future<Database> get db async {
   //   if (_db == null) {
   //     return await initDb();
@@ -34,33 +37,34 @@ class DBHelper {
 
   void _onCreate(Database db, int version) async {
     await db.execute("""
-        CREATE TABLE IF NOT EXISTS subjects_table(
+        CREATE TABLE IF NOT EXISTS $subjectsTable(
           row_id INTEGER PRIMARY KEY AUTOINCREMENT,
           id TEXT NOT NULL, 
-          name TEXT NOT NULL, 
+          name TEXT NOT NULL,
+          description TEXT,
           avatar_color TEXT,
-          time_created INTEGER NOT NULL,
-          time_updated INTEGER NOT NULL
+          time_created INTEGER NOT NULL ASC,
+          time_updated INTEGER NOT NULL ASC
         )
         """);
     await db.execute("""
-        CREATE TABLE IF NOT EXISTS messages_table(
+        CREATE TABLE IF NOT EXISTS $messagesTable(
           row_id INTEGER PRIMARY KEY AUTOINCREMENT,
           id TEXT NOT NULL,
           body TEXT,
-          time_created INTEGER NOT NULL,
-          time_updated INTEGER NOT NULL,
+          time_created INTEGER NOT NULL ASC,
+          time_updated INTEGER NOT NULL ASC,
           is_favourite BOOLEAN NOT NULL DEFAULT 0,
           subject_name TEXT NOT NULL,
           subject_row_id INTEGER NOT NULL,
-          FOREIGN KEY(subject_row_id) REFERENCES subjects_table(row_id)
+          FOREIGN KEY(subject_row_id) REFERENCES $subjectsTable(row_id)
         )
         """);
   }
 
   Future<List<Subject>> getSubjects() async {
     Database db = await database;
-    var subjects = await db.query('subjects_table', orderBy: 'time_created DESC');
+    var subjects = await db.query(subjectsTable, orderBy: 'time_created DESC');
     List<Subject> subjectList = subjects.isNotEmpty ? subjects.map((c) => Subject.fromMap(c)).toList() : [];
     // db.close();
     return subjectList;
@@ -70,7 +74,7 @@ class DBHelper {
     int returnCode = -1;
     Database db = await database;
     returnCode = await db.insert(
-      'subjects_table',
+      subjectsTable,
       subject.toMap(),
       conflictAlgorithm: ConflictAlgorithm.abort,
     );
@@ -86,6 +90,16 @@ class DBHelper {
     // Deleting the subject
     int subjectsDeletedCount = await db.delete("subjects_table", where: "row_id = ?", whereArgs: [subject.rowId]);
     return subjectsDeletedCount + messagesDeletedCount;
+  }
+
+  Future<int> updateSubject(int rowId, String name, String description) async {
+    Map<String, dynamic> row = {
+      "name": name,
+      "description": description,
+    };
+
+    Database db = await database;
+    return await db.update(subjectsTable, row, where: "rowId = ?", whereArgs: [rowId]);
   }
 
   // Future<List<Employee>> getEmployees() async {
@@ -108,7 +122,7 @@ class DBHelper {
   Future<List<Message>> getMessagesDatabase(int rowId) async {
     Database db = await database;
     var messages = await db.query(
-      'messages_table',
+      messagesTable,
       where: 'subject_row_id = ?',
       whereArgs: [rowId],
       orderBy: 'time_created DESC',
@@ -120,7 +134,7 @@ class DBHelper {
   // Future<void> getAllMessagesDatabase() async {
   //   Database db = await database;
   //   var messages = await db.query(
-  //     'messages_table',
+  //     messagesTable,
   //     orderBy: 'time_created DESC',
   //   );
   //   print("************************");
@@ -133,7 +147,7 @@ class DBHelper {
   Future<int> addMessageDatabase(Message message) async {
     Database db = await database;
     return await db.insert(
-      'messages_table',
+      messagesTable,
       message.toMap(),
       conflictAlgorithm: ConflictAlgorithm.abort,
     );
@@ -146,14 +160,14 @@ class DBHelper {
     // if rowIds array dont include null value, then it executes if block. Otherwise executes else block
     if (rowIds.any((e) => e != null)) {
       return await db.delete(
-        'messages_table',
+        messagesTable,
         where: "row_id IN (${List.filled(rowIds.length, '?').join(',')})",
         whereArgs: rowIds,
       );
     } else {
       List<String> ids = messages.map((e) => e.id).toList();
       return await db.delete(
-        'messages_table',
+        messagesTable,
         where: "id IN (${List.filled(rowIds.length, '?').join(',')})",
         whereArgs: ids,
       );

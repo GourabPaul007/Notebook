@@ -2,10 +2,14 @@
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/single_subject/camera_screen.dart';
+import 'package:frontend/services/single_subject_service.dart';
 
-class InputAreaWidget extends StatefulWidget {
-  final void Function(String newChat) addMessage;
+class InputAreaWidget extends ConsumerStatefulWidget {
+  // final void Function(String newChat) addMessage;
+  final String subjectName;
+  final int subjectRowId;
   final Future Function() imgFromGallery;
   final Future Function(String) imgFromCamera;
 
@@ -13,17 +17,19 @@ class InputAreaWidget extends StatefulWidget {
 
   const InputAreaWidget({
     Key? key,
-    required this.addMessage,
+    // required this.addMessage,
+    required this.subjectName,
+    required this.subjectRowId,
     required this.imgFromGallery,
     required this.imgFromCamera,
     // required this.camera,
   }) : super(key: key);
 
   @override
-  State<InputAreaWidget> createState() => _InputAreaWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _InputAreaWidgetState();
 }
 
-class _InputAreaWidgetState extends State<InputAreaWidget> {
+class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
   bool _cameraIconVisible = true;
   bool _galleryIconVisible = true;
   // bool _sendIconVisible = false;
@@ -49,8 +55,10 @@ class _InputAreaWidgetState extends State<InputAreaWidget> {
   }
 
   void _sendInputText() async {
-    widget.addMessage(newTextController.text);
-    // newTextController.text = "";
+    // ref.read(singleSubjectProvider).addMessage(newTextController.text, ref.read(singleSubjectProvider).subjectName,
+    //     ref.read(singleSubjectProvider).subjectRowId);
+    ref.read(singleSubjectProvider).addMessage(newTextController.text, widget.subjectName, widget.subjectRowId);
+    newTextController.text = "";
     newTextController.clear();
     _updateInputText(newTextController.text);
   }
@@ -192,7 +200,7 @@ class _InputAreaWidgetState extends State<InputAreaWidget> {
               Expanded(
                 flex: 2,
                 child: Material(
-                  color: Colors.blue,
+                  color: Theme.of(context).primaryColor,
                   shape: const CircleBorder(),
                   clipBehavior: Clip.hardEdge,
                   child: IconButton(
@@ -200,7 +208,6 @@ class _InputAreaWidgetState extends State<InputAreaWidget> {
                     // iconSize: 48,
                     icon: const Icon(
                       Icons.send_rounded,
-                      size: 24.0,
                     ),
                   ),
                 ),
@@ -212,7 +219,7 @@ class _InputAreaWidgetState extends State<InputAreaWidget> {
 
 // To make the icons slide in and out
   Widget btnTransition(Widget child, Animation<double> animation) {
-    final offsetAnimation = Tween<Offset>(begin: Offset(-0.2, 0.0), end: Offset.zero).animate(animation);
+    final offsetAnimation = Tween<Offset>(begin: const Offset(-0.2, 0.0), end: Offset.zero).animate(animation);
     return SlideTransition(
       position: offsetAnimation,
       child: child,

@@ -1,7 +1,8 @@
 class Subject {
   final int? rowId;
   final String id;
-  final String name;
+  late final String name;
+  late final String description;
   final String avatarColor;
   final int timeCreated;
   final int timeUpdated;
@@ -11,6 +12,7 @@ class Subject {
     required this.rowId,
     required this.id,
     required this.name,
+    required this.description,
     required this.avatarColor,
     required this.timeCreated,
     required this.timeUpdated,
@@ -25,6 +27,7 @@ class Subject {
         rowId: json['row_id'],
         id: json['id'],
         name: json['name'],
+        description: json['description'],
         avatarColor: json['avatar_color'],
         timeCreated: json['time_created'],
         timeUpdated: json['time_updated'],
@@ -35,6 +38,7 @@ class Subject {
       'row_id': rowId,
       'id': id,
       'name': name,
+      'description': description,
       'avatar_color': avatarColor,
       'time_created': timeCreated,
       'time_updated': timeUpdated,

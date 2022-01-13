@@ -39,17 +39,7 @@ class DatabaseHelper {
   Future<List<Subject>> getSubjects() async {
     Database db = await instance.database;
     var subjects = await db.query('subjects', orderBy: 'name');
-    // List<Subject> subjectList = [
-    //   Subject(
-    //     name: "name0",
-    //     avatarColor: pickBgColor(),
-    //   ),
-    //   Subject(
-    //     name: "name1",
-    //     avatarColor: pickBgColor(),
-    //   ),
-    // ];
-    print(subjects);
+    // print(subjects);
     List<Subject> subjectList = subjects.isNotEmpty ? subjects.map((c) => Subject.fromMap(c)).toList() : [];
     return subjectList;
   }

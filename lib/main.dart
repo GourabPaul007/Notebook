@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/home_page.dart';
 
 Future<void> main() async {
@@ -18,9 +19,11 @@ Future<void> main() async {
   // Get a specific camera from the list of available cameras.
   final firstCamera = cameras[0];
 
-  runApp(MyApp(
-      // cameras: cameras,
-      ));
+  runApp(
+    ProviderScope(
+      child: MyApp(/* cameras: cameras*/),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -37,10 +40,14 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // Define the default brightness and colors.
         brightness: Brightness.dark,
-        primaryColor: const Color(0xFF3777f0),
+        primaryColor: Colors.deepPurpleAccent,
         primarySwatch: Colors.red,
+        backgroundColor: const Color(0xFFFFFFFF),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Colors.deepPurpleAccent,
+          foregroundColor: Colors.white,
+        ),
 
         buttonTheme: ButtonThemeData(
           buttonColor: Colors.greenAccent[400],
@@ -48,13 +55,14 @@ class MyApp extends StatelessWidget {
 
         appBarTheme: const AppBarTheme(
           elevation: 0,
-          backgroundColor: Color(0xFF3777f0),
+          // backgroundColor: Color(0xFF3777f0),
+          backgroundColor: Colors.deepPurpleAccent,
           shadowColor: (Colors.white),
           systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Color(0xFF3777f0),
+            statusBarColor: Colors.deepPurpleAccent,
             // Status bar brightness (optional)
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.dark,
+            // statusBarIconBrightness: Brightness.light,
+            // statusBarBrightness: Brightness.dark,
           ),
         ),
 

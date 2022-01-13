@@ -1,18 +1,23 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class NewSubjectDialog extends StatefulWidget {
-  final String title, text, subjectName;
+  final int? rowId;
+  final String type, subjectName, subjectDescription;
 
-  final void Function(String newSubjectName) addSubject;
+  final void Function(String newSubjectName, String subjectDescription)? addSubject;
+  final void Function(int rowId, String newSubjectName, String subjectDescription)? editSubject;
 
   const NewSubjectDialog({
     Key? key,
-    required this.title,
+    this.rowId,
     required this.subjectName,
-    required this.text,
-    required this.addSubject,
+    required this.subjectDescription,
+    required this.type,
+    this.addSubject,
+    this.editSubject,
   }) : super(key: key);
 
   @override
@@ -21,14 +26,26 @@ class NewSubjectDialog extends StatefulWidget {
 
 class _NewSubjectDialogState extends State<NewSubjectDialog> {
   final TextEditingController _subjectNameController = TextEditingController();
+  final TextEditingController _subjectDescriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _subjectNameController.text = widget.subjectName;
+    _subjectDescriptionController.text = widget.subjectDescription;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black54,
-      // appBar: AppBar(
-      //   title: Text('Dialog'),
-      // ),
+      appBar: AppBar(
+        toolbarHeight: 0,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.black54,
+        ),
+      ),
       body: Hero(
         tag: "fab_to_dialogbox",
         child: Container(
@@ -49,14 +66,14 @@ class _NewSubjectDialogState extends State<NewSubjectDialog> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    const Flexible(
+                    Flexible(
                       child: Padding(
-                        padding: EdgeInsets.only(top: 16, bottom: 8),
+                        padding: const EdgeInsets.only(top: 16, bottom: 8),
                         child: Material(
                           color: Colors.transparent,
                           child: Text(
-                            "Add New Subject",
-                            style: TextStyle(
+                            widget.type == "add" ? "Add New Subject" : "Edit Subject",
+                            style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w600,
                             ),
@@ -64,13 +81,14 @@ class _NewSubjectDialogState extends State<NewSubjectDialog> {
                         ),
                       ),
                     ),
+                    // Subject Name TextField
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 8),
+                        padding: const EdgeInsets.only(top: 8),
                         child: Material(
                           color: Colors.transparent,
                           child: Container(
-                            margin: const EdgeInsets.all(8),
+                            margin: const EdgeInsets.only(top: 8, left: 9, right: 8),
                             child: TextField(
                               controller: _subjectNameController,
                               maxLines: 1,
@@ -83,9 +101,30 @@ class _NewSubjectDialogState extends State<NewSubjectDialog> {
                         ),
                       ),
                     ),
+                    // Subject About TextField
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 8),
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+                            child: TextField(
+                              controller: _subjectDescriptionController,
+                              maxLines: 1,
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.only(bottom: -24),
+                                hintText: "Subject Description (Optional)",
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -103,21 +142,45 @@ class _NewSubjectDialogState extends State<NewSubjectDialog> {
                                 ),
                               ),
                             ),
-                            const Flexible(child: SizedBox(width: 8)),
-                            Flexible(
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    widget.addSubject(_subjectNameController.text);
-                                    _subjectNameController.text = "";
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text(
-                                    "Create",
-                                    style: TextStyle(fontSize: 18, color: Colors.white),
-                                  ),
-                                  style: ElevatedButton.styleFrom(primary: Colors.blue)),
-                            ),
-                            const Flexible(child: SizedBox(width: 8)),
+                            widget.type == "add"
+                                ? Flexible(
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          widget.addSubject!(
+                                            _subjectNameController.text,
+                                            _subjectDescriptionController.text,
+                                          );
+                                          _subjectNameController.text = "";
+                                          _subjectDescriptionController.text = "";
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text(
+                                          "Create",
+                                          style: TextStyle(fontSize: 18, color: Colors.white),
+                                        ),
+                                        style: ElevatedButton.styleFrom(primary: Colors.blue)),
+                                  )
+                                : const SizedBox(),
+                            widget.type == "edit"
+                                ? Flexible(
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          widget.editSubject!(
+                                            widget.rowId!,
+                                            _subjectNameController.text,
+                                            _subjectDescriptionController.text,
+                                          );
+                                          _subjectNameController.text = "";
+                                          _subjectDescriptionController.text = "";
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text(
+                                          "Update",
+                                          style: TextStyle(fontSize: 18, color: Colors.white),
+                                        ),
+                                        style: ElevatedButton.styleFrom(primary: Colors.blue)),
+                                  )
+                                : const SizedBox()
                           ],
                         ),
                       ),
