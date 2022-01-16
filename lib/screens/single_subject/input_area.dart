@@ -4,24 +4,20 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/single_subject/camera_screen.dart';
-import 'package:frontend/services/single_subject_service.dart';
+import 'package:frontend/services/message_service.dart';
 
 class InputAreaWidget extends ConsumerStatefulWidget {
   // final void Function(String newChat) addMessage;
-  final String subjectName;
-  final int subjectRowId;
-  final Future Function() imgFromGallery;
-  final Future Function(String) imgFromCamera;
+  // final Future Function() imgFromGallery;
+  // final Future Function(String) imgFromCamera;
 
   // CameraDescription camera;
 
   const InputAreaWidget({
     Key? key,
     // required this.addMessage,
-    required this.subjectName,
-    required this.subjectRowId,
-    required this.imgFromGallery,
-    required this.imgFromCamera,
+    // required this.imgFromGallery,
+    // required this.imgFromCamera,
     // required this.camera,
   }) : super(key: key);
 
@@ -30,10 +26,6 @@ class InputAreaWidget extends ConsumerStatefulWidget {
 }
 
 class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
-  bool _cameraIconVisible = true;
-  bool _galleryIconVisible = true;
-  // bool _sendIconVisible = false;
-
   TextEditingController newTextController = TextEditingController();
 
   late List<CameraDescription> camerasNew;
@@ -54,33 +46,10 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
     super.dispose();
   }
 
-  void _sendInputText() async {
-    // ref.read(singleSubjectProvider).addMessage(newTextController.text, ref.read(singleSubjectProvider).subjectName,
-    //     ref.read(singleSubjectProvider).subjectRowId);
-    ref.read(singleSubjectProvider).addMessage(newTextController.text, widget.subjectName, widget.subjectRowId);
-    newTextController.text = "";
-    newTextController.clear();
-    _updateInputText(newTextController.text);
-  }
-
-  void _updateInputText(String value) {
-    if (value.isNotEmpty) {
-      setState(() {
-        _cameraIconVisible = false;
-        _galleryIconVisible = false;
-        // _sendIconVisible = true;
-      });
-    } else {
-      setState(() {
-        _cameraIconVisible = true;
-        _galleryIconVisible = true;
-        // _sendIconVisible = true;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final singleSubjectRef = ref.watch(messageProvider);
+
     return Container(
         padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
         child: Container(
@@ -92,18 +61,13 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                 flex: 10,
                 child: Container(
                   decoration: const BoxDecoration(
-                      // color: Color(0xFF555a5d),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(50),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 0.5,
-                          offset: Offset(0, 0.5),
-                        )
-                      ]),
+                    // color: Color(0xFF555a5d),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(50),
+                    ),
+                    boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 0.5, offset: Offset(0, 0.5))],
+                  ),
                   child: Material(
                     type: MaterialType.transparency,
                     child: Container(
@@ -114,7 +78,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                             duration: const Duration(milliseconds: 200),
                             switchOutCurve: Curves.easeOutExpo,
                             transitionBuilder: btnTransition,
-                            child: !_cameraIconVisible
+                            child: newTextController.text.isNotEmpty
                                 ? const SizedBox()
                                 : Container(
                                     width: 40,
@@ -130,7 +94,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                               builder: (context) => TakePictureScreen(
                                                 // cameraOld: widget.camera,
                                                 cameraNew: cameraNew,
-                                                imgFromCamera: widget.imgFromCamera,
+                                                // imgFromCamera: widget.imgFromCamera,
                                               ),
                                             ),
                                           );
@@ -146,7 +110,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                             duration: const Duration(milliseconds: 200),
                             transitionBuilder: btnTransition,
                             switchOutCurve: Curves.easeOutExpo,
-                            child: !_galleryIconVisible
+                            child: newTextController.text.isNotEmpty
                                 ? const SizedBox()
                                 : Container(
                                     width: 40,
@@ -156,7 +120,8 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                       color: Colors.transparent,
                                       child: IconButton(
                                         onPressed: () async {
-                                          await widget.imgFromGallery();
+                                          await singleSubjectRef.imgFromGallery(
+                                              singleSubjectRef.getSubjectName, singleSubjectRef.getSubjectRowId);
                                         },
                                         splashColor: Colors.amber,
                                         icon: const Icon(Icons.photo),
@@ -173,7 +138,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                 style: const TextStyle(color: Colors.black),
                                 maxLines: 1,
                                 controller: newTextController,
-                                onChanged: _updateInputText,
+                                onChanged: ref.read(messageProvider).updateInputText,
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.only(
@@ -204,7 +169,11 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                   shape: const CircleBorder(),
                   clipBehavior: Clip.hardEdge,
                   child: IconButton(
-                    onPressed: _sendInputText,
+                    onPressed: () {
+                      ref.read(messageProvider).sendInputText(
+                          newTextController.text, singleSubjectRef.getSubjectName, singleSubjectRef.subjectRowId);
+                      newTextController.clear();
+                    },
                     // iconSize: 48,
                     icon: const Icon(
                       Icons.send_rounded,

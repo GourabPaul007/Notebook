@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/subject_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/services/subject_service.dart';
 
-class SubjectDeleteButton extends StatelessWidget {
-  final bool subjectOnHold;
-  final List<Subject> selectedSubjects;
-  final Future<void> Function(Subject subject) deleteSubject;
+class SubjectDeleteButton extends ConsumerWidget {
+  // final bool subjectOnHold;
+  // final List<Subject> selectedSubjects;
+  // final Future<void> Function(Subject subject) deleteSubject;
 
   const SubjectDeleteButton({
     Key? key,
-    required this.subjectOnHold,
-    required this.selectedSubjects,
-    required this.deleteSubject,
+    // required this.subjectOnHold,
+    // required this.selectedSubjects,
+    // required this.deleteSubject,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return subjectOnHold
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(subjectServiceProvider).subjectOnHold
         ? Padding(
             padding: const EdgeInsets.only(right: 6),
             child: Material(
@@ -44,7 +45,9 @@ class SubjectDeleteButton extends StatelessWidget {
                           ),
                           TextButton(
                             onPressed: () => {
-                              deleteSubject(selectedSubjects[0]),
+                              ref
+                                  .read(subjectServiceProvider)
+                                  .deleteSubject(ref.watch(subjectServiceProvider).selectedSubjects[0]),
                               Navigator.pop(context),
                             },
                             child: const Text("Delete", style: TextStyle(color: Colors.red, fontSize: 18)),

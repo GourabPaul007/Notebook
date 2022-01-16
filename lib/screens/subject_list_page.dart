@@ -6,29 +6,30 @@ import 'package:frontend/models/subject_model.dart';
 import 'package:frontend/screens/single_subject.dart';
 import 'package:frontend/screens/subject_list_page/single_subject_tile.dart';
 import 'package:frontend/screens/subject_list_page/dialog_box.dart';
-import 'package:frontend/services/single_subject_service.dart';
+import 'package:frontend/services/message_service.dart';
+import 'package:frontend/services/subject_service.dart';
 import 'package:uuid/uuid.dart';
 
 class SubjectListPage extends ConsumerStatefulWidget {
   // CameraDescription camera;
-  final bool showHoldSubjectIcons;
-  final Function subjectOnLongPress;
-  final List<Subject> selectedSubjects;
-  final Function setAfterSubjectOnTap;
-  final Function resetHoldSubjectEffects;
+  // final bool showHoldSubjectIcons;
+  // final Function subjectOnLongPress;
+  // final List<Subject> selectedSubjects;
+  // final Function setAfterSubjectOnTap;
+  // final Function resetHoldSubjectEffects;
 
-  List<Subject> subjects;
-  final Function updateSubjects;
+  // List<Subject> subjects;
+  // final Function updateSubjects;
 
   SubjectListPage({
     Key? key,
-    required this.showHoldSubjectIcons,
-    required this.subjectOnLongPress,
-    required this.selectedSubjects,
-    required this.setAfterSubjectOnTap,
-    required this.resetHoldSubjectEffects,
-    required this.subjects,
-    required this.updateSubjects,
+    // required this.showHoldSubjectIcons,
+    // required this.subjectOnLongPress,
+    // required this.selectedSubjects,
+    // required this.setAfterSubjectOnTap,
+    // required this.resetHoldSubjectEffects,
+    // required this.subjects,
+    // required this.updateSubjects,
     // required this.camera,
   }) : super(key: key);
 
@@ -48,41 +49,38 @@ Color pickBgColor() {
 }
 
 class _SubjectListPageState extends ConsumerState<SubjectListPage> with AutomaticKeepAliveClientMixin {
-  late String subjectName = "";
-  late String subjectDescription = "";
+  // late String subjectName = "";
+  // late String subjectDescription = "";
 
-  // Adds a new subject
-  Future<void> addSubject(String subjectName, String subjectDescription) async {
-    if (subjectName.isEmpty) return;
-    // Database Stuff
-    WidgetsFlutterBinding.ensureInitialized();
-    int status = await DBHelper().addSubject(Subject(
-      rowId: null,
-      id: const Uuid().v1(),
-      name: subjectName,
-      description: subjectDescription,
-      avatarColor: pickBgColor().value.toString(),
-      timeCreated: DateTime.now().millisecondsSinceEpoch,
-      timeUpdated: DateTime.now().millisecondsSinceEpoch,
-    ));
-    widget.updateSubjects(status);
-  }
+  // // Adds a new subject
+  // Future<void> addSubject(String subjectName, String subjectDescription) async {
+  //   if (subjectName.isEmpty) return;
+  //   // Database Stuff
+  //   WidgetsFlutterBinding.ensureInitialized();
+  //   int status = await DBHelper().addSubject(Subject(
+  //     rowId: null,
+  //     id: const Uuid().v1(),
+  //     name: subjectName,
+  //     description: subjectDescription,
+  //     avatarColor: pickBgColor().value.toString(),
+  //     timeCreated: DateTime.now().millisecondsSinceEpoch,
+  //     timeUpdated: DateTime.now().millisecondsSinceEpoch,
+  //   ));
+  //   ref.read(subjectServiceProvider).updateSubjects(status);
+  // }
 
   void _onTap(BuildContext context, Subject subject) {
-    if (widget.setAfterSubjectOnTap(subject)) {
+    if (ref.read(subjectServiceProvider).setAfterSubjectOnTap(subject)) {
       return;
     }
 
-    // ref.read(singleSubjectProvider).setSubjectName(subject.name);
-    // ref.read(singleSubjectProvider).setSubjectRowId(subject.rowId!);
+    ref.read(messageProvider).setSubjectName(subject.name);
+    ref.read(messageProvider).setSubjectRowId(subject.rowId!);
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SingleSubject(
-          subjectName: subject.name,
-          subjectRowId: subject.rowId!,
-        ),
+        builder: (context) => const SingleSubject(),
       ),
     );
   }
@@ -99,21 +97,29 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> with Automati
       body: Container(
         // margin: const EdgeInsets.only(left: 8, right: 8),
         child: ListView.builder(
-          itemCount: widget.subjects.length,
+          itemCount: ref.watch(subjectServiceProvider).subjects.length,
           itemBuilder: (BuildContext context, int index) {
             // Material because "chat on hold" tasks
             return Material(
-              color: widget.selectedSubjects.contains(widget.subjects[index]) ? Colors.grey[400] : Colors.transparent,
+              color: ref
+                      .read(subjectServiceProvider)
+                      .selectedSubjects
+                      .contains(ref.watch(subjectServiceProvider).subjects[index])
+                  ? Colors.grey[400]
+                  : Colors.transparent,
               child: InkWell(
                 splashColor: Colors.grey[400],
                 onLongPress: () {
-                  widget.subjectOnLongPress(widget.subjects[index]);
+                  ref
+                      .read(subjectServiceProvider)
+                      .subjectOnLongPress(ref.watch(subjectServiceProvider).subjects[index]);
                 },
                 onTap: () {
-                  _onTap(context, widget.subjects[index]);
+                  // ref.read(subjectServiceProvider).onTap(context, ref.watch(subjectServiceProvider).subjects[index]);
+                  _onTap(context, ref.watch(subjectServiceProvider).subjects[index]);
                 },
                 child: SingleSubjectTile(
-                  subject: widget.subjects[index],
+                  subject: ref.watch(subjectServiceProvider).subjects[index],
                 ),
               ),
             );
@@ -129,15 +135,15 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> with Automati
           size: 32,
         ),
         onPressed: () async {
-          widget.resetHoldSubjectEffects();
+          ref.read(subjectServiceProvider).resetHoldSubjectEffects();
           Navigator.of(context).push(
             PageRouteBuilder(
               opaque: false,
-              pageBuilder: (context, _, __) => NewSubjectDialog(
-                subjectName: subjectName,
-                subjectDescription: subjectDescription,
+              pageBuilder: (context, _, __) => const NewSubjectDialog(
+                // subjectName: subjectName,
+                // subjectDescription: subjectDescription,
                 type: "add",
-                addSubject: addSubject,
+                // addSubject: addSubject,
               ),
             ),
           );

@@ -2,38 +2,42 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/services/subject_service.dart';
 
-class NewSubjectDialog extends StatefulWidget {
+class NewSubjectDialog extends ConsumerStatefulWidget {
   final int? rowId;
-  final String type, subjectName, subjectDescription;
+  final String type;
+  // final String? subjectName, subjectDescription;
 
-  final void Function(String newSubjectName, String subjectDescription)? addSubject;
-  final void Function(int rowId, String newSubjectName, String subjectDescription)? editSubject;
+  // final void Function(String newSubjectName, String subjectDescription)? addSubject;
+  // final void Function(int rowId, String newSubjectName, String subjectDescription)? editSubject;
 
   const NewSubjectDialog({
     Key? key,
     this.rowId,
-    required this.subjectName,
-    required this.subjectDescription,
+    // this.subjectName,
+    // this.subjectDescription,
     required this.type,
-    this.addSubject,
-    this.editSubject,
+    // this.addSubject,
+    // this.editSubject,
   }) : super(key: key);
 
   @override
-  _NewSubjectDialogState createState() => _NewSubjectDialogState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _NewSubjectDialogState();
 }
 
-class _NewSubjectDialogState extends State<NewSubjectDialog> {
+class _NewSubjectDialogState extends ConsumerState<NewSubjectDialog> {
   final TextEditingController _subjectNameController = TextEditingController();
   final TextEditingController _subjectDescriptionController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
-    _subjectNameController.text = widget.subjectName;
-    _subjectDescriptionController.text = widget.subjectDescription;
+    if (widget.type == "edit") {
+      _subjectNameController.text = ref.read(subjectServiceProvider).getSubjectName;
+      _subjectDescriptionController.text = ref.read(subjectServiceProvider).getSubjectDescription;
+    }
   }
 
   @override
@@ -146,10 +150,10 @@ class _NewSubjectDialogState extends State<NewSubjectDialog> {
                                 ? Flexible(
                                     child: ElevatedButton(
                                         onPressed: () {
-                                          widget.addSubject!(
-                                            _subjectNameController.text,
-                                            _subjectDescriptionController.text,
-                                          );
+                                          ref.read(subjectServiceProvider).addSubject(
+                                                _subjectNameController.text,
+                                                _subjectDescriptionController.text,
+                                              );
                                           _subjectNameController.text = "";
                                           _subjectDescriptionController.text = "";
                                           Navigator.of(context).pop();
@@ -165,11 +169,11 @@ class _NewSubjectDialogState extends State<NewSubjectDialog> {
                                 ? Flexible(
                                     child: ElevatedButton(
                                         onPressed: () {
-                                          widget.editSubject!(
-                                            widget.rowId!,
-                                            _subjectNameController.text,
-                                            _subjectDescriptionController.text,
-                                          );
+                                          ref.read(subjectServiceProvider).editSubject(
+                                                widget.rowId!,
+                                                _subjectNameController.text,
+                                                _subjectDescriptionController.text,
+                                              );
                                           _subjectNameController.text = "";
                                           _subjectDescriptionController.text = "";
                                           Navigator.of(context).pop();

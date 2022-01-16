@@ -20,9 +20,13 @@ class DBHelper {
   //   }
   // }
 
-  Future<Database> get database async => _db ??= await initDb();
+  DBHelper._privateConstructor();
+  static final DBHelper instance = DBHelper._privateConstructor();
 
-  Future<Database> initDb() async {
+  // Future<Database> get database async => _db ??= await initDb();
+  Future<Database> get database async => _db ??= await _initDb();
+
+  Future<Database> _initDb() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, "database.db");
     return await openDatabase(
@@ -43,8 +47,8 @@ class DBHelper {
           name TEXT NOT NULL,
           description TEXT,
           avatar_color TEXT,
-          time_created INTEGER NOT NULL ASC,
-          time_updated INTEGER NOT NULL ASC
+          time_created INTEGER NOT NULL,
+          time_updated INTEGER NOT NULL
         )
         """);
     await db.execute("""
@@ -52,8 +56,8 @@ class DBHelper {
           row_id INTEGER PRIMARY KEY AUTOINCREMENT,
           id TEXT NOT NULL,
           body TEXT,
-          time_created INTEGER NOT NULL ASC,
-          time_updated INTEGER NOT NULL ASC,
+          time_created INTEGER NOT NULL,
+          time_updated INTEGER NOT NULL,
           is_favourite BOOLEAN NOT NULL DEFAULT 0,
           subject_name TEXT NOT NULL,
           subject_row_id INTEGER NOT NULL,
@@ -61,121 +65,4 @@ class DBHelper {
         )
         """);
   }
-
-  Future<List<Subject>> getSubjects() async {
-    Database db = await database;
-    var subjects = await db.query(subjectsTable, orderBy: 'time_created DESC');
-    List<Subject> subjectList = subjects.isNotEmpty ? subjects.map((c) => Subject.fromMap(c)).toList() : [];
-    // db.close();
-    return subjectList;
-  }
-
-  Future<int> addSubject(Subject subject) async {
-    int returnCode = -1;
-    Database db = await database;
-    returnCode = await db.insert(
-      subjectsTable,
-      subject.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.abort,
-    );
-    // db.close();
-    return returnCode;
-  }
-
-  Future<int> deleteSubject(Subject subject) async {
-    Database db = await database;
-    // Deleting the messages tied to the subject First
-    int messagesDeletedCount =
-        await db.delete("messages_table", where: "subject_row_id = ?", whereArgs: [subject.rowId]);
-    // Deleting the subject
-    int subjectsDeletedCount = await db.delete("subjects_table", where: "row_id = ?", whereArgs: [subject.rowId]);
-    return subjectsDeletedCount + messagesDeletedCount;
-  }
-
-  Future<int> updateSubject(int rowId, String name, String description) async {
-    Map<String, dynamic> row = {
-      "name": name,
-      "description": description,
-    };
-
-    Database db = await database;
-    return await db.update(subjectsTable, row, where: "rowId = ?", whereArgs: [rowId]);
-  }
-
-  // Future<List<Employee>> getEmployees() async {
-  //   var dbClient = await db;
-  //   List<Map> list = await dbClient.rawQuery('SELECT * FROM Employee');
-  //   List<Employee> employees = new List();
-  //   for (int i = 0; i < list.length; i++) {
-  //     employees.add(new Employee(list[i]["firstname"], list[i]["lastname"], list[i]["mobileno"], list[i]["emailid"]));
-  //   }
-  //   print(employees.length);
-  //   return employees;
-  // }
-
-// ===============================================================================================================
-// ===============================================================================================================
-// ===============================================================================================================
-
-// Messages
-
-  Future<List<Message>> getMessagesDatabase(int rowId) async {
-    Database db = await database;
-    var messages = await db.query(
-      messagesTable,
-      where: 'subject_row_id = ?',
-      whereArgs: [rowId],
-      orderBy: 'time_created DESC',
-    );
-    List<Message> messageList = messages.isNotEmpty ? messages.map((c) => Message.fromMap(c)).toList() : [];
-    return messageList;
-  }
-
-  // Future<void> getAllMessagesDatabase() async {
-  //   Database db = await database;
-  //   var messages = await db.query(
-  //     messagesTable,
-  //     orderBy: 'time_created DESC',
-  //   );
-  //   print("************************");
-  //   List<Message> messageList = messages.isNotEmpty ? messages.map((c) => Message.fromMap(c)).toList() : [];
-  //   for (var element in messageList) {
-  //     print("${element.rowId} ${element.id} ${element.body}--${element.subjectName} ${element.subjectRowId}\n");
-  //   }
-  // }
-
-  Future<int> addMessageDatabase(Message message) async {
-    Database db = await database;
-    return await db.insert(
-      messagesTable,
-      message.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.abort,
-    );
-  }
-
-  Future<int> deleteMessagesDatabase(List<Message> messages) async {
-    Database db = await database;
-    List<int?> rowIds = messages.map((e) => e.rowId).toList();
-
-    // if rowIds array dont include null value, then it executes if block. Otherwise executes else block
-    if (rowIds.any((e) => e != null)) {
-      return await db.delete(
-        messagesTable,
-        where: "row_id IN (${List.filled(rowIds.length, '?').join(',')})",
-        whereArgs: rowIds,
-      );
-    } else {
-      List<String> ids = messages.map((e) => e.id).toList();
-      return await db.delete(
-        messagesTable,
-        where: "id IN (${List.filled(rowIds.length, '?').join(',')})",
-        whereArgs: ids,
-      );
-    }
-  }
-
-  // Future<int> update(Subject subject) async {
-  //   Database db = await instance.database;
-  //   return await db.update('groceries', subject.toMap(), where: "id = ?", whereArgs: [subject.id]);
-  // }
 }

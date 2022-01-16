@@ -2,19 +2,21 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/services/message_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class TakePictureScreen extends StatefulWidget {
   // final CameraDescription cameraOld;
   final CameraDescription cameraNew;
-  final Future Function(String) imgFromCamera;
+  // final Future Function(String) imgFromCamera;
 
   const TakePictureScreen({
     Key? key,
     // required this.cameraOld,
     required this.cameraNew,
-    required this.imgFromCamera,
+    // required this.imgFromCamera,
   }) : super(key: key);
 
   @override
@@ -200,7 +202,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                           builder: (context) => DisplayPictureScreen(
                                             // imagePath: tempImageFile.path,
                                             imagePath: localImageFilePath,
-                                            imgFromCamera: widget.imgFromCamera,
+                                            // imgFromCamera: widget.imgFromCamera,
                                           ),
                                         ),
                                       );
@@ -224,21 +226,21 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                 child: IconButton(
                                   iconSize: 36,
                                   onPressed: () async {
-                                    try {
-                                      // Ensure that the camera is initialized.
-                                      await _initializeControllerFuture;
-                                      final image = await _controller.takePicture();
-                                      await Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => DisplayPictureScreen(
-                                            imagePath: image.path,
-                                            imgFromCamera: widget.imgFromCamera,
-                                          ),
-                                        ),
-                                      );
-                                    } catch (e) {
-                                      debugPrint(e.toString());
-                                    }
+                                    // try {
+                                    //   // Ensure that the camera is initialized.
+                                    //   await _initializeControllerFuture;
+                                    //   final image = await _controller.takePicture();
+                                    //   await Navigator.of(context).push(
+                                    //     MaterialPageRoute(
+                                    //       builder: (context) => DisplayPictureScreen(
+                                    //         imagePath: image.path,
+                                    //         imgFromCamera: widget.imgFromCamera,
+                                    //       ),
+                                    //     ),
+                                    //   );
+                                    // } catch (e) {
+                                    //   debugPrint(e.toString());
+                                    // }
                                   },
                                   icon: const Icon(
                                     Icons.camera_front_rounded,
@@ -302,9 +304,13 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 // A widget that displays the picture taken by the user.
 class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
-  final Future Function(String) imgFromCamera;
+  // final Future Function(String) imgFromCamera;
 
-  const DisplayPictureScreen({Key? key, required this.imagePath, required this.imgFromCamera}) : super(key: key);
+  const DisplayPictureScreen({
+    Key? key,
+    required this.imagePath,
+    // required this.imgFromCamera,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -316,10 +322,16 @@ class DisplayPictureScreen extends StatelessWidget {
         color: Colors.black,
         child: Column(
           children: [
-            Image.file(
-              File(imagePath),
+            Expanded(
+              flex: 6,
+              child: Image.file(
+                File(imagePath),
+                width: double.infinity,
+                fit: BoxFit.fitWidth,
+              ),
             ),
             Expanded(
+              flex: 1,
               child: Center(
                 child: Container(
                   padding: const EdgeInsets.only(left: 48, right: 48),
@@ -338,18 +350,23 @@ class DisplayPictureScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        child: IconButton(
-                          onPressed: () async {
-                            await imgFromCamera(imagePath);
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
-                          },
-                          icon: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 36,
-                          ),
-                        ),
+                        child: Consumer(builder: (context, ref, child) {
+                          final singleSubjectRef = ref.watch(messageProvider);
+
+                          return IconButton(
+                            onPressed: () async {
+                              await ref.read(messageProvider).imgFromCamera(
+                                  imagePath, singleSubjectRef.subjectName, singleSubjectRef.subjectRowId);
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                            },
+                            icon: const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 36,
+                            ),
+                          );
+                        }),
                       ),
                     ],
                   ),
