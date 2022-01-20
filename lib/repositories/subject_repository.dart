@@ -1,5 +1,6 @@
 import 'package:frontend/db/database.dart';
 import 'package:frontend/models/subject_model.dart';
+import 'package:frontend/repositories/message_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SubjectRepository {
@@ -33,6 +34,7 @@ class SubjectRepository {
     // Deleting the subject
     int subjectsDeletedCount = await db.delete("subjects_table", where: "row_id = ?", whereArgs: [subject.rowId]);
     // await db.close();
+    MessageRepository().printAllMessagesFromLocalDatabase();
     return subjectsDeletedCount + messagesDeletedCount;
   }
 

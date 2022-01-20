@@ -1,10 +1,7 @@
-import 'dart:io';
 import 'package:frontend/db/database.dart';
 import 'package:frontend/db/database_helper.dart';
 import 'package:frontend/models/message_model.dart';
 import 'package:frontend/models/subject_model.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class MessageRepository {
@@ -24,17 +21,40 @@ class MessageRepository {
     return messageList;
   }
 
+  // For Development Purpose
+  Future<void> printAllMessagesFromLocalDatabase() async {
+    Database db = await DBHelper.instance.database;
+    var messages = await db.query(
+      messageTable,
+      orderBy: 'time_created DESC',
+    );
+    List<Message> messageList = messages.isNotEmpty ? messages.map((c) => Message.fromMap(c)).toList() : [];
+    // print("rowId----id----body-----------subjectName----subjectRowId\n");
+    for (var element in messageList) {
+      // print("${element.rowId} ${element.id} ${element.body}-------${element.subjectName} ${element.subjectRowId}\n");
+    }
+  }
+
   Future<int> addMessageToLocalDatabase(Message message) async {
     Database db = await DBHelper.instance.database;
     return await db.insert(messageTable, message.toMap());
   }
 
+  // Edit Message from the edit button
+  Future<int> editMessageFromLocalDatabase(Message message) async {
+    Database db = await DBHelper.instance.database;
+    Map<String, dynamic> values = {
+      "title": message.title,
+      "body": message.body,
+      "time_updated": message.timeUpdated,
+    };
+    final returnCode = await db.update(messageTable, values, where: "row_id = ?", whereArgs: [message.rowId]);
+    return returnCode;
+  }
+
   Future<int> deleteMessagesFromLocalDatabase(List<Message> messages) async {
     Database db = await DBHelper.instance.database;
     List<int?> rowIds = messages.map((e) => e.rowId).toList();
-
-    // if rowIds array dont include null value, then it executes if block. Otherwise executes else block
-    // if (rowIds.any((e) => e != null)) {
     int returnCode = await db.delete(
       messageTable,
       where: "row_id IN (${List.filled(rowIds.length, '?').join(',')})",
@@ -43,7 +63,6 @@ class MessageRepository {
     // await db.close();
     return returnCode;
   }
-  // }
 
   Future<int> remove(Subject subject) async {
     String name = subject.name;

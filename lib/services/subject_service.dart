@@ -82,8 +82,8 @@ class SubjectService extends ChangeNotifier {
       return;
     }
 
-    ref.read(messageProvider).setSubjectName(subject.name);
-    ref.read(messageProvider).setSubjectRowId(subject.rowId!);
+    ref.read(messageServiceProvider).setSubjectName(subject.name);
+    ref.read(messageServiceProvider).setSubjectRowId(subject.rowId!);
 
     // Navigator.push(
     //   context,

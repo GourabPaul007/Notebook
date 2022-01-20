@@ -4,6 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/single_subject/camera_screen.dart';
+import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/message_service.dart';
 
 class InputAreaWidget extends ConsumerStatefulWidget {
@@ -34,10 +35,11 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
   @override
   void initState() {
     super.initState();
-    availableCameras().then((availableCameras) {
-      camerasNew = availableCameras;
-      cameraNew = camerasNew.first;
-    });
+    // availableCameras().then((availableCameras) {
+    //   camerasNew = availableCameras;
+    //   cameraNew = camerasNew.first;
+    // });
+    ref.read(cameraServiceProvider).initCameras();
   }
 
   @override
@@ -48,7 +50,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final singleSubjectRef = ref.watch(messageProvider);
+    final singleSubjectRef = ref.watch(messageServiceProvider);
 
     return Container(
         padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
@@ -92,10 +94,10 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) => TakePictureScreen(
-                                                // cameraOld: widget.camera,
-                                                cameraNew: cameraNew,
-                                                // imgFromCamera: widget.imgFromCamera,
-                                              ),
+                                                  // cameraOld: widget.camera,
+                                                  // cameraNew: cameraNew,
+                                                  // imgFromCamera: widget.imgFromCamera,
+                                                  ),
                                             ),
                                           );
                                         },
@@ -138,7 +140,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                 style: const TextStyle(color: Colors.black),
                                 maxLines: 1,
                                 controller: newTextController,
-                                onChanged: ref.read(messageProvider).updateInputText,
+                                onChanged: ref.read(messageServiceProvider).updateInputText,
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.only(
@@ -170,8 +172,11 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                   clipBehavior: Clip.hardEdge,
                   child: IconButton(
                     onPressed: () {
-                      ref.read(messageProvider).sendInputText(
-                          newTextController.text, singleSubjectRef.getSubjectName, singleSubjectRef.subjectRowId);
+                      ref.read(messageServiceProvider).sendInputText(
+                            newTextController.text,
+                            singleSubjectRef.getSubjectName,
+                            singleSubjectRef.subjectRowId,
+                          );
                       newTextController.clear();
                     },
                     // iconSize: 48,

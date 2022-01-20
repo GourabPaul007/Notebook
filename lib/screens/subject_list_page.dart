@@ -74,13 +74,13 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> with Automati
       return;
     }
 
-    ref.read(messageProvider).setSubjectName(subject.name);
-    ref.read(messageProvider).setSubjectRowId(subject.rowId!);
+    ref.read(messageServiceProvider).setSubjectName(subject.name);
+    ref.read(messageServiceProvider).setSubjectRowId(subject.rowId!);
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const SingleSubject(),
+        builder: (context) => SingleSubject(),
       ),
     );
   }

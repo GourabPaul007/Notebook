@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:frontend/models/message_model.dart';
-import 'package:frontend/models/subject_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,7 +21,6 @@ class DBHelper {
   DBHelper._privateConstructor();
   static final DBHelper instance = DBHelper._privateConstructor();
 
-  // Future<Database> get database async => _db ??= await initDb();
   Future<Database> get database async => _db ??= await _initDb();
 
   Future<Database> _initDb() async {
@@ -55,14 +52,19 @@ class DBHelper {
         CREATE TABLE IF NOT EXISTS $messagesTable(
           row_id INTEGER PRIMARY KEY AUTOINCREMENT,
           id TEXT NOT NULL,
+          title TEXT,
           body TEXT,
           time_created INTEGER NOT NULL,
           time_updated INTEGER NOT NULL,
           is_favourite BOOLEAN NOT NULL DEFAULT 0,
-          subject_name TEXT NOT NULL,
+          is_text BOOLEAN NOT NULL DEFAULT 0,
+          is_image BOOLEAN NOT NULL DEFAULT 0,
           subject_row_id INTEGER NOT NULL,
           FOREIGN KEY(subject_row_id) REFERENCES $subjectsTable(row_id)
         )
         """);
+    // await db.execute("""
+    //   CREATE INDEX
+    // """);
   }
 }

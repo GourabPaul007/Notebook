@@ -8,54 +8,84 @@ import 'package:frontend/models/message_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-final messageProvider = ChangeNotifierProvider((ref) => MessageService());
+final messageServiceProvider = ChangeNotifierProvider((ref) => MessageService());
 
 class MessageService extends ChangeNotifier {
   XFile? _image;
   final ImagePicker _picker = ImagePicker();
   List<Message> messages = [];
 
-  // late List<String> images = chatItems.removeWhere((element) => element.contains(".jpg"));
+  List<Message> images = [];
+  void setImages() {
+    images = messages.where((value) => value.isImage).toList();
+  }
 
   // AppBar Stuff
   bool showHoldMessageIcons = false;
   List<Message> selectedMessages = [];
 
+  // ===========================================================================================
+  // ===========================================================================================
+  // Subject Metadata for when you click on a subject on subjectlist page and go in that subject
   late int subjectRowId;
+  late String subjectName;
+
   int get getSubjectRowId => subjectRowId;
   void setSubjectRowId(int rowId) {
     subjectRowId = rowId;
     notifyListeners();
   }
 
-  late String subjectName;
   String get getSubjectName => subjectName;
   void setSubjectName(String name) {
     subjectName = name;
     notifyListeners();
   }
+  // ===========================================================================================
+  // ===========================================================================================
 
-  Future<void> addMessage(String newChat, String subjectName, int subjectRowId) async {
+  // ===========================================================================================
+  // ===========================================================================================
+  // Get all the message info on edit message modal
+  String get getEditMessageTitle => selectedMessages[0].title;
+  String get getEditMessageBody => selectedMessages[0].body;
+  // int? get getEditMessageRowId => selectedMessages[0].rowId;
+  // bool get getEditMessageIsText => selectedMessages[0].isText;
+  // ===========================================================================================
+  // ===========================================================================================
+
+  Future<void> addMessage(String newChat, int subjectRowId, bool isFavourite, bool isText, bool isImage) async {
     if (newChat == "") return;
 
     // database stuff
     await MessageRepository().addMessageToLocalDatabase(Message(
       rowId: null,
       id: const Uuid().v1(),
+      title: "",
       body: newChat,
-      subjectName: subjectName,
+      // subjectName: subjectName,
       subjectRowId: subjectRowId,
       timeCreated: DateTime.now().millisecondsSinceEpoch,
       timeUpdated: DateTime.now().millisecondsSinceEpoch,
+      isFavourite: isFavourite,
+      isText: isText,
+      isImage: isImage,
     ));
     List<Message> newMessages = await MessageRepository().getMessagesFromLocalDatabase(subjectRowId);
 
-    // setState(() {
     messages = newMessages;
-
     // Other Stuff
     showHoldMessageIcons = false;
-    // });
+    notifyListeners();
+  }
+
+  Future<void> editMessage(int messsageRowId, String messageTitle, String messageBody) async {
+    selectedMessages[0].title = messageTitle;
+    selectedMessages[0].body = messageBody;
+    selectedMessages[0].timeUpdated = DateTime.now().millisecondsSinceEpoch;
+
+    await MessageRepository().editMessageFromLocalDatabase(selectedMessages[0]);
+    deleteStates();
     notifyListeners();
   }
 
@@ -65,8 +95,7 @@ class MessageService extends ChangeNotifier {
     List<Message> newMessages = await MessageRepository().getMessagesFromLocalDatabase(subjectRowId);
     messages = newMessages;
     // Other Stuff
-    selectedMessages = [];
-    showHoldMessageIcons = false;
+    deleteStates();
     notifyListeners();
   }
 
@@ -83,15 +112,11 @@ class MessageService extends ChangeNotifier {
     }
   }
 
-  // helper function for displaying the appbad icons which depend onuser hold or taps
-  bool hasSelectedMessages() {
-    return selectedMessages.isNotEmpty;
-  }
-
   void messageOnLongPress(Message message) {
     HapticFeedback.vibrate();
     selectedMessages.add(message);
-    showHoldMessageIcons = hasSelectedMessages();
+    print(selectedMessages);
+    showHoldMessageIcons = selectedMessages.isNotEmpty;
     notifyListeners();
   }
 
@@ -99,10 +124,10 @@ class MessageService extends ChangeNotifier {
     if (selectedMessages.isNotEmpty && !selectedMessages.contains(message)) {
       selectedMessages.add(message);
 
-      showHoldMessageIcons = hasSelectedMessages();
+      showHoldMessageIcons = selectedMessages.isNotEmpty;
     } else {
       selectedMessages.remove(message);
-      showHoldMessageIcons = hasSelectedMessages();
+      showHoldMessageIcons = selectedMessages.isNotEmpty;
     }
     notifyListeners();
   }
@@ -113,8 +138,24 @@ class MessageService extends ChangeNotifier {
     notifyListeners();
   }
 
-  disposeState() {
+  void deleteStates() {
     selectedMessages = [];
+    showHoldMessageIcons = false;
+
+    // notifyListeners();
+  }
+
+  /// Returns wheather the screen should [pop] or not. returns [true] if should [pop].
+  /// To check if user has selected any messages, if so then remove them from [selectedMessages] and return false
+  /// If [selectedMessages] is already empty then return true.
+  Future<bool> willPopScreen() async {
+    if (selectedMessages.isNotEmpty) {
+      selectedMessages = [];
+      showHoldMessageIcons = selectedMessages.isNotEmpty;
+      notifyListeners();
+      return false;
+    }
+    return true;
   }
 
   // =============================================================================================================
@@ -131,9 +172,13 @@ class MessageService extends ChangeNotifier {
   late List<CameraDescription> camerasNew;
   late CameraDescription cameraNew;
 
+  /// sends input [text] to [addMessage] method and clears the [newTextController] text
   void sendInputText(String text, String subjectName, int subjectRowId) async {
-    addMessage(text, subjectName, subjectRowId);
-    // newTextController.text = "";
+    const bool isFavourite = false;
+    const bool isText = true;
+    const bool isImage = false;
+
+    addMessage(text, subjectRowId, isFavourite, isText, isImage);
     newTextController.clear();
     // updateInputText(text);
   }
@@ -152,26 +197,36 @@ class MessageService extends ChangeNotifier {
     }
   }
 
+  /// Adds Image from Camera.
+  /// takes the [imagePath] sent from [Camera] and adds the image path to [Message.body]
   Future imgFromCamera(String imagePath, String subjectName, int subjectRowId) async {
     debugPrint(imagePath);
     if (imagePath != null || imagePath != "") {
-      addMessage(imagePath, subjectName, subjectRowId);
+      const bool isFavourite = false;
+      const bool isText = false;
+      const bool isImage = true;
+      addMessage(imagePath, subjectRowId, isFavourite, isText, isImage);
     }
   }
 
+  /// Adds Image from gallery.
+  /// takes the [imagePath] sent from [ImagePicker().pickImage] and adds the image path to [Message.body]
   Future imgFromGallery(String subjectName, int subjectRowId) async {
     try {
       XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
       );
-      // setState(() {
       _image = image;
-      // });
       notifyListeners();
-      if (_image != null) addMessage(_image!.path, subjectName, subjectRowId);
+      if (_image != null) {
+        const bool isFavourite = false;
+        const bool isText = false;
+        const bool isImage = true;
+        addMessage(_image!.path, subjectRowId, isFavourite, isText, isImage);
+      }
     } on Exception catch (e) {
       await retrieveLostData();
-      debugPrint("here" + e.toString());
+      debugPrint("failed to retrive image from gallery" + e.toString());
     }
   }
 }

@@ -3,95 +3,41 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/message_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class TakePictureScreen extends StatefulWidget {
+class TakePictureScreen extends ConsumerStatefulWidget {
   // final CameraDescription cameraOld;
-  final CameraDescription cameraNew;
+  // final CameraDescription cameraNew;
   // final Future Function(String) imgFromCamera;
 
   const TakePictureScreen({
     Key? key,
     // required this.cameraOld,
-    required this.cameraNew,
+    // required this.cameraNew,
     // required this.imgFromCamera,
   }) : super(key: key);
 
   @override
-  TakePictureScreenState createState() => TakePictureScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _TakePictureScreenState();
 }
 
-class TakePictureScreenState extends State<TakePictureScreen> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
-
-  late bool flashOn = false;
-
-// For requesting Device Storage Permission
-  Future<bool> _requestPermission() async {
-    if (await Permission.storage.isGranted) {
-      return true;
-    }
-    // else {
-    //   var request = await permission.request();
-    //   if (request == PermissionStatus.granted) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // }
-    else if (await Permission.storage.request().isPermanentlyDenied) {
-      return await openAppSettings();
-    } else if (await Permission.storage.request().isDenied) {
-      return false;
-    }
-    return false;
-  }
-
-  Future<String> saveFile(XFile tempImageFile) async {
-    Directory directory;
-    try {
-      if (Platform.isAndroid) {
-        // if (await _requestPermission(Permission.storage)) {
-        final appDir = await getExternalStorageDirectory();
-        final myImagePath = '${appDir!.path}/CameraImages';
-        final myImgDir = await Directory("storage/emulated/0/Pictures/Notebook").create();
-        debugPrint("*******************************" + appDir.path);
-        final String fileName = tempImageFile.path.split('/').last;
-        File localImageFile = await File(tempImageFile.path).copy('${myImgDir.path}/$fileName');
-
-        return localImageFile.path;
-        // } else {
-        //   return "Permission Denied";
-        // }
-      } else {
-        return "";
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-
-    debugPrint("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-    return "Permission Denied";
-  }
-
+class _TakePictureScreenState extends ConsumerState<TakePictureScreen> {
   @override
   void initState() {
     super.initState();
-
-    _controller = CameraController(
-      widget.cameraNew,
-      ResolutionPreset.high,
-    );
-    _initializeControllerFuture = _controller.initialize();
+    ref.read(cameraServiceProvider).initCameraController();
   }
 
   @override
   void dispose() {
     // Dispose of the controller when the widget is disposed.
-    _controller.dispose();
+
+    // ref.read(cameraServiceProvider).disposeState();
+
+    // _controller.dispose();
     super.dispose();
   }
 
@@ -106,7 +52,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       // camera preview. Use a FutureBuilder to display a loading spinner until the
       // controller has finished initializing.
       body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
+        future: ref.read(cameraServiceProvider).initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
@@ -118,8 +64,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                   Expanded(
                       flex: 6,
                       child: AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        child: CameraPreview(_controller),
+                        aspectRatio: ref.watch(cameraServiceProvider).controller.value.aspectRatio,
+                        child: CameraPreview(ref.watch(cameraServiceProvider).controller),
                       )),
                   Expanded(
                     flex: 1,
@@ -129,12 +75,14 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                           children: [
                             Expanded(
                               child: Material(
-                                color: Colors.blue,
+                                color: Colors.transparent,
                                 shape: const CircleBorder(),
                                 clipBehavior: Clip.hardEdge,
                                 child: IconButton(
                                   icon: Icon(
-                                    flashOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+                                    ref.watch(cameraServiceProvider).flashOn
+                                        ? Icons.flash_on_rounded
+                                        : Icons.flash_off_rounded,
                                     color: Colors.white,
                                     size: 24,
                                   ),
@@ -142,14 +90,15 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                   onPressed: () async {
                                     try {
                                       // Ensure that the camera is initialized.
-                                      await _initializeControllerFuture;
+                                      await ref.read(cameraServiceProvider).initializeControllerFuture;
 
                                       setState(() {
-                                        flashOn = !flashOn;
+                                        ref.watch(cameraServiceProvider).flashOn =
+                                            !ref.watch(cameraServiceProvider).flashOn;
                                       });
-                                      flashOn
-                                          ? _controller.setFlashMode(FlashMode.torch)
-                                          : _controller.setFlashMode(FlashMode.off);
+                                      ref.watch(cameraServiceProvider).flashOn
+                                          ? ref.watch(cameraServiceProvider).controller.setFlashMode(FlashMode.torch)
+                                          : ref.watch(cameraServiceProvider).controller.setFlashMode(FlashMode.off);
                                     } catch (e) {
                                       debugPrint(e.toString());
                                     }
@@ -159,7 +108,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                             ),
                             Expanded(
                               child: Material(
-                                color: Colors.blue,
+                                color: Colors.transparent,
                                 shape: const CircleBorder(),
                                 clipBehavior: Clip.hardEdge,
                                 child: IconButton(
@@ -167,8 +116,9 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                   onPressed: () async {
                                     try {
                                       // Ensure that the camera is initialized.
-                                      await _initializeControllerFuture;
-                                      final tempImageFile = await _controller.takePicture();
+                                      await ref.read(cameraServiceProvider).initializeControllerFuture;
+                                      final tempImageFile =
+                                          await ref.watch(cameraServiceProvider).controller.takePicture();
 
 // TODO: SEPERATE METHOD FOR CREATION OF FOLDER AND STUFF
                                       // late String localImageFilePath;
@@ -182,20 +132,15 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                       //   localImageFile =
                                       //       await File(tempImageFile.path).copy('${myImgDir.path}/$fileName');
                                       // }
-                                      if (!await _requestPermission()) {
+                                      if (!await ref.read(cameraServiceProvider).requestPermission()) {
                                         return Navigator.pop(context);
                                       }
-                                      String localImageFilePath = await saveFile(tempImageFile);
-                                      // while (localImageFilePath == "Permission Denied") {
-                                      //   // return Navigator.pop(context);
-                                      //   await _requestPermission();
-                                      // }
+                                      String localImageFilePath =
+                                          await ref.read(cameraServiceProvider).saveFile(tempImageFile);
 
                                       // turn off flash after clicking the photo
-                                      _controller.setFlashMode(FlashMode.off);
-                                      setState(() {
-                                        flashOn = false;
-                                      });
+                                      ref.watch(cameraServiceProvider).controller.setFlashMode(FlashMode.off);
+                                      ref.watch(cameraServiceProvider).flashOn = false;
 
                                       await Navigator.of(context).push(
                                         MaterialPageRoute(
@@ -220,27 +165,13 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                             ),
                             Expanded(
                               child: Material(
-                                color: Colors.blue,
+                                color: Colors.transparent,
                                 shape: const CircleBorder(),
                                 clipBehavior: Clip.hardEdge,
                                 child: IconButton(
                                   iconSize: 36,
                                   onPressed: () async {
-                                    // try {
-                                    //   // Ensure that the camera is initialized.
-                                    //   await _initializeControllerFuture;
-                                    //   final image = await _controller.takePicture();
-                                    //   await Navigator.of(context).push(
-                                    //     MaterialPageRoute(
-                                    //       builder: (context) => DisplayPictureScreen(
-                                    //         imagePath: image.path,
-                                    //         imgFromCamera: widget.imgFromCamera,
-                                    //       ),
-                                    //     ),
-                                    //   );
-                                    // } catch (e) {
-                                    //   debugPrint(e.toString());
-                                    // }
+                                    ref.read(cameraServiceProvider).changeBackOrFrontCamera();
                                   },
                                   icon: const Icon(
                                     Icons.camera_front_rounded,
@@ -264,39 +195,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           }
         },
       ),
-
-      // floatingActionButton: Container(
-      //   padding: const EdgeInsets.only(bottom: 100.0),
-      //   child: Align(
-      //     alignment: Alignment.bottomCenter,
-      //     child: FloatingActionButton(
-      //       onPressed: () async {
-      //         // Take the Picture in a try / catch block. If anything goes wrong,
-      //         // catch the error.
-      //         try {
-      //           // Ensure that the camera is initialized.
-      //           await _initializeControllerFuture;
-      //           // Attempt to take a picture and get the file `image`
-      //           // where it was saved.
-      //           final image = await _controller.takePicture();
-      //           // If the picture was taken, display it on a new screen.
-      //           await Navigator.of(context).push(
-      //             MaterialPageRoute(
-      //               builder: (context) => DisplayPictureScreen(
-      //                 // Pass the automatically generated path to the DisplayPictureScreen widget.
-      //                 imagePath: image.path, imgFromCamera: widget.imgFromCamera,
-      //               ),
-      //             ),
-      //           );
-      //         } catch (e) {
-      //           // If an error occurs, log the error to the console.
-      //           print(e);
-      //         }
-      //       },
-      //       child: const Icon(Icons.camera_alt),
-      //     ),
-      //   ),
-      // ),
     );
   }
 }
@@ -351,11 +249,11 @@ class DisplayPictureScreen extends StatelessWidget {
                       ),
                       Expanded(
                         child: Consumer(builder: (context, ref, child) {
-                          final singleSubjectRef = ref.watch(messageProvider);
+                          final singleSubjectRef = ref.watch(messageServiceProvider);
 
                           return IconButton(
                             onPressed: () async {
-                              await ref.read(messageProvider).imgFromCamera(
+                              await ref.read(messageServiceProvider).imgFromCamera(
                                   imagePath, singleSubjectRef.subjectName, singleSubjectRef.subjectRowId);
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
