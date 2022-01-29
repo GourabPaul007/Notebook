@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/subject_details_page.dart';
 import 'package:frontend/services/message_service.dart';
+import 'package:frontend/services/subject_service.dart';
 
 class SubjectTitle extends ConsumerWidget {
   const SubjectTitle({
@@ -14,7 +15,7 @@ class SubjectTitle extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedMessages = ref.watch(messageServiceProvider).selectedMessages;
-    final subjectName = ref.watch(messageServiceProvider).subjectName;
+    final subjectName = ref.watch(subjectServiceProvider).subjectName;
 
     return SizedBox(
       height: kToolbarHeight,

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/message_service.dart';
+import 'package:frontend/services/subject_service.dart';
 
 class MessageDeleteButton extends ConsumerWidget {
   const MessageDeleteButton({
@@ -34,7 +35,7 @@ class MessageDeleteButton extends ConsumerWidget {
                     ),
                     TextButton(
                       onPressed: () => {
-                        ref.read(messageServiceProvider).deleteMessages(ref.watch(messageServiceProvider).subjectRowId),
+                        ref.read(messageServiceProvider).deleteMessages(ref.watch(subjectServiceProvider).subjectRowId),
                         Navigator.pop(context),
                       },
                       child: Text("Delete", style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 20)),

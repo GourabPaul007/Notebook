@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/single_subject/camera_screen.dart';
 import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/message_service.dart';
+import 'package:frontend/services/subject_service.dart';
 
 class InputAreaWidget extends ConsumerStatefulWidget {
   const InputAreaWidget({Key? key}) : super(key: key);
@@ -34,7 +35,8 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final singleSubjectRef = ref.watch(messageServiceProvider);
+    final messageService = ref.watch(messageServiceProvider);
+    final subjectService = ref.watch(subjectServiceProvider);
 
     return Container(
         padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
@@ -102,8 +104,8 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                       color: Colors.transparent,
                                       child: IconButton(
                                         onPressed: () async {
-                                          await singleSubjectRef.imgFromGallery(
-                                              singleSubjectRef.getSubjectName, singleSubjectRef.getSubjectRowId);
+                                          await ref.read(messageServiceProvider).imgFromGallery(
+                                              subjectService.getSubjectName, subjectService.getSubjectRowId);
                                         },
                                         splashColor: Colors.amber,
                                         icon: const Icon(Icons.photo),
@@ -154,8 +156,8 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                     onPressed: () {
                       ref.read(messageServiceProvider).sendInputText(
                             newTextController.text,
-                            singleSubjectRef.getSubjectName,
-                            singleSubjectRef.subjectRowId,
+                            subjectService.getSubjectName,
+                            subjectService.subjectRowId,
                           );
                       newTextController.clear();
                     },

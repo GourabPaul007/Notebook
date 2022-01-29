@@ -39,20 +39,20 @@ class MessageService extends ChangeNotifier {
   // ===========================================================================================
   // ===========================================================================================
   // Subject Metadata for when you click on a subject on subjectlist page and go in that subject
-  late int subjectRowId;
-  late String subjectName;
+  // late int subjectRowId;
+  // late String subjectName;
 
-  int get getSubjectRowId => subjectRowId;
-  void setSubjectRowId(int rowId) {
-    subjectRowId = rowId;
-    notifyListeners();
-  }
+  // int get getSubjectRowId => subjectRowId;
+  // void setSubjectRowId(int rowId) {
+  //   subjectRowId = rowId;
+  //   notifyListeners();
+  // }
 
-  String get getSubjectName => subjectName;
-  void setSubjectName(String name) {
-    subjectName = name;
-    notifyListeners();
-  }
+  // String get getSubjectName => subjectName;
+  // void setSubjectName(String name) {
+  //   subjectName = name;
+  //   notifyListeners();
+  // }
   // ===========================================================================================
   //
   //
@@ -176,7 +176,7 @@ class MessageService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getMessages() async {
+  void getMessages(int subjectRowId) async {
     var result = await MessageRepository().getMessagesFromLocalDatabase(subjectRowId);
     messages = result;
     notifyListeners();

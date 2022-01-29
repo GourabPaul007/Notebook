@@ -11,6 +11,7 @@ import 'package:frontend/screens/single_subject/input_area.dart';
 import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/message_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/services/subject_service.dart';
 
 // import 'single_subject/camera_screen.dart';
 
@@ -42,7 +43,7 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
     ref.read(messageServiceProvider).retrieveLostData();
 
     // get the initial [messages] to show on page load
-    ref.read(messageServiceProvider).getMessages();
+    ref.read(messageServiceProvider).getMessages(ref.read(subjectServiceProvider).getSubjectRowId);
   }
 
   @override

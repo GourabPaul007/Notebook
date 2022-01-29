@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/single_subject/each_message.dart';
 import 'package:frontend/services/message_service.dart';
+import 'package:frontend/services/subject_service.dart';
 
 class StarredMessagesPage extends ConsumerStatefulWidget {
   const StarredMessagesPage({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class _StarredMessagesPageState extends ConsumerState<StarredMessagesPage> {
   @override
   void initState() {
     super.initState();
-    ref.read(messageServiceProvider).setStarredMessages(ref.read(messageServiceProvider).getSubjectRowId);
+    ref.read(messageServiceProvider).setStarredMessages(ref.read(subjectServiceProvider).getSubjectRowId);
   }
 
   // @override

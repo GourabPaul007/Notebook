@@ -20,9 +20,10 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> with Automati
       return;
     }
 
-    ref.read(messageServiceProvider).setSubjectName(subject.name);
-    // ref.read(messageServiceProvider).setSubjectDescription(subject.description);
-    ref.read(messageServiceProvider).setSubjectRowId(subject.rowId!);
+    // ref.read(messageServiceProvider).setSubjectName(subject.name);
+    // // ref.read(messageServiceProvider).setSubjectDescription(subject.description);
+    // ref.read(messageServiceProvider).setSubjectRowId(subject.rowId!);
+    ref.read(subjectServiceProvider).setSubject(subject);
     ref.read(subjectServiceProvider).setSubjectName(subject.name);
     ref.read(subjectServiceProvider).setSubjectRowId(subject.rowId!);
     ref.read(subjectServiceProvider).setSubjectDescription(subject.description);

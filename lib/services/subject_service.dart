@@ -16,6 +16,7 @@ class SubjectService extends ChangeNotifier {
 
   final Ref ref;
 
+  late Subject subject;
   late int subjectRowId;
   late String subjectName = "";
   late String subjectDescription = "";
@@ -26,6 +27,12 @@ class SubjectService extends ChangeNotifier {
   String get getSubjectDescription => subjectDescription;
   void setSubjectDescription(String description) {
     subjectDescription = description;
+    notifyListeners();
+  }
+
+  Subject get getSubject => subject;
+  void setSubject(Subject s) {
+    subject = s;
     notifyListeners();
   }
 
@@ -88,9 +95,9 @@ class SubjectService extends ChangeNotifier {
     if (setAfterSubjectOnTap(subject)) {
       return;
     }
-
-    ref.read(messageServiceProvider).setSubjectName(subject.name);
-    ref.read(messageServiceProvider).setSubjectRowId(subject.rowId!);
+    // why ?
+    ref.read(subjectServiceProvider).setSubjectName(subject.name);
+    ref.read(subjectServiceProvider).setSubjectRowId(subject.rowId!);
   }
 
   // Delete Subject

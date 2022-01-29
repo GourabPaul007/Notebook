@@ -8,6 +8,10 @@ import 'package:frontend/services/subject_service.dart';
 class SubjectDetailsPage extends ConsumerWidget {
   const SubjectDetailsPage({Key? key}) : super(key: key);
 
+  String formatDate(DateTime dateTime) {
+    return "${dateTime.day.toString()}/${dateTime.month.toString()}/${dateTime.year.toString()}";
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final messageService = ref.watch(messageServiceProvider);
@@ -33,15 +37,21 @@ class SubjectDetailsPage extends ConsumerWidget {
                   height: double.infinity,
                 ),
                 Positioned(
-                  bottom: 16,
+                  bottom: 8,
                   left: 16,
                   // width: double.maxFinite,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
                         subjectService.subjectName,
                         style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        "Created at  " +
+                            formatDate(DateTime.fromMillisecondsSinceEpoch(subjectService.subject.timeCreated)),
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
@@ -49,19 +59,24 @@ class SubjectDetailsPage extends ConsumerWidget {
                 Positioned(
                   bottom: 8,
                   right: 8,
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditSubjectDialog(
-                            rowId: subjectService.subjectRowId,
-                            type: "edit",
+                  child: Material(
+                    color: Colors.transparent,
+                    clipBehavior: Clip.hardEdge,
+                    borderRadius: BorderRadius.circular(50),
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditSubjectDialog(
+                              rowId: subjectService.subjectRowId,
+                              type: "edit",
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.edit_rounded),
+                        );
+                      },
+                      icon: const Icon(Icons.edit_rounded),
+                    ),
                   ),
                 )
               ]),
@@ -71,7 +86,6 @@ class SubjectDetailsPage extends ConsumerWidget {
                 child: Container(
                   color: const Color(0xFFECE5DD),
                   child: SingleChildScrollView(
-                    // color: Colors.redAccent,
                     child: Column(
                       children: <Widget>[
                         Container(

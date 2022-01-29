@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/message_service.dart';
+import 'package:frontend/services/subject_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -249,7 +250,7 @@ class DisplayPictureScreen extends StatelessWidget {
                       ),
                       Expanded(
                         child: Consumer(builder: (context, ref, child) {
-                          final singleSubjectRef = ref.watch(messageServiceProvider);
+                          final singleSubjectRef = ref.watch(subjectServiceProvider);
 
                           return IconButton(
                             onPressed: () async {
