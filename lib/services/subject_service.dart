@@ -16,6 +16,7 @@ class SubjectService extends ChangeNotifier {
 
   final Ref ref;
 
+  late int subjectRowId;
   late String subjectName = "";
   late String subjectDescription = "";
   List<Subject> subjects = [];
@@ -31,6 +32,12 @@ class SubjectService extends ChangeNotifier {
   String get getSubjectName => subjectName;
   void setSubjectName(String name) {
     subjectName = name;
+    notifyListeners();
+  }
+
+  int get getSubjectRowId => subjectRowId;
+  void setSubjectRowId(int id) {
+    subjectRowId = id;
     notifyListeners();
   }
 
@@ -84,13 +91,6 @@ class SubjectService extends ChangeNotifier {
 
     ref.read(messageServiceProvider).setSubjectName(subject.name);
     ref.read(messageServiceProvider).setSubjectRowId(subject.rowId!);
-
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => const SingleSubject(),
-    //   ),
-    // );
   }
 
   // Delete Subject

@@ -7,7 +7,7 @@ class Message {
   final int subjectRowId;
   final int timeCreated;
   int timeUpdated;
-  final bool isFavourite;
+  bool isFavourite;
   final bool isText;
   final bool isImage;
 

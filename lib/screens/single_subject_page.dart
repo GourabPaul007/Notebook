@@ -1,6 +1,10 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/single_subject/appbar/message_delete_button.dart';
+import 'package:frontend/screens/single_subject/appbar/message_edit_button.dart';
+import 'package:frontend/screens/single_subject/appbar/message_star_button.dart';
+import 'package:frontend/screens/single_subject/appbar/subject_title.dart';
 import 'package:frontend/screens/single_subject/each_message.dart';
 import 'package:frontend/screens/single_subject/edit_message_dialog.dart';
 import 'package:frontend/screens/single_subject/input_area.dart';
@@ -38,7 +42,7 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
     ref.read(messageServiceProvider).retrieveLostData();
 
     // get the initial [messages] to show on page load
-    ref.read(messageServiceProvider).getData();
+    ref.read(messageServiceProvider).getMessages();
   }
 
   @override
@@ -48,51 +52,15 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
       onWillPop: ref.read(messageServiceProvider).willPopScreen,
       child: Scaffold(
         appBar: AppBar(
-          title: messageService.selectedMessages.isNotEmpty
-              ? Text(messageService.selectedMessages.length.toString())
-              : Text(messageService.subjectName),
-          // title: Text(widget.subjectName),
+          // toolbarHeight: kToolbarHeight,
+          title: const SubjectTitle(),
           actions: <Widget>[
-            messageService.showHoldMessageIcons
-                ? Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: Material(
-                      shape: const CircleBorder(),
-                      clipBehavior: Clip.hardEdge,
-                      color: Colors.transparent,
-                      child: IconButton(
-                        onPressed: () {
-                          ref.read(messageServiceProvider).deleteMessages(messageService.subjectRowId);
-                        },
-                        icon: const Icon(Icons.delete_rounded, size: 26.0),
-                      ),
-                    ),
-                  )
-                : const SizedBox(),
-            messageService.selectedMessages.length == 1
-                ? Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: Material(
-                      shape: const CircleBorder(),
-                      clipBehavior: Clip.hardEdge,
-                      color: Colors.transparent,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            PageRouteBuilder(
-                              opaque: false,
-                              pageBuilder: (context, _, __) => const EditMessageDialog(
-                                  // messageRowId: messageService.selectedMessages[0].rowId!,
-                                  ),
-                            ),
-                          );
-                          // ref.read(messageServiceProvider).deleteMessages(messageService.subjectRowId);
-                        },
-                        icon: const Icon(Icons.edit_rounded, size: 26.0),
-                      ),
-                    ),
-                  )
-                : const SizedBox(),
+            // Star Button
+            messageService.showHoldMessageIcons ? const MessageStarButton() : const SizedBox(),
+            // Delete Button
+            messageService.showHoldMessageIcons ? const MessageDeleteButton() : const SizedBox(),
+            // Edit Button
+            messageService.selectedMessages.length == 1 ? const MessageEditButton() : const SizedBox(),
             Padding(
               padding: const EdgeInsets.only(right: 6),
               child: Material(
@@ -140,7 +108,24 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
                           },
                           child: Container(
                             alignment: Alignment.centerRight,
-                            child: EachMessage(index: index),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                // left area of message, should be used as message metadata(datetime etc.)
+                                const Flexible(
+                                  flex: 1,
+                                  child: SizedBox(),
+                                ),
+                                // the message
+                                Flexible(
+                                  flex: 4,
+                                  child: EachMessage(
+                                    index: index,
+                                    parentType: 'SingleSubjectPage',
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );

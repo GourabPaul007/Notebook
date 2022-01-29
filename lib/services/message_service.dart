@@ -15,10 +15,22 @@ class MessageService extends ChangeNotifier {
   final ImagePicker _picker = ImagePicker();
   List<Message> messages = [];
 
+  /// separate [starredMessages] variable for [StarredMessagePage]
+  List<Message> starredMessages = [];
+
+  // ===========================================================================================
+  // ===========================================================================================
+  // Image Message Stuff
   List<Message> images = [];
   void setImages() {
     images = messages.where((value) => value.isImage).toList();
   }
+
+  /// get the initial clicked [image] when user tapped image in messages([images])
+  Message getTappedImage(int index) => images[index];
+  //
+  // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  //
 
   // AppBar Stuff
   bool showHoldMessageIcons = false;
@@ -42,22 +54,24 @@ class MessageService extends ChangeNotifier {
     notifyListeners();
   }
   // ===========================================================================================
-  // ===========================================================================================
+  //
+  //
 
   // ===========================================================================================
   // ===========================================================================================
   // Get all the message info on edit message modal
   String get getEditMessageTitle => selectedMessages[0].title;
   String get getEditMessageBody => selectedMessages[0].body;
-  // int? get getEditMessageRowId => selectedMessages[0].rowId;
-  // bool get getEditMessageIsText => selectedMessages[0].isText;
-  // ===========================================================================================
-  // ===========================================================================================
+  //
+  //
 
+  // ===========================================================================================
+  // ===========================================================================================
+  // General CRUD
+
+  /// Adds a new [Message] to message repository/database.
   Future<void> addMessage(String newChat, int subjectRowId, bool isFavourite, bool isText, bool isImage) async {
     if (newChat == "") return;
-
-    // database stuff
     await MessageRepository().addMessageToLocalDatabase(Message(
       rowId: null,
       id: const Uuid().v1(),
@@ -79,12 +93,36 @@ class MessageService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// if [flag] is 1 then unstar all messages. else star all messages
+  /// [flag] is set to 1 when [selectedMessages] includes all starred messages.
+  /// [flag] is set to 0 when [selectedMessages] include a [message] which is not favourite
+  Future<void> toggleStarMessages() async {
+    int flag = 1;
+    for (Message message in selectedMessages) {
+      if (message.isFavourite == false) {
+        flag = 0;
+      }
+    }
+    MessageRepository().toggleStarMessagesFromDatabase(selectedMessages, flag);
+    if (flag == 1) {
+      for (Message message in selectedMessages) {
+        message.isFavourite = false;
+      }
+    } else {
+      for (Message message in selectedMessages) {
+        message.isFavourite = true;
+      }
+    }
+    deleteStates();
+    notifyListeners();
+  }
+
   Future<void> editMessage(int messsageRowId, String messageTitle, String messageBody) async {
     selectedMessages[0].title = messageTitle;
     selectedMessages[0].body = messageBody;
     selectedMessages[0].timeUpdated = DateTime.now().millisecondsSinceEpoch;
 
-    await MessageRepository().editMessageFromLocalDatabase(selectedMessages[0]);
+    await MessageRepository().editMessageFromLocalDatabase(selectedMessages.first);
     deleteStates();
     notifyListeners();
   }
@@ -98,6 +136,12 @@ class MessageService extends ChangeNotifier {
     deleteStates();
     notifyListeners();
   }
+
+  //
+  // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  //
+  //
+  //
 
   Future<void> retrieveLostData() async {
     final LostDataResponse response = await _picker.retrieveLostData();
@@ -132,7 +176,7 @@ class MessageService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getData() async {
+  void getMessages() async {
     var result = await MessageRepository().getMessagesFromLocalDatabase(subjectRowId);
     messages = result;
     notifyListeners();
@@ -228,5 +272,21 @@ class MessageService extends ChangeNotifier {
       await retrieveLostData();
       debugPrint("failed to retrive image from gallery" + e.toString());
     }
+  }
+
+  /// set the [starredMessages] on initial load of [StarredMessagesPage]
+  Future<void> setStarredMessages(int subjectRowId) async {
+    starredMessages = [];
+    starredMessages = await MessageRepository().getStarredMessagesFromLocalDatabase(subjectRowId);
+    for (var element in starredMessages) {
+      print(element.body + "-----" + element.isFavourite.toString());
+    }
+    notifyListeners();
+  }
+
+  /// dispose the [starredMessages] on destroying the [StarredMessagesPage]
+  void disposeStarredMessages() {
+    starredMessages = [];
+    // notifyListeners();
   }
 }

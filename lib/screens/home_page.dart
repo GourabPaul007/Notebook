@@ -6,7 +6,7 @@ import 'package:frontend/db/database.dart';
 import 'package:frontend/models/subject_model.dart';
 import 'package:frontend/screens/subject_list_page.dart';
 import 'package:frontend/screens/subject_list_page/subject_delete_button.dart';
-import 'package:frontend/screens/subject_list_page/dialog_box.dart';
+import 'package:frontend/screens/subject_list_page/edit_subject_dialog.dart';
 import 'package:frontend/screens/subject_list_page/subject_edit_button.dart';
 import 'package:frontend/services/subject_service.dart';
 

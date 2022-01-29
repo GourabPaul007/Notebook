@@ -8,19 +8,7 @@ import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/message_service.dart';
 
 class InputAreaWidget extends ConsumerStatefulWidget {
-  // final void Function(String newChat) addMessage;
-  // final Future Function() imgFromGallery;
-  // final Future Function(String) imgFromCamera;
-
-  // CameraDescription camera;
-
-  const InputAreaWidget({
-    Key? key,
-    // required this.addMessage,
-    // required this.imgFromGallery,
-    // required this.imgFromCamera,
-    // required this.camera,
-  }) : super(key: key);
+  const InputAreaWidget({Key? key}) : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _InputAreaWidgetState();
@@ -35,10 +23,6 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
   @override
   void initState() {
     super.initState();
-    // availableCameras().then((availableCameras) {
-    //   camerasNew = availableCameras;
-    //   cameraNew = camerasNew.first;
-    // });
     ref.read(cameraServiceProvider).initCameras();
   }
 
@@ -93,11 +77,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => TakePictureScreen(
-                                                  // cameraOld: widget.camera,
-                                                  // cameraNew: cameraNew,
-                                                  // imgFromCamera: widget.imgFromCamera,
-                                                  ),
+                                              builder: (context) => const TakePictureScreen(),
                                             ),
                                           );
                                         },

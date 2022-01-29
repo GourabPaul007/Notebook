@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/helpers/unix_to_time.dart';
 import 'package:frontend/models/message_model.dart';
 import 'package:frontend/screens/single_subject/view_image.dart';
 import 'package:frontend/services/message_service.dart';
@@ -9,100 +10,153 @@ import 'package:frontend/services/message_service.dart';
 class EachMessage extends ConsumerWidget {
   final int index;
 
-  const EachMessage({Key? key, required this.index}) : super(key: key);
+  /// type is required to know if the message should render in [SingleSubjectPage] or [StarredMessagesPage]
+  final String parentType;
+
+  const EachMessage({Key? key, required this.index, required this.parentType}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final message = ref.watch(messageServiceProvider).messages.elementAt(index);
+    // gets message from either [messages] or [starredMessages] depending on the parentType
+    final message = parentType == "SingleSubjectPage"
+        ? ref.watch(messageServiceProvider).messages.elementAt(index)
+        : ref.watch(messageServiceProvider).starredMessages.elementAt(index);
 
     // Sets images in serviceprovider
     ref.read(messageServiceProvider).setImages();
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        const Flexible(
-          flex: 1,
-          child: SizedBox(),
-        ),
-        Flexible(
-          flex: 4,
-          child: Container(
-            padding: const EdgeInsets.all(4),
-            margin: const EdgeInsets.only(left: 4, right: 4, top: 2, bottom: 2),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Theme.of(context).primaryColor,
-            ),
-            child: IntrinsicWidth(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // IF [message.title] exists then render it
-                  message.title != ""
-                      ? Container(
-                          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                          margin: const EdgeInsets.only(bottom: 2),
-                          child: Text(
-                            message.title,
-                            style: const TextStyle(fontSize: 20, color: Colors.white),
-                            textAlign: TextAlign.left,
-                          ),
-                        )
-                      : const SizedBox(),
+    return Container(
+      padding: const EdgeInsets.all(4),
+      margin: const EdgeInsets.only(left: 4, right: 4, top: 2, bottom: 2),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Theme.of(context).primaryColor,
+      ),
+      child: IntrinsicWidth(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // IF [message.title] exists then render it
+            message.title != ""
+                ? Container(
+                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                    margin: const EdgeInsets.only(bottom: 2),
+                    child: Text(
+                      message.title,
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                      textAlign: TextAlign.left,
+                    ),
+                  )
+                : const SizedBox(),
 
-                  // FOR TEXT CHATS
-                  message.isText
-                      ? Container(
-                          padding: message.title != ""
-                              ? const EdgeInsets.symmetric(vertical: 8, horizontal: 6)
-                              : const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.0),
-                            color: message.title != "" ? Colors.deepPurple : Colors.transparent,
+            // FOR TEXT CHATS
+            message.isText
+                ? Container(
+                    padding: message.title != ""
+                        ? const EdgeInsets.symmetric(vertical: 8, horizontal: 6)
+                        : const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4.0),
+                      color: message.title != "" ? Colors.deepPurple : Colors.transparent,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              message.body,
+                              style: const TextStyle(fontSize: 20, color: Colors.white),
+                              softWrap: true,
+                            ),
                           ),
-                          child: Text(
-                            message.body,
-                            style: const TextStyle(fontSize: 20, color: Colors.white),
+                          OtherMessageInfo(
+                            message: message,
                           ),
-                        )
-                      : const SizedBox(),
+                        ],
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
 
-                  // FOR IMAGE MESSAGES
-                  message.isImage
-                      ? InkWell(
-                          onTap: () {
-                            final images = ref.watch(messageServiceProvider).images;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ViewImage(
-                                  index: images.indexOf(message),
-                                ),
-                              ),
-                            );
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5.0),
+            // FOR IMAGE MESSAGES
+            message.isImage
+                ? Stack(
+                    children: [
+                      InkWell(
+                        onTap: parentType == "SingleSubjectPage"
+                            ? () {
+                                final images = ref.watch(messageServiceProvider).images;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ViewImage(
+                                      index: images.indexOf(message),
+                                    ),
+                                  ),
+                                );
+                              }
+                            : () {},
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5.0),
+                          child: Container(
+                            constraints: const BoxConstraints(minWidth: 200, maxWidth: double.maxFinite),
                             child: Image.file(
                               File(message.body),
-                              width: message.title.length < 20 ? 200 : double.maxFinite,
+                              width: double.maxFinite,
                               height: 200,
                               fit: BoxFit.cover,
                             ),
                           ),
-                        )
-                      : const SizedBox(),
-                ],
-              ),
-            ),
-          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 2,
+                        right: 4,
+                        child: OtherMessageInfo(message: message),
+                      ),
+                    ],
+                  )
+                : const SizedBox(),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
+
+class OtherMessageInfo extends StatelessWidget {
+  final Message message;
+  const OtherMessageInfo({
+    Key? key,
+    required this.message,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.bottomCenter,
+      child: Row(
+        children: [
+          const SizedBox(width: 4),
+          message.isFavourite
+              ? const Icon(
+                  Icons.star_rate_rounded,
+                  size: 12,
+                )
+              : const SizedBox(),
+          const SizedBox(width: 4),
+          Text(
+            unixToTime(message.timeCreated),
+            style: const TextStyle(fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 
 

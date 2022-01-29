@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/message_service.dart';
@@ -26,16 +27,39 @@ class ViewImage extends ConsumerStatefulWidget {
 }
 
 class _ViewImageState extends ConsumerState<ViewImage> {
+  bool showAppBar = true;
+  late String imageName;
+
+  @override
+  void initState() {
+    String imageTitle = ref.read(messageServiceProvider).getTappedImage(widget.index).title;
+    String imageUrl = ref.read(messageServiceProvider).getTappedImage(widget.index).body;
+    imageName = imageTitle == "" ? imageUrl.substring(imageUrl.lastIndexOf("/") + 1) : imageTitle;
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final messageService = ref.watch(messageServiceProvider);
+    // final messageService = ref.watch(messageServiceProvider);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(ref.watch(messageServiceProvider).images.elementAt(widget.index).title),
-        backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: showAppBar ? true : false,
+        // title: showAppBar ? Text(ref.watch(messageServiceProvider).images.elementAt(widget.index).title) : null,
+        title: showAppBar
+            ? Text(
+                imageName,
+                softWrap: true,
+                style: const TextStyle(fontSize: 20),
+              )
+            : null,
+        backgroundColor: showAppBar ? Colors.black45 : Colors.transparent,
         elevation: 0.0,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+        ),
       ),
       body: Container(
         // decoration: const BoxDecoration(color: Colors.black),
@@ -44,32 +68,28 @@ class _ViewImageState extends ConsumerState<ViewImage> {
               reverse: true,
               pageController: widget.pageController,
               itemCount: ref.watch(messageServiceProvider).images.length,
-              // onDoubleTap: _handleDoubleTap,
+              onPageChanged: (index) {
+                String imageTitle = ref.watch(messageServiceProvider).images[index].title;
+                String imageUrl = ref.watch(messageServiceProvider).images[index].body;
+                setState(() {
+                  imageName = imageTitle == "" ? imageUrl.substring(imageUrl.lastIndexOf("/") + 1) : imageTitle;
+                  showAppBar = true;
+                });
+              },
               builder: (context, index) {
                 final imageUrl = ref.watch(messageServiceProvider).images[index].body;
                 debugPrint("*********************" + imageUrl);
                 return PhotoViewGalleryPageOptions(
-                  // imageProvider: NetworkImage(imageUrl),
-                  imageProvider: FileImage(File(imageUrl)),
-
-                  minScale: PhotoViewComputedScale.contained,
-                  maxScale: PhotoViewComputedScale.contained * 4,
-                  // child: Image.network(
-                  // File(urlImage),
-                  // fit: BoxFit.contain,
-                  // height: double.infinity,
-                  // width: double.infinity,
-                  // alignment: Alignment.center,
-                );
-              }
-              // Image.file(
-              //   File(widget.imageUrl),
-              //   fit: BoxFit.contain,
-              //   height: double.infinity,
-              //   width: double.infinity,
-              //   alignment: Alignment.center,
-              // ),
-              ),
+                    imageProvider: FileImage(File(imageUrl)),
+                    initialScale: PhotoViewComputedScale.contained * 9 / 10,
+                    minScale: PhotoViewComputedScale.contained,
+                    maxScale: PhotoViewComputedScale.contained * 4,
+                    onTapDown: (_, __, ___) {
+                      setState(() {
+                        showAppBar = !showAppBar;
+                      });
+                    });
+              }),
         ),
       ),
     );

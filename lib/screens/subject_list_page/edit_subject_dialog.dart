@@ -5,31 +5,26 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/subject_service.dart';
 
-class NewSubjectDialog extends ConsumerStatefulWidget {
+class EditSubjectDialog extends ConsumerStatefulWidget {
   final int? rowId;
   final String type;
-  // final String? subjectName, subjectDescription;
 
-  // final void Function(String newSubjectName, String subjectDescription)? addSubject;
-  // final void Function(int rowId, String newSubjectName, String subjectDescription)? editSubject;
-
-  const NewSubjectDialog({
+  const EditSubjectDialog({
     Key? key,
     this.rowId,
-    // this.subjectName,
-    // this.subjectDescription,
     required this.type,
-    // this.addSubject,
-    // this.editSubject,
   }) : super(key: key);
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _NewSubjectDialogState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _EditSubjectDialogState();
 }
 
-class _NewSubjectDialogState extends ConsumerState<NewSubjectDialog> {
+class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
   final TextEditingController _subjectNameController = TextEditingController();
   final TextEditingController _subjectDescriptionController = TextEditingController();
+
+  // If body textfield is empty then button should be disabled
+  bool _buttonDisabled = false;
 
   @override
   void initState() {
@@ -38,118 +33,103 @@ class _NewSubjectDialogState extends ConsumerState<NewSubjectDialog> {
       _subjectNameController.text = ref.read(subjectServiceProvider).getSubjectName;
       _subjectDescriptionController.text = ref.read(subjectServiceProvider).getSubjectDescription;
     }
+    // If body textfield is empty then button should be disabled
+    _subjectNameController.addListener(() {
+      if (_subjectNameController.text.isEmpty) {
+        setState(() => _buttonDisabled = true);
+      }
+      if (_subjectNameController.text.isNotEmpty) {
+        setState(() => _buttonDisabled = false);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black54,
+      // backgroundColor: Colors.black54,
       appBar: AppBar(
-        toolbarHeight: 0,
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.black54,
-        ),
+        title: Text(widget.type == "add" ? "Add New Subject" : "Edit Subject"),
       ),
       body: Hero(
         tag: "fab_to_dialogbox",
         child: Container(
-          margin: const EdgeInsets.all(8),
-          child: Container(
-            color: Colors.transparent,
-            child: Center(
-              child: Container(
-                margin: const EdgeInsets.all(8),
-                padding: const EdgeInsets.all(8),
-                clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  color: Colors.grey[900],
-                  borderRadius: BorderRadius.circular(8),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+          height: double.infinity,
+          color: Colors.grey[900],
+          child: Column(
+            children: [
+              // Subject Name TextField
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 8, left: 8, right: 8),
+                      child: TextField(
+                        controller: _subjectNameController,
+                        maxLines: 1,
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.only(bottom: -24, left: 2),
+                          hintText: "Subject Name",
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 16, bottom: 8),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Text(
-                            widget.type == "add" ? "Add New Subject" : "Edit Subject",
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+              ),
+              // Subject About TextField
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+                      child: TextField(
+                        controller: _subjectDescriptionController,
+                        maxLines: 1,
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.only(bottom: -24, left: 2),
+                          hintText: "Subject Description (Optional)",
                         ),
                       ),
                     ),
-                    // Subject Name TextField
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
+                  ),
+                ),
+              ),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Flexible(
                         child: Material(
-                          color: Colors.transparent,
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 8, left: 9, right: 8),
-                            child: TextField(
-                              controller: _subjectNameController,
-                              maxLines: 1,
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.only(bottom: -24),
-                                hintText: "Subject Name",
-                              ),
-                            ),
+                          shape: const CircleBorder(),
+                          clipBehavior: Clip.hardEdge,
+                          color: Theme.of(context).primaryColor,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            iconSize: 36,
+                            icon: const Icon(Icons.close_rounded, color: Colors.white),
                           ),
                         ),
                       ),
-                    ),
-                    // Subject About TextField
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
-                            child: TextField(
-                              controller: _subjectDescriptionController,
-                              maxLines: 1,
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.only(bottom: -24),
-                                hintText: "Subject Description (Optional)",
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Flexible(
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            widget.type == "add"
-                                ? Flexible(
-                                    child: ElevatedButton(
-                                        onPressed: () {
+                      const SizedBox(width: 24),
+                      widget.type == "add"
+                          ? Flexible(
+                              child: Material(
+                                shape: const CircleBorder(),
+                                clipBehavior: Clip.hardEdge,
+                                color: Theme.of(context).primaryColor,
+                                child: IconButton(
+                                  onPressed: _buttonDisabled
+                                      ? null
+                                      : () {
                                           ref.read(subjectServiceProvider).addSubject(
                                                 _subjectNameController.text,
                                                 _subjectDescriptionController.text,
@@ -158,17 +138,22 @@ class _NewSubjectDialogState extends ConsumerState<NewSubjectDialog> {
                                           _subjectDescriptionController.text = "";
                                           Navigator.of(context).pop();
                                         },
-                                        child: const Text(
-                                          "Create",
-                                          style: TextStyle(fontSize: 18, color: Colors.white),
-                                        ),
-                                        style: ElevatedButton.styleFrom(primary: Colors.blue)),
-                                  )
-                                : const SizedBox(),
-                            widget.type == "edit"
-                                ? Flexible(
-                                    child: ElevatedButton(
-                                        onPressed: () {
+                                  iconSize: 36,
+                                  icon: const Icon(Icons.done_rounded, color: Colors.white),
+                                ),
+                              ),
+                            )
+                          : const SizedBox(),
+                      widget.type == "edit"
+                          ? Flexible(
+                              child: Material(
+                                shape: const CircleBorder(),
+                                clipBehavior: Clip.hardEdge,
+                                color: _buttonDisabled ? Colors.grey[800] : Theme.of(context).primaryColor,
+                                child: IconButton(
+                                  onPressed: _buttonDisabled
+                                      ? null
+                                      : () {
                                           ref.read(subjectServiceProvider).editSubject(
                                                 widget.rowId!,
                                                 _subjectNameController.text,
@@ -178,21 +163,19 @@ class _NewSubjectDialogState extends ConsumerState<NewSubjectDialog> {
                                           _subjectDescriptionController.text = "";
                                           Navigator.of(context).pop();
                                         },
-                                        child: const Text(
-                                          "Update",
-                                          style: TextStyle(fontSize: 18, color: Colors.white),
-                                        ),
-                                        style: ElevatedButton.styleFrom(primary: Colors.blue)),
-                                  )
-                                : const SizedBox()
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                                  color: Theme.of(context).primaryColor,
+                                  iconSize: 36,
+                                  icon: const Icon(Icons.done_rounded, color: Colors.white),
+                                ),
+                              ),
+                            )
+                          : const SizedBox(),
+                      const SizedBox(width: 8),
+                    ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),

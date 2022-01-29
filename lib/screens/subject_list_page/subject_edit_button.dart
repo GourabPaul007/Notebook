@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/models/subject_model.dart';
-import 'package:frontend/screens/subject_list_page/dialog_box.dart';
+import 'package:frontend/screens/subject_list_page/edit_subject_dialog.dart';
 import 'package:frontend/services/subject_service.dart';
 
 class SubjectEditButton extends ConsumerWidget {
@@ -28,9 +28,6 @@ class SubjectEditButton extends ConsumerWidget {
               child: IconButton(
                 onPressed: () async {
                   List<Subject> selectedSubjects = ref.watch(subjectServiceProvider).selectedSubjects;
-
-                  // String subjectName = selectedSubjects[0].name;
-                  // String subjectDescription = selectedSubjects[0].description;
                   int? subjectRowId = selectedSubjects[0].rowId;
                   ref.read(subjectServiceProvider).setSubjectDescription(selectedSubjects[0].description);
                   ref.read(subjectServiceProvider).setSubjectName(selectedSubjects[0].name);
@@ -38,10 +35,8 @@ class SubjectEditButton extends ConsumerWidget {
                   Navigator.of(context).push(
                     PageRouteBuilder(
                       opaque: false,
-                      pageBuilder: (context, _, __) => NewSubjectDialog(
+                      pageBuilder: (context, _, __) => EditSubjectDialog(
                         rowId: subjectRowId,
-                        // subjectName: subjectName,
-                        // subjectDescription: subjectDescription,
                         type: "edit",
                         // editSubject: editSubject,
                       ),
