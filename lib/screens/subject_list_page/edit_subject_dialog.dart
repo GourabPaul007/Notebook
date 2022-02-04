@@ -1,7 +1,4 @@
-import 'dart:ui';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/subject_service.dart';
 
@@ -113,9 +110,13 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
                           child: IconButton(
                             onPressed: () {
                               Navigator.of(context).pop();
+                              ref.read(subjectServiceProvider).resetHoldSubjectEffects();
                             },
                             iconSize: 36,
-                            icon: const Icon(Icons.close_rounded, color: Colors.white),
+                            icon: const Icon(
+                              Icons.close_rounded,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),

@@ -2,15 +2,8 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/db/database.dart';
-import 'package:frontend/repositories/message_repository.dart';
-import 'package:frontend/models/message_model.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:uuid/uuid.dart';
 
 final cameraServiceProvider = ChangeNotifierProvider((ref) => CameraService());
 
@@ -65,12 +58,12 @@ class CameraService extends ChangeNotifier {
   }
 
   Future<String> saveFile(XFile tempImageFile) async {
-    Directory directory;
+    // Directory directory;
     try {
       if (Platform.isAndroid) {
         // if (await _requestPermission(Permission.storage)) {
-        final appDir = await getExternalStorageDirectory();
-        final myImagePath = '${appDir!.path}/CameraImages';
+        // final appDir = await getExternalStorageDirectory();
+        // final myImagePath = '${appDir!.path}/CameraImages';
         final myImgDir = await Directory("storage/emulated/0/Pictures/Notebook").create();
         final String fileName = tempImageFile.path.split('/').last;
         File localImageFile = await File(tempImageFile.path).copy('${myImgDir.path}/$fileName');

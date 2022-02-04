@@ -4,7 +4,7 @@ import 'package:frontend/models/subject_model.dart';
 import 'package:frontend/screens/single_subject_page.dart';
 import 'package:frontend/screens/subject_list_page/single_subject_tile.dart';
 import 'package:frontend/screens/subject_list_page/edit_subject_dialog.dart';
-import 'package:frontend/services/message_service.dart';
+import 'package:frontend/services/documents_service.dart';
 import 'package:frontend/services/subject_service.dart';
 
 class SubjectListPage extends ConsumerStatefulWidget {
@@ -20,9 +20,7 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> with Automati
       return;
     }
 
-    // ref.read(messageServiceProvider).setSubjectName(subject.name);
-    // // ref.read(messageServiceProvider).setSubjectDescription(subject.description);
-    // ref.read(messageServiceProvider).setSubjectRowId(subject.rowId!);
+    // set subject data that will be used inside SingleSubject
     ref.read(subjectServiceProvider).setSubject(subject);
     ref.read(subjectServiceProvider).setSubjectName(subject.name);
     ref.read(subjectServiceProvider).setSubjectRowId(subject.rowId!);
@@ -46,58 +44,52 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> with Automati
       // backgroundColor: const Color(0xFFECE5DD),
       backgroundColor: Theme.of(context).backgroundColor,
 
-      body: Container(
-        // child: ReorderableListView(
-        //   onReorder: (oldIndex, newIndex) {},
-        //   children: [
-        //     for (Subject subject in subjects)
-        //       ListTile(
-        //         tileColor: Colors.red,
-        //         key: ValueKey(subject),
-        //         title: Padding(
-        //           padding: const EdgeInsets.only(bottom: 4),
-        //           child: Text(
-        //             subject.name,
-        //             style: const TextStyle(color: Colors.black, fontSize: 20),
-        //           ),
-        //         ),
-        //         subtitle: Text(
-        //           subject.description,
-        //           style: const TextStyle(color: Colors.black, fontSize: 16),
-        //         ),
-        //       )
-        //   ],
-        // ),
+      body:
+          // ReorderableListView(
+          //   onReorder: (oldIndex, newIndex) {},
+          //   children: [
+          //     for (Subject subject in subjects)
+          //       ListTile(
+          //         tileColor: Colors.red,
+          //         key: ValueKey(subject),
+          //         title: Padding(
+          //           padding: const EdgeInsets.only(bottom: 4),
+          //           child: Text(
+          //             subject.name,
+          //             style: const TextStyle(color: Colors.black, fontSize: 20),
+          //           ),
+          //         ),
+          //         subtitle: Text(
+          //           subject.description,
+          //           style: const TextStyle(color: Colors.black, fontSize: 16),
+          //         ),
+          //       )
+          //   ],
+          // ),
 
-        child: ListView.builder(
-          itemCount: ref.watch(subjectServiceProvider).subjects.length,
-          itemBuilder: (BuildContext context, int index) {
-            // Material because "chat on hold" tasks
-            return Material(
-              color: ref
-                      .read(subjectServiceProvider)
-                      .selectedSubjects
-                      .contains(ref.watch(subjectServiceProvider).subjects[index])
-                  ? Colors.grey[400]
-                  : Colors.transparent,
-              child: InkWell(
-                splashColor: Colors.grey[400],
-                onLongPress: () {
-                  ref
-                      .read(subjectServiceProvider)
-                      .subjectOnLongPress(ref.watch(subjectServiceProvider).subjects[index]);
-                },
-                onTap: () {
-                  // ref.read(subjectServiceProvider).onTap(context, ref.watch(subjectServiceProvider).subjects[index]);
-                  _onTap(context, ref.watch(subjectServiceProvider).subjects[index]);
-                },
-                child: SingleSubjectTile(
-                  subject: ref.watch(subjectServiceProvider).subjects[index],
-                ),
+          ListView.builder(
+        itemCount: subjects.length,
+        itemBuilder: (BuildContext context, int index) {
+          // Material because "chat on hold" tasks
+          return Material(
+            color: ref.read(subjectServiceProvider).selectedSubjects.contains(subjects[index])
+                ? Colors.grey[400]
+                : Colors.transparent,
+            child: InkWell(
+              splashColor: Colors.grey[400],
+              onLongPress: () {
+                ref.read(subjectServiceProvider).subjectOnLongPress(subjects[index]);
+              },
+              onTap: () {
+                // ref.read(subjectServiceProvider).onTap(context, subjects[index]);
+                _onTap(context, subjects[index]);
+              },
+              child: SingleSubjectTile(
+                subject: subjects[index],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
 
       // FAB

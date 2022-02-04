@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:frontend/db/database.dart';
-import 'package:frontend/db/database_helper.dart';
 import 'package:frontend/models/message_model.dart';
 import 'package:frontend/models/subject_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -31,6 +30,7 @@ class MessageRepository {
     );
     List<Message> messageList = messages.isNotEmpty ? messages.map((c) => Message.fromMap(c)).toList() : [];
     // print("rowId----id----body-----------subjectName----subjectRowId\n");
+    // ignore: unused_local_variable
     for (var element in messageList) {
       // print("${element.rowId} ${element.id} ${element.body}-------${element.subjectName} ${element.subjectRowId}\n");
     }
@@ -101,7 +101,7 @@ class MessageRepository {
     );
     // print(messages);
     List<Message> starredMessageList = messages.isNotEmpty ? messages.map((c) => Message.fromMap(c)).toList() : [];
-    print(starredMessageList);
+    debugPrint(starredMessageList.toString());
     return starredMessageList;
   }
 }

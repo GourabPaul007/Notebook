@@ -1,4 +1,3 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,27 +7,17 @@ Future<void> main() async {
   // Ensure that plugin services are initialized so that `availableCameras()`
   // can be called before `runApp()`
   WidgetsFlutterBinding.ensureInitialized();
-  List<CameraDescription> cameras = [];
-  // Obtain a list of the available cameras on the device.
-  try {
-    cameras = await availableCameras();
-  } on CameraException catch (e) {
-    debugPrint(e.description);
-  }
-
-  // Get a specific camera from the list of available cameras.
-  final firstCamera = cameras[0];
 
   runApp(
-    ProviderScope(
-      child: MyApp(/* cameras: cameras*/),
+    const ProviderScope(
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
   // List<CameraDescription> cameras;
-  MyApp({
+  const MyApp({
     Key? key,
     // required this.cameras,
   }) : super(key: key);
@@ -74,9 +63,7 @@ class MyApp extends StatelessWidget {
           bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Fira Code'),
         ),
       ),
-      home: const MyHomePage(
-          // camera: cameras[0],
-          ),
+      home: const MyHomePage(),
     );
   }
 }

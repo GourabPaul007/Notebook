@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/message_service.dart';
 import 'package:photo_view/photo_view.dart';
@@ -61,36 +60,33 @@ class _ViewImageState extends ConsumerState<ViewImage> {
           statusBarColor: Colors.transparent,
         ),
       ),
-      body: Container(
-        // decoration: const BoxDecoration(color: Colors.black),
-        child: InteractiveViewer(
-          child: PhotoViewGallery.builder(
-              reverse: true,
-              pageController: widget.pageController,
-              itemCount: ref.watch(messageServiceProvider).images.length,
-              onPageChanged: (index) {
-                String imageTitle = ref.watch(messageServiceProvider).images[index].title;
-                String imageUrl = ref.watch(messageServiceProvider).images[index].body;
-                setState(() {
-                  imageName = imageTitle == "" ? imageUrl.substring(imageUrl.lastIndexOf("/") + 1) : imageTitle;
-                  showAppBar = true;
-                });
-              },
-              builder: (context, index) {
-                final imageUrl = ref.watch(messageServiceProvider).images[index].body;
-                debugPrint("*********************" + imageUrl);
-                return PhotoViewGalleryPageOptions(
-                    imageProvider: FileImage(File(imageUrl)),
-                    initialScale: PhotoViewComputedScale.contained * 9 / 10,
-                    minScale: PhotoViewComputedScale.contained,
-                    maxScale: PhotoViewComputedScale.contained * 4,
-                    onTapDown: (_, __, ___) {
-                      setState(() {
-                        showAppBar = !showAppBar;
-                      });
+      body: InteractiveViewer(
+        child: PhotoViewGallery.builder(
+            reverse: true,
+            pageController: widget.pageController,
+            itemCount: ref.watch(messageServiceProvider).images.length,
+            onPageChanged: (index) {
+              String imageTitle = ref.watch(messageServiceProvider).images[index].title;
+              String imageUrl = ref.watch(messageServiceProvider).images[index].body;
+              setState(() {
+                imageName = imageTitle == "" ? imageUrl.substring(imageUrl.lastIndexOf("/") + 1) : imageTitle;
+                showAppBar = true;
+              });
+            },
+            builder: (context, index) {
+              final imageUrl = ref.watch(messageServiceProvider).images[index].body;
+              debugPrint("*********************" + imageUrl);
+              return PhotoViewGalleryPageOptions(
+                  imageProvider: FileImage(File(imageUrl)),
+                  initialScale: PhotoViewComputedScale.contained * 9 / 10,
+                  minScale: PhotoViewComputedScale.contained,
+                  maxScale: PhotoViewComputedScale.contained * 4,
+                  onTapDown: (_, __, ___) {
+                    setState(() {
+                      showAppBar = !showAppBar;
                     });
-              }),
-        ),
+                  });
+            }),
       ),
     );
   }

@@ -2,7 +2,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/db/database.dart';
 import 'package:frontend/repositories/message_repository.dart';
 import 'package:frontend/models/message_model.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,42 +27,15 @@ class MessageService extends ChangeNotifier {
 
   /// get the initial clicked [image] when user tapped image in messages([images])
   Message getTappedImage(int index) => images[index];
-  //
-  // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  //
 
   // AppBar Stuff
   bool showHoldMessageIcons = false;
   List<Message> selectedMessages = [];
 
   // ===========================================================================================
-  // ===========================================================================================
-  // Subject Metadata for when you click on a subject on subjectlist page and go in that subject
-  // late int subjectRowId;
-  // late String subjectName;
-
-  // int get getSubjectRowId => subjectRowId;
-  // void setSubjectRowId(int rowId) {
-  //   subjectRowId = rowId;
-  //   notifyListeners();
-  // }
-
-  // String get getSubjectName => subjectName;
-  // void setSubjectName(String name) {
-  //   subjectName = name;
-  //   notifyListeners();
-  // }
-  // ===========================================================================================
-  //
-  //
-
-  // ===========================================================================================
-  // ===========================================================================================
   // Get all the message info on edit message modal
   String get getEditMessageTitle => selectedMessages[0].title;
   String get getEditMessageBody => selectedMessages[0].body;
-  //
-  //
 
   // ===========================================================================================
   // ===========================================================================================
@@ -159,7 +131,6 @@ class MessageService extends ChangeNotifier {
   void messageOnLongPress(Message message) {
     HapticFeedback.vibrate();
     selectedMessages.add(message);
-    print(selectedMessages);
     showHoldMessageIcons = selectedMessages.isNotEmpty;
     notifyListeners();
   }
@@ -245,7 +216,7 @@ class MessageService extends ChangeNotifier {
   /// takes the [imagePath] sent from [Camera] and adds the image path to [Message.body]
   Future imgFromCamera(String imagePath, String subjectName, int subjectRowId) async {
     debugPrint(imagePath);
-    if (imagePath != null || imagePath != "") {
+    if (imagePath != "") {
       const bool isFavourite = false;
       const bool isText = false;
       const bool isImage = true;
@@ -279,7 +250,7 @@ class MessageService extends ChangeNotifier {
     starredMessages = [];
     starredMessages = await MessageRepository().getStarredMessagesFromLocalDatabase(subjectRowId);
     for (var element in starredMessages) {
-      print(element.body + "-----" + element.isFavourite.toString());
+      debugPrint(element.body + "-----" + element.isFavourite.toString());
     }
     notifyListeners();
   }

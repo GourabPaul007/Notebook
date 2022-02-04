@@ -6,8 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/message_service.dart';
 import 'package:frontend/services/subject_service.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class TakePictureScreen extends ConsumerStatefulWidget {
   // final CameraDescription cameraOld;
@@ -70,120 +68,118 @@ class _TakePictureScreenState extends ConsumerState<TakePictureScreen> {
                       )),
                   Expanded(
                     flex: 1,
-                    child: Container(
-                      child: Center(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Material(
-                                color: Colors.transparent,
-                                shape: const CircleBorder(),
-                                clipBehavior: Clip.hardEdge,
-                                child: IconButton(
-                                  icon: Icon(
+                    child: Center(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Material(
+                              color: Colors.transparent,
+                              shape: const CircleBorder(),
+                              clipBehavior: Clip.hardEdge,
+                              child: IconButton(
+                                icon: Icon(
+                                  ref.watch(cameraServiceProvider).flashOn
+                                      ? Icons.flash_on_rounded
+                                      : Icons.flash_off_rounded,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                                iconSize: 36,
+                                onPressed: () async {
+                                  try {
+                                    // Ensure that the camera is initialized.
+                                    await ref.read(cameraServiceProvider).initializeControllerFuture;
+
+                                    setState(() {
+                                      ref.watch(cameraServiceProvider).flashOn =
+                                          !ref.watch(cameraServiceProvider).flashOn;
+                                    });
                                     ref.watch(cameraServiceProvider).flashOn
-                                        ? Icons.flash_on_rounded
-                                        : Icons.flash_off_rounded,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
-                                  iconSize: 36,
-                                  onPressed: () async {
-                                    try {
-                                      // Ensure that the camera is initialized.
-                                      await ref.read(cameraServiceProvider).initializeControllerFuture;
-
-                                      setState(() {
-                                        ref.watch(cameraServiceProvider).flashOn =
-                                            !ref.watch(cameraServiceProvider).flashOn;
-                                      });
-                                      ref.watch(cameraServiceProvider).flashOn
-                                          ? ref.watch(cameraServiceProvider).controller.setFlashMode(FlashMode.torch)
-                                          : ref.watch(cameraServiceProvider).controller.setFlashMode(FlashMode.off);
-                                    } catch (e) {
-                                      debugPrint(e.toString());
-                                    }
-                                  },
-                                ),
+                                        ? ref.watch(cameraServiceProvider).controller.setFlashMode(FlashMode.torch)
+                                        : ref.watch(cameraServiceProvider).controller.setFlashMode(FlashMode.off);
+                                  } catch (e) {
+                                    debugPrint(e.toString());
+                                  }
+                                },
                               ),
                             ),
-                            Expanded(
-                              child: Material(
-                                color: Colors.transparent,
-                                shape: const CircleBorder(),
-                                clipBehavior: Clip.hardEdge,
-                                child: IconButton(
-                                  iconSize: 48,
-                                  onPressed: () async {
-                                    try {
-                                      // Ensure that the camera is initialized.
-                                      await ref.read(cameraServiceProvider).initializeControllerFuture;
-                                      final tempImageFile =
-                                          await ref.watch(cameraServiceProvider).controller.takePicture();
+                          ),
+                          Expanded(
+                            child: Material(
+                              color: Colors.transparent,
+                              shape: const CircleBorder(),
+                              clipBehavior: Clip.hardEdge,
+                              child: IconButton(
+                                iconSize: 48,
+                                onPressed: () async {
+                                  try {
+                                    // Ensure that the camera is initialized.
+                                    await ref.read(cameraServiceProvider).initializeControllerFuture;
+                                    final tempImageFile =
+                                        await ref.watch(cameraServiceProvider).controller.takePicture();
 
-// TODO: SEPERATE METHOD FOR CREATION OF FOLDER AND STUFF
-                                      // late String localImageFilePath;
-                                      // if (Platform.isAndroid) {
-                                      //   final appDir = await getExternalStorageDirectory();
-                                      //   final myImagePath = '${appDir!.path}/CameraImages';
-                                      //   final myImgDir =
-                                      //       await Directory("storage/emulated/0/Pictures/Notebook").create();
-                                      //   debugPrint("*******************************" + appDir.path);
-                                      //   final String fileName = tempImageFile.path.split('/').last;
-                                      //   localImageFile =
-                                      //       await File(tempImageFile.path).copy('${myImgDir.path}/$fileName');
-                                      // }
-                                      if (!await ref.read(cameraServiceProvider).requestPermission()) {
-                                        return Navigator.pop(context);
-                                      }
-                                      String localImageFilePath =
-                                          await ref.read(cameraServiceProvider).saveFile(tempImageFile);
+                                    // TODO: SEPERATE METHOD FOR CREATION OF FOLDER AND STUFF
+                                    // late String localImageFilePath;
+                                    // if (Platform.isAndroid) {
+                                    //   final appDir = await getExternalStorageDirectory();
+                                    //   final myImagePath = '${appDir!.path}/CameraImages';
+                                    //   final myImgDir =
+                                    //       await Directory("storage/emulated/0/Pictures/Notebook").create();
+                                    //   debugPrint("*******************************" + appDir.path);
+                                    //   final String fileName = tempImageFile.path.split('/').last;
+                                    //   localImageFile =
+                                    //       await File(tempImageFile.path).copy('${myImgDir.path}/$fileName');
+                                    // }
+                                    if (!await ref.read(cameraServiceProvider).requestPermission()) {
+                                      return Navigator.pop(context);
+                                    }
+                                    String localImageFilePath =
+                                        await ref.read(cameraServiceProvider).saveFile(tempImageFile);
 
-                                      // turn off flash after clicking the photo
-                                      ref.watch(cameraServiceProvider).controller.setFlashMode(FlashMode.off);
-                                      ref.watch(cameraServiceProvider).flashOn = false;
+                                    // turn off flash after clicking the photo
+                                    ref.watch(cameraServiceProvider).controller.setFlashMode(FlashMode.off);
+                                    ref.watch(cameraServiceProvider).flashOn = false;
 
-                                      await Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => DisplayPictureScreen(
-                                            // imagePath: tempImageFile.path,
-                                            imagePath: localImageFilePath,
-                                            // imgFromCamera: widget.imgFromCamera,
-                                          ),
+                                    await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => DisplayPictureScreen(
+                                          // imagePath: tempImageFile.path,
+                                          imagePath: localImageFilePath,
+                                          // imgFromCamera: widget.imgFromCamera,
                                         ),
-                                      );
-                                    } catch (e) {
-                                      debugPrint(e.toString());
-                                    }
-                                  },
-                                  icon: const Icon(
-                                    Icons.camera_alt_rounded,
-                                    color: Colors.white,
-                                    size: 36,
-                                  ),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    debugPrint(e.toString());
+                                  }
+                                },
+                                icon: const Icon(
+                                  Icons.camera_alt_rounded,
+                                  color: Colors.white,
+                                  size: 36,
                                 ),
                               ),
                             ),
-                            Expanded(
-                              child: Material(
-                                color: Colors.transparent,
-                                shape: const CircleBorder(),
-                                clipBehavior: Clip.hardEdge,
-                                child: IconButton(
-                                  iconSize: 36,
-                                  onPressed: () async {
-                                    ref.read(cameraServiceProvider).changeBackOrFrontCamera();
-                                  },
-                                  icon: const Icon(
-                                    Icons.camera_front_rounded,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
+                          ),
+                          Expanded(
+                            child: Material(
+                              color: Colors.transparent,
+                              shape: const CircleBorder(),
+                              clipBehavior: Clip.hardEdge,
+                              child: IconButton(
+                                iconSize: 36,
+                                onPressed: () async {
+                                  ref.read(cameraServiceProvider).changeBackOrFrontCamera();
+                                },
+                                icon: const Icon(
+                                  Icons.camera_front_rounded,
+                                  color: Colors.white,
+                                  size: 24,
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

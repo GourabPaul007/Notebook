@@ -9,6 +9,7 @@ class DBHelper {
 
   String subjectsTable = "subjects_table";
   String messagesTable = "messages_table";
+  String documentsTable = "documents_table";
 
   // Future<Database> get db async {
   //   if (_db == null) {
@@ -61,6 +62,19 @@ class DBHelper {
           is_image BOOLEAN NOT NULL DEFAULT 0,
           subject_row_id INTEGER NOT NULL,
           FOREIGN KEY(subject_row_id) REFERENCES $subjectsTable(row_id)
+        )
+        """);
+
+    // The Documents Table in 2nd page
+    await db.execute("""
+        CREATE TABLE IF NOT EXISTS $documentsTable(
+          row_id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          path TEXT NOT NULL,
+          size INTEGER NOT NULL,
+          type TEXT NOT NULL,
+          time_added INTEGER NOT NULL,
+          is_favourite BOOLEAN NOT NULL DEFAULT 0
         )
         """);
     // await db.execute("""

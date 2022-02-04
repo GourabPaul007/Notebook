@@ -3,10 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/db/database.dart';
 import 'package:frontend/repositories/subject_repository.dart';
 import 'package:frontend/models/subject_model.dart';
-import 'package:frontend/services/message_service.dart';
 import 'package:uuid/uuid.dart';
 
 final subjectServiceProvider = ChangeNotifierProvider((ref) => SubjectService(ref));
@@ -64,11 +62,7 @@ class SubjectService extends ChangeNotifier {
   // get all initial data
   Future<void> getData() async {
     List<Subject> data = await SubjectRepository().getSubjectsFromLocalDatabase();
-    // List<Subject> data = await ref.read(subjectRepositoryProvider).getSubjects();
-
-    // setState(() {
     subjects = data;
-    // });
     notifyListeners();
   }
 
@@ -100,10 +94,11 @@ class SubjectService extends ChangeNotifier {
     ref.read(subjectServiceProvider).setSubjectRowId(subject.rowId!);
   }
 
-  // Delete Subject
+  /// Delete Subject
   Future<void> deleteSubject(Subject subject) async {
     int status = await SubjectRepository().deleteSubjectFromLocalDatabase(subject);
     // int status = await ref.read(subjectRepositoryProvider).deleteSubject(subject);
+    // subjects.remove(subject);
     updateSubjects(status);
   }
 
@@ -122,24 +117,17 @@ class SubjectService extends ChangeNotifier {
       newSubjects = await SubjectRepository().getSubjectsFromLocalDatabase();
       // newSubjects = await ref.read(subjectRepositoryProvider).getSubjects();
     }
-    // setState(() {
     subjects = newSubjects;
-    // });
-    notifyListeners();
+    // notifyListeners();
     resetHoldSubjectEffects();
   }
   // ============================================================================
-
-// ************** can not be in subject-list-page cause the functionality is called by things on this page ***************
-  bool hasSelectedSubjects() {
-    return selectedSubjects.isNotEmpty;
-  }
 
   void subjectOnLongPress(Subject subject) {
     HapticFeedback.vibrate();
     // setState(() {
     selectedSubjects = [subject];
-    subjectOnHold = hasSelectedSubjects();
+    subjectOnHold = selectedSubjects.isNotEmpty;
     // });
     notifyListeners();
   }
@@ -156,10 +144,8 @@ class SubjectService extends ChangeNotifier {
   }
 
   void resetHoldSubjectEffects() {
-    // setState(() {
     selectedSubjects = [];
-    subjectOnHold = hasSelectedSubjects();
-    // });
+    subjectOnHold = false;
     notifyListeners();
   }
 }

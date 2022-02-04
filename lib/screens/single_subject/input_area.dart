@@ -35,7 +35,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final messageService = ref.watch(messageServiceProvider);
+    // final messageService = ref.watch(messageServiceProvider);
     final subjectService = ref.watch(subjectServiceProvider);
 
     return Container(
@@ -68,7 +68,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                             transitionBuilder: btnTransition,
                             child: newTextController.text.isNotEmpty
                                 ? const SizedBox()
-                                : Container(
+                                : SizedBox(
                                     width: 40,
                                     child: Material(
                                       shape: const CircleBorder(),
@@ -96,7 +96,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                             switchOutCurve: Curves.easeOutExpo,
                             child: newTextController.text.isNotEmpty
                                 ? const SizedBox()
-                                : Container(
+                                : SizedBox(
                                     width: 40,
                                     child: Material(
                                       shape: const CircleBorder(),

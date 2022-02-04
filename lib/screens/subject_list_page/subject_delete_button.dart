@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/subject_service.dart';
 
-class SubjectDeleteButton extends ConsumerWidget {
+class SubjectDeleteButton extends StatelessWidget {
   const SubjectDeleteButton({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 6),
       child: Material(
@@ -25,23 +25,28 @@ class SubjectDeleteButton extends ConsumerWidget {
                     style: TextStyle(color: Colors.black, fontSize: 28),
                   ),
                   content: Text(
-                    "All Contents in this subject will be deleted.",
+                    "The Subject and all Contents inside it will be deleted.",
                     style: TextStyle(color: Colors.grey[900], fontSize: 18),
                   ),
                   actions: <Widget>[
                     TextButton(
                       onPressed: () => {() {}, Navigator.pop(context, 'Cancel')},
-                      child: const Text("Cancel", style: TextStyle(color: Color(0xFF3777f0), fontSize: 18)),
+                      child: Text("CANCEL", style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 18)),
                     ),
-                    TextButton(
-                      onPressed: () => {
-                        ref
-                            .read(subjectServiceProvider)
-                            .deleteSubject(ref.watch(subjectServiceProvider).selectedSubjects[0]),
-                        Navigator.pop(context),
-                      },
-                      child: const Text("Delete", style: TextStyle(color: Colors.red, fontSize: 18)),
-                    ),
+                    const SizedBox(width: 2),
+                    Consumer(builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                      // getting the selected subject
+                      final selectedSubject = ref.watch(subjectServiceProvider).selectedSubjects[0];
+                      return TextButton(
+                        onPressed: () => {
+                          // deleting the subject
+                          ref.read(subjectServiceProvider).deleteSubject(selectedSubject),
+                          Navigator.pop(context),
+                        },
+                        child: Text("DELETE", style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 18)),
+                      );
+                    }),
+                    const SizedBox(width: 8),
                   ],
                 );
               },

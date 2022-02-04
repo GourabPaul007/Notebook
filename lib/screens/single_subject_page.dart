@@ -1,13 +1,10 @@
-import 'package:camera/camera.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/single_subject/appbar/message_delete_button.dart';
-import 'package:frontend/screens/single_subject/appbar/message_edit_button.dart';
-import 'package:frontend/screens/single_subject/appbar/message_star_button.dart';
-import 'package:frontend/screens/single_subject/appbar/subject_title.dart';
 import 'package:frontend/screens/single_subject/each_message.dart';
-import 'package:frontend/screens/single_subject/edit_message_dialog.dart';
 import 'package:frontend/screens/single_subject/input_area.dart';
+import 'package:frontend/screens/single_subject/messages_appbar/message_delete_button.dart';
+import 'package:frontend/screens/single_subject/messages_appbar/message_edit_button.dart';
+import 'package:frontend/screens/single_subject/messages_appbar/message_star_button.dart';
+import 'package:frontend/screens/single_subject/messages_appbar/subject_title.dart';
 import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/message_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -82,56 +79,52 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
           ),
           child: Column(
             children: [
-              Container(
-                child: Expanded(
-                  flex: 4,
-                  child: ListView.builder(
-                    reverse: true,
-                    shrinkWrap: true,
-                    itemCount: messageService.messages.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Material(
-                        color: messageService.selectedMessages.contains(
-                          messageService.messages.elementAt(index),
-                        )
-                            ? Colors.grey[400]
-                            : Colors.transparent,
-                        child: InkWell(
-                          splashColor: Colors.black12,
-                          onLongPress: () {
-                            ref
-                                .read(messageServiceProvider)
-                                .messageOnLongPress(messageService.messages.elementAt(index));
-                            // message.messageOnLongPress(messages.elementAt(index));
-                          },
-                          onTap: () {
-                            ref.read(messageServiceProvider).messageOnTap(messageService.messages.elementAt(index));
-                          },
-                          child: Container(
-                            alignment: Alignment.centerRight,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                // left area of message, should be used as message metadata(datetime etc.)
-                                const Flexible(
-                                  flex: 1,
-                                  child: SizedBox(),
+              Expanded(
+                flex: 4,
+                child: ListView.builder(
+                  reverse: true,
+                  shrinkWrap: true,
+                  itemCount: messageService.messages.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Material(
+                      color: messageService.selectedMessages.contains(
+                        messageService.messages.elementAt(index),
+                      )
+                          ? Colors.grey[400]
+                          : Colors.transparent,
+                      child: InkWell(
+                        splashColor: Colors.black12,
+                        onLongPress: () {
+                          ref.read(messageServiceProvider).messageOnLongPress(messageService.messages.elementAt(index));
+                          // message.messageOnLongPress(messages.elementAt(index));
+                        },
+                        onTap: () {
+                          ref.read(messageServiceProvider).messageOnTap(messageService.messages.elementAt(index));
+                        },
+                        child: Container(
+                          alignment: Alignment.centerRight,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              // left area of message, should be used as message metadata(datetime etc.)
+                              const Flexible(
+                                flex: 1,
+                                child: SizedBox(),
+                              ),
+                              // the message
+                              Flexible(
+                                flex: 4,
+                                child: EachMessage(
+                                  index: index,
+                                  parentType: 'SingleSubjectPage',
                                 ),
-                                // the message
-                                Flexible(
-                                  flex: 4,
-                                  child: EachMessage(
-                                    index: index,
-                                    parentType: 'SingleSubjectPage',
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
               ),
 
