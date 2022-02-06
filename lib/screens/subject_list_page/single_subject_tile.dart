@@ -18,7 +18,7 @@ class SingleSubjectTile extends StatelessWidget {
       child: Row(
         children: <Widget>[
           CircleAvatar(
-            backgroundColor: Color(int.parse(subject.avatarColor)),
+            backgroundColor: Color(subject.avatarColor),
             radius: 28,
             child: Text(
               subject.name[0].toUpperCase() == "" ? "X" : subject.name[0].toUpperCase(),

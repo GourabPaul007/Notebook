@@ -250,8 +250,9 @@ class DisplayPictureScreen extends StatelessWidget {
 
                           return IconButton(
                             onPressed: () async {
-                              await ref.read(messageServiceProvider).imgFromCamera(
-                                  imagePath, singleSubjectRef.subjectName, singleSubjectRef.subjectRowId);
+                              await ref
+                                  .read(messageServiceProvider)
+                                  .imgFromCamera(imagePath, singleSubjectRef.subjectRowId);
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             },

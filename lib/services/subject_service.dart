@@ -59,11 +59,15 @@ class SubjectService extends ChangeNotifier {
 
   // =================================Main Features===================================
 
-  // get all initial data
-  Future<void> getData() async {
+  /// get all [subjects] from database
+  /// if called from [HomePage] then notify all listeners
+  /// else if called from [SharedIntentPage], just get the data.
+  Future<void> getAllSubjects(String calledFrom) async {
     List<Subject> data = await SubjectRepository().getSubjectsFromLocalDatabase();
     subjects = data;
-    notifyListeners();
+    if (calledFrom != "ReceiveSharedIntentPage") {
+      notifyListeners();
+    }
   }
 
   // Adds a new subject
@@ -76,7 +80,7 @@ class SubjectService extends ChangeNotifier {
       id: const Uuid().v1(),
       name: subjectName,
       description: subjectDescription,
-      avatarColor: pickBgColor().value.toString(),
+      avatarColor: pickBgColor().value,
       timeCreated: DateTime.now().millisecondsSinceEpoch,
       timeUpdated: DateTime.now().millisecondsSinceEpoch,
     );

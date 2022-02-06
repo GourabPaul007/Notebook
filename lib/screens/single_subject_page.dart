@@ -113,7 +113,7 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
                               ),
                               // the message
                               Flexible(
-                                flex: 4,
+                                flex: 7,
                                 child: EachMessage(
                                   index: index,
                                   parentType: 'SingleSubjectPage',

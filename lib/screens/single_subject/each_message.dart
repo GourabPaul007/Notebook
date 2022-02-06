@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/helpers/unix_to_time.dart';
+import 'package:frontend/helpers/date_time.dart';
 import 'package:frontend/models/message_model.dart';
 import 'package:frontend/screens/single_subject/view_image.dart';
 import 'package:frontend/services/message_service.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path/path.dart';
 
 class EachMessage extends ConsumerWidget {
   final int index;
@@ -43,20 +45,20 @@ class EachMessage extends ConsumerWidget {
                     margin: const EdgeInsets.only(bottom: 2),
                     child: Text(
                       message.title,
-                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
                       textAlign: TextAlign.left,
                     ),
                   )
                 : const SizedBox(),
 
             // FOR TEXT CHATS
-            message.isText
+            message.type == "text"
                 ? Container(
                     padding: message.title != ""
                         ? const EdgeInsets.symmetric(vertical: 8, horizontal: 6)
                         : const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.0),
+                      borderRadius: BorderRadius.circular(6.0),
                       color: message.title != "" ? Colors.deepPurple : Colors.transparent,
                     ),
                     child: IntrinsicHeight(
@@ -66,7 +68,7 @@ class EachMessage extends ConsumerWidget {
                           Flexible(
                             child: Text(
                               message.body,
-                              style: const TextStyle(fontSize: 20, color: Colors.white),
+                              style: const TextStyle(fontSize: 16, color: Colors.white),
                               softWrap: true,
                             ),
                           ),
@@ -80,7 +82,7 @@ class EachMessage extends ConsumerWidget {
                 : const SizedBox(),
 
             // FOR IMAGE MESSAGES
-            message.isImage
+            message.type == "image"
                 ? Stack(
                     children: [
                       InkWell(
@@ -117,6 +119,57 @@ class EachMessage extends ConsumerWidget {
                       ),
                     ],
                   )
+                : const SizedBox(),
+
+            // FOR DOCUMENT CHATS
+            message.type == "document"
+                ? InkWell(
+                    onTap: () {
+                      OpenFile.open(message.body);
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 5 / 7,
+                          padding: const EdgeInsets.only(top: 12, bottom: 12, left: 10, right: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6.0),
+                            color: Colors.deepPurple,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                message.body.endsWith(".pdf")
+                                    ? Icons.picture_as_pdf_rounded
+                                    : Icons.description_rounded,
+                                color: message.body.endsWith(".pdf") ? Colors.redAccent : Colors.blue,
+                                size: 32,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  basename(message.body),
+                                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                                  softWrap: false,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 2),
+                          color: Colors.deepPurpleAccent,
+                          // height: 24,
+                          child: OtherMessageInfo(
+                            message: message,
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                // )
                 : const SizedBox(),
           ],
         ),
@@ -155,12 +208,6 @@ class OtherMessageInfo extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
 
 // import 'dart:io';
 // import 'package:flutter/cupertino.dart';

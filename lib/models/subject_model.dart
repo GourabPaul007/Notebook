@@ -3,7 +3,7 @@ class Subject {
   final String id;
   late final String name;
   late final String description;
-  final String avatarColor;
+  final int avatarColor;
   final int timeCreated;
   final int timeUpdated;
   // String? imageURL;

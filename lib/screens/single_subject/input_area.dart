@@ -1,5 +1,7 @@
 // The Input area at the bottom on a chat Screen
 
+import 'dart:math';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,20 +18,24 @@ class InputAreaWidget extends ConsumerStatefulWidget {
 }
 
 class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
-  TextEditingController newTextController = TextEditingController();
+  final _inputTextController = TextEditingController();
 
-  late List<CameraDescription> camerasNew;
-  late CameraDescription cameraNew;
+  // late List<CameraDescription> camerasNew;
+  // late CameraDescription cameraNew;
 
   @override
   void initState() {
     super.initState();
     ref.read(cameraServiceProvider).initCameras();
+
+    _inputTextController.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
-    newTextController.dispose();
+    _inputTextController.dispose();
     super.dispose();
   }
 
@@ -63,10 +69,10 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                       child: Row(
                         children: <Widget>[
                           AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 200),
+                            duration: const Duration(milliseconds: 500),
                             switchOutCurve: Curves.easeOutExpo,
                             transitionBuilder: btnTransition,
-                            child: newTextController.text.isNotEmpty
+                            child: _inputTextController.text.isNotEmpty
                                 ? const SizedBox()
                                 : SizedBox(
                                     width: 40,
@@ -91,10 +97,10 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                   ),
                           ),
                           AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 200),
+                            duration: const Duration(milliseconds: 500),
                             transitionBuilder: btnTransition,
                             switchOutCurve: Curves.easeOutExpo,
-                            child: newTextController.text.isNotEmpty
+                            child: _inputTextController.text.isNotEmpty
                                 ? const SizedBox()
                                 : SizedBox(
                                     width: 40,
@@ -105,7 +111,8 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                       child: IconButton(
                                         onPressed: () async {
                                           await ref.read(messageServiceProvider).imgFromGallery(
-                                              subjectService.getSubjectName, subjectService.getSubjectRowId);
+                                                subjectService.getSubjectRowId,
+                                              );
                                         },
                                         splashColor: Colors.amber,
                                         icon: const Icon(Icons.photo),
@@ -114,6 +121,25 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                     ),
                                   ),
                           ),
+                          SizedBox(
+                            width: 40,
+                            child: Material(
+                              shape: const CircleBorder(),
+                              clipBehavior: Clip.hardEdge,
+                              color: Colors.transparent,
+                              child: Transform.rotate(
+                                angle: 45,
+                                child: IconButton(
+                                  onPressed: () async {
+                                    ref.read(messageServiceProvider).pickFiles(subjectService.subjectRowId);
+                                  },
+                                  icon: const Icon(Icons.attach_file_rounded),
+                                  splashColor: Colors.amber,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ),
+                          ),
                           Expanded(
                             flex: 8,
                             child: Scrollbar(
@@ -121,7 +147,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                 cursorColor: Colors.red,
                                 style: const TextStyle(color: Colors.black),
                                 maxLines: 1,
-                                controller: newTextController,
+                                controller: _inputTextController,
                                 onChanged: ref.read(messageServiceProvider).updateInputText,
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,
@@ -155,11 +181,10 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                   child: IconButton(
                     onPressed: () {
                       ref.read(messageServiceProvider).sendInputText(
-                            newTextController.text,
-                            subjectService.getSubjectName,
+                            _inputTextController.text,
                             subjectService.subjectRowId,
                           );
-                      newTextController.clear();
+                      _inputTextController.clear();
                     },
                     // iconSize: 48,
                     icon: const Icon(

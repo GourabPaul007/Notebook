@@ -177,10 +177,12 @@ class _PdfsPageState extends ConsumerState<PdfsPage> {
           size: 28,
         ),
         onPressed: () async {
-          File? newPdf = await ref.read(documentServiceProvider).pickFile();
-          late String message;
-          if (newPdf != null) {
-            message = await ref.read(documentServiceProvider).addPDF(newPdf);
+          List<File>? newDocuments = await ref.read(documentServiceProvider).pickFiles();
+          String message = "No Files Selected";
+          if (newDocuments != null) {
+            for (var eachDocument in newDocuments) {
+              message = await ref.read(documentServiceProvider).addDocument(eachDocument);
+            }
           }
           SnackBarWidget.buildSnackbar(context, message);
         },

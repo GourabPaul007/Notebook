@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +25,7 @@ class MessageService extends ChangeNotifier {
   // Image Message Stuff
   List<Message> images = [];
   void setImages() {
-    images = messages.where((value) => value.isImage).toList();
+    images = messages.where((value) => value.type == "image").toList();
   }
 
   /// get the initial clicked [image] when user tapped image in messages([images])
@@ -42,8 +45,9 @@ class MessageService extends ChangeNotifier {
   // General CRUD
 
   /// Adds a new [Message] to message repository/database.
-  Future<void> addMessage(String newChat, int subjectRowId, bool isFavourite, bool isText, bool isImage) async {
+  Future<void> addMessage(String newChat, int subjectRowId, String type) async {
     if (newChat == "") return;
+
     await MessageRepository().addMessageToLocalDatabase(Message(
       rowId: null,
       id: const Uuid().v1(),
@@ -53,39 +57,14 @@ class MessageService extends ChangeNotifier {
       subjectRowId: subjectRowId,
       timeCreated: DateTime.now().millisecondsSinceEpoch,
       timeUpdated: DateTime.now().millisecondsSinceEpoch,
-      isFavourite: isFavourite,
-      isText: isText,
-      isImage: isImage,
+      isFavourite: false,
+      type: type,
     ));
     List<Message> newMessages = await MessageRepository().getMessagesFromLocalDatabase(subjectRowId);
 
     messages = newMessages;
     // Other Stuff
     showHoldMessageIcons = false;
-    notifyListeners();
-  }
-
-  /// if [flag] is 1 then unstar all messages. else star all messages
-  /// [flag] is set to 1 when [selectedMessages] includes all starred messages.
-  /// [flag] is set to 0 when [selectedMessages] include a [message] which is not favourite
-  Future<void> toggleStarMessages() async {
-    int flag = 1;
-    for (Message message in selectedMessages) {
-      if (message.isFavourite == false) {
-        flag = 0;
-      }
-    }
-    MessageRepository().toggleStarMessagesFromDatabase(selectedMessages, flag);
-    if (flag == 1) {
-      for (Message message in selectedMessages) {
-        message.isFavourite = false;
-      }
-    } else {
-      for (Message message in selectedMessages) {
-        message.isFavourite = true;
-      }
-    }
-    deleteStates();
     notifyListeners();
   }
 
@@ -188,12 +167,11 @@ class MessageService extends ChangeNotifier {
   late CameraDescription cameraNew;
 
   /// sends input [text] to [addMessage] method and clears the [newTextController] text
-  void sendInputText(String text, String subjectName, int subjectRowId) async {
+  void sendInputText(String text, int subjectRowId) async {
     const bool isFavourite = false;
-    const bool isText = true;
-    const bool isImage = false;
+    const String type = "text";
 
-    addMessage(text, subjectRowId, isFavourite, isText, isImage);
+    addMessage(text, subjectRowId, type);
     newTextController.clear();
     // updateInputText(text);
   }
@@ -214,19 +192,18 @@ class MessageService extends ChangeNotifier {
 
   /// Adds Image from Camera.
   /// takes the [imagePath] sent from [Camera] and adds the image path to [Message.body]
-  Future imgFromCamera(String imagePath, String subjectName, int subjectRowId) async {
+  Future imgFromCamera(String imagePath, int subjectRowId) async {
     debugPrint(imagePath);
     if (imagePath != "") {
       const bool isFavourite = false;
-      const bool isText = false;
-      const bool isImage = true;
-      addMessage(imagePath, subjectRowId, isFavourite, isText, isImage);
+      const String type = "image";
+      addMessage(imagePath, subjectRowId, type);
     }
   }
 
   /// Adds Image from gallery.
   /// takes the [imagePath] sent from [ImagePicker().pickImage] and adds the image path to [Message.body]
-  Future imgFromGallery(String subjectName, int subjectRowId) async {
+  Future imgFromGallery(int subjectRowId) async {
     try {
       XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -234,15 +211,56 @@ class MessageService extends ChangeNotifier {
       _image = image;
       notifyListeners();
       if (_image != null) {
-        const bool isFavourite = false;
-        const bool isText = false;
-        const bool isImage = true;
-        addMessage(_image!.path, subjectRowId, isFavourite, isText, isImage);
+        // const bool isFavourite = false;
+        // const bool isText = false;
+        const String type = "image";
+        addMessage(_image!.path, subjectRowId, type);
       }
     } on Exception catch (e) {
       await retrieveLostData();
       debugPrint("failed to retrive image from gallery" + e.toString());
     }
+  }
+
+  Future pickFiles(int subjectRowId) async {
+    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc', 'docx'],
+    );
+
+    if (result == null) return null;
+
+    List<File> files = result.paths.map((path) {
+      return File(path!);
+    }).toList();
+    for (var file in files) {
+      addMessage(file.path, subjectRowId, "document");
+    }
+  }
+
+  /// if [flag] is 1 then unstar all messages. else star all messages
+  /// [flag] is set to 1 when [selectedMessages] includes all starred messages.
+  /// [flag] is set to 0 when [selectedMessages] include a [message] which is not favourite
+  Future<void> toggleStarMessages() async {
+    int flag = 1;
+    for (Message message in selectedMessages) {
+      if (message.isFavourite == false) {
+        flag = 0;
+      }
+    }
+    MessageRepository().toggleStarMessagesFromDatabase(selectedMessages, flag);
+    if (flag == 1) {
+      for (Message message in selectedMessages) {
+        message.isFavourite = false;
+      }
+    } else {
+      for (Message message in selectedMessages) {
+        message.isFavourite = true;
+      }
+    }
+    deleteStates();
+    notifyListeners();
   }
 
   /// set the [starredMessages] on initial load of [StarredMessagesPage]

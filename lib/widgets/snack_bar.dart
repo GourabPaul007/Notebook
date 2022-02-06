@@ -6,7 +6,7 @@ class SnackBarWidget {
   static buildSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: Colors.grey[300],
+        backgroundColor: Colors.white70,
         behavior: SnackBarBehavior.floating,
         elevation: 5,
         width: MediaQuery.of(context).size.width * 5 / 8,

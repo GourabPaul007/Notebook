@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/documents_page.dart';
 import 'package:frontend/screens/documents_page/document_delete_button.dart';
 import 'package:frontend/screens/documents_page/document_share_button.dart';
-import 'package:frontend/screens/receive_shared_intent.dart';
+import 'package:frontend/screens/receive_shared_intent_page.dart';
 import 'package:frontend/screens/subject_list_page.dart';
 import 'package:frontend/screens/subject_list_page/subject_delete_button.dart';
 import 'package:frontend/screens/subject_list_page/subject_edit_button.dart';
@@ -53,15 +53,16 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
       if (value.isNotEmpty) {
         setState(() {
           _sharedFiles = value;
-          debugPrint("+++++++++++++++++Shared:" +
-              (_sharedFiles?.map((f) => f.path).join(",") ?? "") +
-              _sharedFiles.runtimeType.toString());
+          debugPrint(
+            "+++++++++++++++++Shared:" +
+                (_sharedFiles?.map((f) => f.path).join(",") ?? "") +
+                _sharedFiles.runtimeType.toString(),
+          );
         });
       }
     }, onError: (err) {
       debugPrint("getIntentDataStream error: $err");
     });
-
     // For sharing images coming from outside the app while the app is closed
     ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
       if (value.isNotEmpty) {
@@ -76,7 +77,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
       }
     });
 
-    ref.read(subjectServiceProvider).getData();
+    // get all the subjects on initial load
+    ref.read(subjectServiceProvider).getAllSubjects("HomePage");
 
     _tabController = TabController(vsync: this, length: tabItemList.length);
     // when the tab changes, reset all the states(if subject or documents on hold)
@@ -106,7 +108,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
   Widget build(BuildContext context) {
     final subjectService = ref.watch(subjectServiceProvider);
     return _sharedFiles != null
-        ? ShareIntent(
+        ? ReceiveSharedIntentPage(
             sharedFiles: _sharedFiles,
             clearIntentData: clearIntentData,
           )

@@ -44,7 +44,7 @@ class DBHelper {
           id TEXT NOT NULL, 
           name TEXT NOT NULL,
           description TEXT,
-          avatar_color TEXT,
+          avatar_color INTEGER,
           time_created INTEGER NOT NULL,
           time_updated INTEGER NOT NULL
         )
@@ -57,9 +57,8 @@ class DBHelper {
           body TEXT,
           time_created INTEGER NOT NULL,
           time_updated INTEGER NOT NULL,
+          type TEXT NOT NULL,
           is_favourite BOOLEAN NOT NULL DEFAULT 0,
-          is_text BOOLEAN NOT NULL DEFAULT 0,
-          is_image BOOLEAN NOT NULL DEFAULT 0,
           subject_row_id INTEGER NOT NULL,
           FOREIGN KEY(subject_row_id) REFERENCES $subjectsTable(row_id)
         )

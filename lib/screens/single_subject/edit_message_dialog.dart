@@ -124,7 +124,7 @@ class _EditMessageDialogState extends ConsumerState<EditMessageDialog> {
                       ),
                     ),
                     // ref.read(messageServiceProvider).getEditMessageIsText
-                    messageService.selectedMessages.isNotEmpty && messageService.selectedMessages[0].isText
+                    messageService.selectedMessages.isNotEmpty && messageService.selectedMessages[0].type == 'text'
                         ?
                         // Subject About TextField
                         Flexible(

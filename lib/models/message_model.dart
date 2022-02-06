@@ -1,3 +1,4 @@
+/// [type] is one of ['text','image','document']
 class Message {
   late final int? rowId;
   final String id;
@@ -8,22 +9,19 @@ class Message {
   final int timeCreated;
   int timeUpdated;
   bool isFavourite;
-  final bool isText;
-  final bool isImage;
+  final String type;
 
-  Message({
-    required this.rowId,
-    required this.id,
-    required this.title,
-    required this.body,
-    // required this.subjectName,
-    required this.subjectRowId,
-    required this.timeCreated,
-    required this.timeUpdated,
-    required this.isFavourite,
-    required this.isText,
-    required this.isImage,
-  });
+  Message(
+      {required this.rowId,
+      required this.id,
+      required this.title,
+      required this.body,
+      // required this.subjectName,
+      required this.subjectRowId,
+      required this.timeCreated,
+      required this.timeUpdated,
+      required this.isFavourite,
+      required this.type});
 
   factory Message.fromMap(Map<String, dynamic> json) => Message(
         rowId: json["row_id"],
@@ -35,8 +33,7 @@ class Message {
         timeCreated: json['time_created'],
         timeUpdated: json['time_updated'],
         isFavourite: json['is_favourite'] == 1 ? true : false,
-        isText: json['is_text'] == 1 ? true : false,
-        isImage: json['is_image'] == 1 ? true : false,
+        type: json['type'],
       );
 
   Map<String, dynamic> toMap() {
@@ -50,8 +47,7 @@ class Message {
       'time_created': timeCreated,
       'time_updated': timeUpdated,
       'is_favourite': isFavourite,
-      'is_text': isText,
-      'is_image': isImage,
+      'type': type,
     };
   }
 }

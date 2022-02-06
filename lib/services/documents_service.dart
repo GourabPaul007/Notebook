@@ -10,7 +10,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path/path.dart';
 import 'package:share_plus/share_plus.dart';
 
-final documentServiceProvider = ChangeNotifierProvider.autoDispose((ref) {
+final documentServiceProvider = ChangeNotifierProvider((ref) {
   return PdfService();
 });
 
@@ -43,18 +43,22 @@ class PdfService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<File?> pickFile() async {
+  Future<List<File>?> pickFiles() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
+      allowMultiple: true,
       type: FileType.custom,
       allowedExtensions: ['pdf', 'doc', 'docx'],
     );
 
     if (result == null) return null;
-    return File(result.paths.first!);
+
+    List<File> files = result.paths.map((path) {
+      return File(path!);
+    }).toList();
+    return files;
   }
 
-  Future<String> addPDF(File file) async {
+  Future<String> addDocument(File file) async {
     Document newDocument = Document(
       rowId: null,
       name: basename(file.path),
