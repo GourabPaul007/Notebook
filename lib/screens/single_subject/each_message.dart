@@ -28,7 +28,7 @@ class EachMessage extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.all(4),
-      margin: const EdgeInsets.only(left: 4, right: 4, top: 2, bottom: 2),
+      margin: const EdgeInsets.only(left: 4, right: 8, top: 2, bottom: 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: Theme.of(context).primaryColor,

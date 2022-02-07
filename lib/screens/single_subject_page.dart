@@ -75,7 +75,7 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
         ),
         body: Container(
           decoration: const BoxDecoration(
-            color: Color(0xFFECE5DD),
+            color: Color(0xFFDBD4CC),
           ),
           child: Column(
             children: [

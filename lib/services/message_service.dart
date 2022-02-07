@@ -45,14 +45,14 @@ class MessageService extends ChangeNotifier {
   // General CRUD
 
   /// Adds a new [Message] to message repository/database.
-  Future<void> addMessage(String newChat, int subjectRowId, String type) async {
-    if (newChat == "") return;
+  Future<void> addMessage(String title, String body, int subjectRowId, String type) async {
+    if (body == "") return;
 
     await MessageRepository().addMessageToLocalDatabase(Message(
       rowId: null,
       id: const Uuid().v1(),
       title: "",
-      body: newChat,
+      body: body,
       // subjectName: subjectName,
       subjectRowId: subjectRowId,
       timeCreated: DateTime.now().millisecondsSinceEpoch,
@@ -171,7 +171,7 @@ class MessageService extends ChangeNotifier {
     const bool isFavourite = false;
     const String type = "text";
 
-    addMessage(text, subjectRowId, type);
+    addMessage("", text, subjectRowId, type);
     newTextController.clear();
     // updateInputText(text);
   }
@@ -197,7 +197,7 @@ class MessageService extends ChangeNotifier {
     if (imagePath != "") {
       const bool isFavourite = false;
       const String type = "image";
-      addMessage(imagePath, subjectRowId, type);
+      addMessage("", imagePath, subjectRowId, type);
     }
   }
 
@@ -214,7 +214,7 @@ class MessageService extends ChangeNotifier {
         // const bool isFavourite = false;
         // const bool isText = false;
         const String type = "image";
-        addMessage(_image!.path, subjectRowId, type);
+        addMessage("", _image!.path, subjectRowId, type);
       }
     } on Exception catch (e) {
       await retrieveLostData();
@@ -222,7 +222,7 @@ class MessageService extends ChangeNotifier {
     }
   }
 
-  Future pickFiles(int subjectRowId) async {
+  Future pickDocuments(int subjectRowId) async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
@@ -235,7 +235,7 @@ class MessageService extends ChangeNotifier {
       return File(path!);
     }).toList();
     for (var file in files) {
-      addMessage(file.path, subjectRowId, "document");
+      addMessage("", file.path, subjectRowId, "document");
     }
   }
 

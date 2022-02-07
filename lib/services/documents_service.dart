@@ -21,6 +21,7 @@ class PdfService extends ChangeNotifier {
 
   void documentOnTap(BuildContext context, Document document) async {
     if (selectedDocuments.isEmpty) {
+      debugPrint("inside OpenFile");
       await OpenFile.open(
         document.path,
         // type: "application/pdf",

@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/message_service.dart';
+import 'package:frontend/services/subject_service.dart';
 
 import 'styles.dart';
 
 class EditMessageDialog extends ConsumerStatefulWidget {
   // final int messageRowId;
+  final String type;
 
   const EditMessageDialog({
     Key? key,
     // required this.messageRowId,
+    required this.type,
   }) : super(key: key);
 
   @override
@@ -22,7 +25,7 @@ class _EditMessageDialogState extends ConsumerState<EditMessageDialog> {
   late TextEditingController _messageBodyController;
 
   // If body textfield is empty then button should be disabled
-  bool _buttonDisabled = false;
+  bool _buttonDisabled = true;
 
   @override
   void initState() {
@@ -31,12 +34,14 @@ class _EditMessageDialogState extends ConsumerState<EditMessageDialog> {
     _messageTitleController = TextEditingController();
     _messageBodyController = TextEditingController();
 
-    _messageTitleController.text = ref.read(messageServiceProvider).getEditMessageTitle;
-    _messageBodyController.text = ref.read(messageServiceProvider).getEditMessageBody;
+    if (widget.type != "new") {
+      _messageTitleController.text = ref.read(messageServiceProvider).getEditMessageTitle;
+      _messageBodyController.text = ref.read(messageServiceProvider).getEditMessageBody;
+    }
 
     // If body textfield is empty then button should be disabled
     _messageBodyController.addListener(() {
-      if (_messageBodyController.text.isEmpty) {
+      if (_messageBodyController.text.isEmpty || _messageBodyController.text == "") {
         setState(() => _buttonDisabled = true);
       }
       if (_messageBodyController.text.isNotEmpty) {
@@ -84,14 +89,14 @@ class _EditMessageDialogState extends ConsumerState<EditMessageDialog> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    const Flexible(
+                    Flexible(
                       child: Padding(
-                        padding: EdgeInsets.only(top: 16, bottom: 8),
+                        padding: const EdgeInsets.only(top: 16, bottom: 8),
                         child: Material(
                           color: Colors.transparent,
                           child: Text(
-                            "Edit Message",
-                            style: TextStyle(
+                            widget.type == "new" ? "New Rich Text" : "Edit Message",
+                            style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w600,
                             ),
@@ -124,7 +129,8 @@ class _EditMessageDialogState extends ConsumerState<EditMessageDialog> {
                       ),
                     ),
                     // ref.read(messageServiceProvider).getEditMessageIsText
-                    messageService.selectedMessages.isNotEmpty && messageService.selectedMessages[0].type == 'text'
+                    (messageService.selectedMessages.isNotEmpty && messageService.selectedMessages[0].type == 'text') ||
+                            widget.type == "new"
                         ?
                         // Subject About TextField
                         Flexible(
@@ -186,19 +192,30 @@ class _EditMessageDialogState extends ConsumerState<EditMessageDialog> {
                                 child: ElevatedButton(
                                   onPressed: _buttonDisabled
                                       ? null
-                                      : () {
-                                          ref.read(messageServiceProvider).editMessage(
-                                                messageService.selectedMessages[0].rowId!,
-                                                _messageTitleController.text,
-                                                _messageBodyController.text,
-                                              );
-                                          _messageTitleController.text = "";
-                                          _messageBodyController.text = "";
-                                          Navigator.of(context).pop();
-                                        },
-                                  child: const Text(
-                                    "Update",
-                                    style: TextStyle(fontSize: 18, color: Colors.white),
+                                      : widget.type == "new"
+                                          ? () {
+                                              ref.read(messageServiceProvider).addMessage(
+                                                  _messageTitleController.text,
+                                                  _messageBodyController.text,
+                                                  ref.watch(subjectServiceProvider).subjectRowId,
+                                                  "text");
+                                              _messageTitleController.text = "";
+                                              _messageBodyController.text = "";
+                                              Navigator.of(context).pop();
+                                            }
+                                          : () {
+                                              ref.read(messageServiceProvider).editMessage(
+                                                    messageService.selectedMessages[0].rowId!,
+                                                    _messageTitleController.text,
+                                                    _messageBodyController.text,
+                                                  );
+                                              _messageTitleController.text = "";
+                                              _messageBodyController.text = "";
+                                              Navigator.of(context).pop();
+                                            },
+                                  child: Text(
+                                    widget.type == "new" ? "Done" : "Update",
+                                    style: const TextStyle(fontSize: 18, color: Colors.white),
                                   ),
                                   style: ElevatedButton.styleFrom(primary: Colors.blue),
                                 ),

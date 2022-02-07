@@ -24,6 +24,8 @@ class CameraService extends ChangeNotifier {
     }
   }
 
+  /// changes the camera back to front or vice versa
+  /// [cameras[0]] is back camera, [cameras[1]] is front camera.
   void changeBackOrFrontCamera() {
     try {
       if (camera == cameras[0]) {

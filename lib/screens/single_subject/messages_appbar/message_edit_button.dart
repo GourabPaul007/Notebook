@@ -17,11 +17,15 @@ class MessageEditButton extends StatelessWidget {
         child: IconButton(
           onPressed: () {
             Navigator.of(context).push(
+              // have to use PageRouteBuilder if want opacity
               PageRouteBuilder(
                 opaque: false,
-                pageBuilder: (context, _, __) => const EditMessageDialog(),
+                pageBuilder: (context, _, __) => const EditMessageDialog(type: "edit"),
               ),
             );
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(builder: (context) => const EditMessageDialog(type: "edit")),
+            // );
           },
           icon: const Icon(Icons.edit_rounded, size: 26.0),
         ),
