@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:frontend/db/database.dart';
 import 'package:frontend/models/message_model.dart';
 import 'package:frontend/models/subject_model.dart';
@@ -16,8 +15,10 @@ class MessageRepository {
       whereArgs: [subjectRowId],
       orderBy: 'time_created DESC',
     );
-    // print(messages);
-    List<Message> messageList = messages.isNotEmpty ? messages.map((c) => Message.fromMap(c)).toList() : [];
+    List<Message> messageList = [];
+    for (int i = 0; i < messages.length; i++) {
+      messageList.add(Message.fromMap(messages[i]));
+    }
     return messageList;
   }
 
@@ -55,7 +56,10 @@ class MessageRepository {
 
   Future<int> deleteMessagesFromLocalDatabase(List<Message> messages) async {
     Database db = await DBHelper.instance.database;
-    List<int?> rowIds = messages.map((e) => e.rowId).toList();
+    List<int?> rowIds = [];
+    for (int i = 0; i < messages.length; i++) {
+      rowIds.add(messages[i].rowId);
+    }
     int returnCode = await db.delete(
       messageTable,
       where: "row_id IN (${List.filled(rowIds.length, '?').join(',')})",
@@ -80,7 +84,10 @@ class MessageRepository {
     } else {
       values = {"is_favourite": 1};
     }
-    List<int?> rowIds = messages.map((m) => m.rowId).toList();
+    List<int?> rowIds = [];
+    for (int i = 0; i < messages.length; i++) {
+      rowIds.add(messages[i].rowId);
+    }
     final returnCode = await db.update(
       messageTable,
       values,
@@ -90,18 +97,34 @@ class MessageRepository {
     return returnCode;
   }
 
-  /// get the messages from database where [is_favourite] is true
-  Future<List<Message>> getStarredMessagesFromLocalDatabase(int subjectRowId) async {
+  /// get the messages from database where [is_favourite] is true & subject_row_id is given.
+  ///
+  /// If Called from [SubjectDetailsPage], will show subject specific starred messages.
+  ///
+  /// Else If Called from [HomePage], will show all starred messages
+  Future<List<Message>> getStarredMessagesFromLocalDatabase(String from, int subjectRowId) async {
     Database db = await DBHelper.instance.database;
-    var messages = await db.query(
-      messageTable,
-      where: 'subject_row_id = ? AND is_favourite = 1',
-      whereArgs: [subjectRowId],
-      orderBy: 'time_created DESC',
-    );
-    // print(messages);
-    List<Message> starredMessageList = messages.isNotEmpty ? messages.map((c) => Message.fromMap(c)).toList() : [];
-    debugPrint(starredMessageList.toString());
+    List<Map<String, Object?>> messages;
+    if (from == "HomePage" && subjectRowId == -1) {
+      messages = await db.query(
+        messageTable,
+        where: 'is_favourite = 1',
+        orderBy: 'time_created DESC',
+      );
+    } else {
+      messages = await db.query(
+        messageTable,
+        where: 'subject_row_id = ? AND is_favourite = 1',
+        whereArgs: [subjectRowId],
+        orderBy: 'time_created DESC',
+      );
+    }
+    List<Message> starredMessageList = [];
+    if (messages.isNotEmpty) {
+      for (int i = 0; i < messages.length; i++) {
+        starredMessageList.add(Message.fromMap(messages[i]));
+      }
+    }
     return starredMessageList;
   }
 }

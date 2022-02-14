@@ -45,7 +45,7 @@ class MessageDeleteButton extends ConsumerWidget {
               },
             );
           },
-          icon: const Icon(Icons.delete_rounded, size: 26.0),
+          icon: const Icon(Icons.delete_outline_rounded, size: 26.0),
         ),
       ),
     );

@@ -38,8 +38,12 @@ class PdfService extends ChangeNotifier {
 
   void documentOnLongPress(Document document) {
     HapticFeedback.vibrate();
-    selectedDocuments.add(document);
-    isDocumentsSelected = true;
+    if (selectedDocuments.contains(document)) {
+      selectedDocuments.remove(document);
+    } else {
+      selectedDocuments.add(document);
+    }
+    isDocumentsSelected = selectedDocuments.isNotEmpty;
     // subjectOnHold = hasSelectedSubjects();
     notifyListeners();
   }

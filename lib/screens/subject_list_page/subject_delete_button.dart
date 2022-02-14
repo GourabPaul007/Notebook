@@ -35,12 +35,10 @@ class SubjectDeleteButton extends StatelessWidget {
                     ),
                     const SizedBox(width: 2),
                     Consumer(builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                      // getting the selected subject
-                      final selectedSubject = ref.watch(subjectServiceProvider).selectedSubjects[0];
                       return TextButton(
                         onPressed: () => {
                           // deleting the subject
-                          ref.read(subjectServiceProvider).deleteSubject(selectedSubject),
+                          ref.read(subjectServiceProvider).deleteSubjects(),
                           Navigator.pop(context),
                         },
                         child: Text("DELETE", style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 18)),
@@ -53,7 +51,7 @@ class SubjectDeleteButton extends StatelessWidget {
             );
           },
           icon: const Icon(
-            Icons.delete_rounded,
+            Icons.delete_outline_rounded,
             size: 26.0,
           ),
         ),

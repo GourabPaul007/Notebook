@@ -27,7 +27,7 @@ class MessageEditButton extends StatelessWidget {
             //   MaterialPageRoute(builder: (context) => const EditMessageDialog(type: "edit")),
             // );
           },
-          icon: const Icon(Icons.edit_rounded, size: 26.0),
+          icon: const Icon(Icons.edit_outlined, size: 26.0),
         ),
       ),
     );

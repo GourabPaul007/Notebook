@@ -9,20 +9,19 @@ import 'package:open_file/open_file.dart';
 import 'package:path/path.dart';
 
 class EachMessage extends ConsumerWidget {
-  final int index;
+  final Message message;
 
   /// type is required to know if the message should render in [SingleSubjectPage] or [StarredMessagesPage]
-  final String parentType;
+  final String from;
 
-  const EachMessage({Key? key, required this.index, required this.parentType}) : super(key: key);
+  const EachMessage({
+    Key? key,
+    required this.from,
+    required this.message,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // gets message from either [messages] or [starredMessages] depending on the parentType
-    final message = parentType == "SingleSubjectPage"
-        ? ref.watch(messageServiceProvider).messages.elementAt(index)
-        : ref.watch(messageServiceProvider).starredMessages.elementAt(index);
-
     // Sets images in serviceprovider
     ref.read(messageServiceProvider).setImages();
 
@@ -86,7 +85,7 @@ class EachMessage extends ConsumerWidget {
                 ? Stack(
                     children: [
                       InkWell(
-                        onTap: parentType == "SingleSubjectPage"
+                        onTap: from == "SingleSubjectPage"
                             ? () {
                                 final images = ref.watch(messageServiceProvider).images;
                                 Navigator.push(
@@ -159,11 +158,20 @@ class EachMessage extends ConsumerWidget {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.only(top: 2),
+                          padding: const EdgeInsets.only(top: 2, bottom: 0, left: 4, right: 4),
                           color: Colors.deepPurpleAccent,
                           // height: 24,
-                          child: OtherMessageInfo(
-                            message: message,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                message.body.substring(message.body.lastIndexOf(".") + 1).toUpperCase(),
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                              OtherMessageInfo(
+                                message: message,
+                              ),
+                            ],
                           ),
                         )
                       ],

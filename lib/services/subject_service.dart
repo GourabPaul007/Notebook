@@ -20,7 +20,7 @@ class SubjectService extends ChangeNotifier {
   late String subjectDescription = "";
   List<Subject> subjects = [];
   List<Subject> selectedSubjects = [];
-  bool subjectOnHold = false;
+  bool subjectsOnHold = false;
 
   String get getSubjectDescription => subjectDescription;
   void setSubjectDescription(String description) {
@@ -85,25 +85,15 @@ class SubjectService extends ChangeNotifier {
       timeUpdated: DateTime.now().millisecondsSinceEpoch,
     );
     int status = await SubjectRepository().addSubjectToLocalDatabse(subject);
-    // int status = await ref.read(subjectRepositoryProvider).addSubject(subject);
-    updateSubjects(status);
-  }
-
-  void onTap(BuildContext context, Subject subject) {
-    if (setAfterSubjectOnTap(subject)) {
-      return;
-    }
-    // why ?
-    ref.read(subjectServiceProvider).setSubjectName(subject.name);
-    ref.read(subjectServiceProvider).setSubjectRowId(subject.rowId!);
+    getSubjects(status);
   }
 
   /// Delete Subject
-  Future<void> deleteSubject(Subject subject) async {
-    int status = await SubjectRepository().deleteSubjectFromLocalDatabase(subject);
+  Future<void> deleteSubjects() async {
+    int status = await SubjectRepository().deleteSubjectsFromLocalDatabase(selectedSubjects);
     // int status = await ref.read(subjectRepositoryProvider).deleteSubject(subject);
     // subjects.remove(subject);
-    updateSubjects(status);
+    getSubjects(status);
   }
 
   // Update Subject(eg. subjectName, subjectAbout etc. )
@@ -111,45 +101,54 @@ class SubjectService extends ChangeNotifier {
     int timeUpdated = DateTime.now().millisecondsSinceEpoch;
     int status = await SubjectRepository().updateSubjectFromLocalDatabase(rowId, name, about, timeUpdated);
     // int status = await ref.read(subjectRepositoryProvider).updateSubject(rowId, name, about, timeUpdated);
-    updateSubjects(status);
+    getSubjects(status);
   }
 
   // Updates the state with subjects after adding or deleting a subject
-  Future<void> updateSubjects(int status) async {
+  Future<void> getSubjects(int status) async {
     List<Subject> newSubjects = [];
     if (status != -1) {
       newSubjects = await SubjectRepository().getSubjectsFromLocalDatabase();
-      // newSubjects = await ref.read(subjectRepositoryProvider).getSubjects();
     }
     subjects = newSubjects;
-    // notifyListeners();
-    resetHoldSubjectEffects();
+    selectedSubjects = [];
+    subjectsOnHold = false;
+    notifyListeners();
   }
   // ============================================================================
 
   void subjectOnLongPress(Subject subject) {
     HapticFeedback.vibrate();
-    // setState(() {
-    selectedSubjects = [subject];
-    subjectOnHold = selectedSubjects.isNotEmpty;
-    // });
+    // selectedSubjects = [subject];
+    if (selectedSubjects.contains(subject)) {
+      selectedSubjects.remove(subject);
+    } else {
+      selectedSubjects.add(subject);
+    }
+    subjectsOnHold = selectedSubjects.isNotEmpty;
     notifyListeners();
   }
 
-  //When you tap on the already selected message, it should unselect, not go inside the page
-  bool setAfterSubjectOnTap(Subject subject) {
-    if (selectedSubjects.isNotEmpty) {
-      resetHoldSubjectEffects();
-      return true;
-    } else {
-      resetHoldSubjectEffects();
+  /// What happens when you tap on a Subject Tile.
+  ///
+  /// When you tap on the already selected subject, it should unselect, not go inside the page.
+  bool subjectOnTap(Subject message) {
+    if (selectedSubjects.isEmpty) {
       return false;
+    } else if (selectedSubjects.isNotEmpty && !selectedSubjects.contains(message)) {
+      selectedSubjects.add(message);
+      subjectsOnHold = selectedSubjects.isNotEmpty;
+    } else {
+      selectedSubjects.remove(message);
+      subjectsOnHold = selectedSubjects.isNotEmpty;
     }
+    notifyListeners();
+    return true;
   }
 
   void resetHoldSubjectEffects() {
     selectedSubjects = [];
-    subjectOnHold = false;
+    subjectsOnHold = false;
     notifyListeners();
   }
 }

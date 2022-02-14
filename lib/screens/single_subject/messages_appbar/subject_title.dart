@@ -26,6 +26,7 @@ class SubjectTitle extends ConsumerWidget {
               width: double.maxFinite,
               child: Text(
                 selectedMessages.length.toString(),
+                style: Theme.of(context).textTheme.headline1,
               ),
             )
           : Material(
@@ -37,7 +38,7 @@ class SubjectTitle extends ConsumerWidget {
                   width: double.maxFinite,
                   child: Text(
                     subjectName,
-                    style: const TextStyle(fontSize: 24),
+                    style: Theme.of(context).textTheme.headline1,
                     maxLines: 1,
                   ),
                 ),

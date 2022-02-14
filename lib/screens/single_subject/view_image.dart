@@ -45,8 +45,19 @@ class _ViewImageState extends ConsumerState<ViewImage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        automaticallyImplyLeading: showAppBar ? true : false,
+        // automaticallyImplyLeading: showAppBar ? true : false,
         // title: showAppBar ? Text(ref.watch(messageServiceProvider).images.elementAt(widget.index).title) : null,
+        leading: showAppBar
+            ? IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(
+                  Icons.arrow_back_rounded,
+                  color: Colors.white,
+                ),
+              )
+            : null,
         title: showAppBar
             ? Text(
                 imageName,

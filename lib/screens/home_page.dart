@@ -7,7 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/documents_page.dart';
 import 'package:frontend/screens/documents_page/document_delete_button.dart';
 import 'package:frontend/screens/documents_page/document_share_button.dart';
+import 'package:frontend/screens/subject_search_page.dart';
 import 'package:frontend/screens/receive_shared_intent_page.dart';
+import 'package:frontend/screens/starred_messages_page.dart';
 import 'package:frontend/screens/subject_list_page.dart';
 import 'package:frontend/screens/subject_list_page/subject_delete_button.dart';
 import 'package:frontend/screens/subject_list_page/subject_edit_button.dart';
@@ -26,20 +28,12 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
   // Intent Suff IDK dont ask shut
   late StreamSubscription _intentDataStreamSubscription;
   List<SharedMediaFile>? _sharedFiles;
-  String? _sharedText;
 
   void clearIntentData() {
     setState(() {
       _sharedFiles = null;
     });
   }
-
-  // ItemList in Tabbar
-  List<Widget> tabItemList = const [
-    Tab(icon: Icon(Icons.library_books_rounded)),
-    Tab(icon: Icon(Icons.picture_as_pdf_rounded)),
-    Tab(icon: Icon(Icons.image)),
-  ];
 
   late final TabController _tabController;
 
@@ -48,7 +42,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
   void initState() {
     super.initState();
 
-    // For sharing images coming from outside the app while the app is in the memory
+    // For sharing files coming from outside the app while the app is in the memory
     _intentDataStreamSubscription = ReceiveSharingIntent.getMediaStream().listen((List<SharedMediaFile> value) {
       if (value.isNotEmpty) {
         setState(() {
@@ -63,7 +57,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
     }, onError: (err) {
       debugPrint("getIntentDataStream error: $err");
     });
-    // For sharing images coming from outside the app while the app is closed
+    // For sharing files coming from outside the app while the app is closed
     ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
       if (value.isNotEmpty) {
         setState(() {
@@ -77,23 +71,34 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
       }
     });
 
-    // get all the subjects on initial load
-    ref.read(subjectServiceProvider).getAllSubjects("HomePage");
-
-    _tabController = TabController(vsync: this, length: tabItemList.length);
-    // when the tab changes, reset all the states(if subject or documents on hold)
+    _tabController = TabController(vsync: this, length: 3);
+    /**
+     *  when the tab changes, reset all the states(if subject or documents on hold)
+     */
     _tabController.addListener(() {
-      switch (_tabController.index) {
-        case 0:
-          ref.read(documentServiceProvider).disposeStates();
-          break;
-        case 1:
-          ref.read(subjectServiceProvider).resetHoldSubjectEffects();
-          break;
-        default:
+      // switch (_tabController.index) {
+      //   case 0:
+      //     ref.read(documentServiceProvider).disposeStates();
+      //     break;
+      //   case 1:
+      //     ref.read(subjectServiceProvider).resetHoldSubjectEffects();
+      //     break;
+      //   default:
+      //     ref.read(documentServiceProvider).disposeStates();
+      //     ref.read(subjectServiceProvider).resetHoldSubjectEffects();
+      //     break;
+      // }
+      if (_tabController.indexIsChanging) {
+        print("tab is animating. from active (getting the index) to inactive(getting the index) ");
+      } else {
+        //tab is finished animating you get the current index
+        //here you can get your index or run some method once.
+        print("**************" + _tabController.index.toString());
+        ref.read(documentServiceProvider).disposeStates();
+        ref.read(subjectServiceProvider).resetHoldSubjectEffects();
       }
 
-      debugPrint("************************************ Selected Index: " + _tabController.index.toString());
+      // debugPrint("************************************ Selected Index: " + _tabController.index.toString());
     });
   }
 
@@ -107,6 +112,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     final subjectService = ref.watch(subjectServiceProvider);
+    final subjects = ref.watch(subjectServiceProvider).subjects;
     return _sharedFiles != null
         ? ReceiveSharedIntentPage(
             sharedFiles: _sharedFiles,
@@ -117,18 +123,17 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
             child: Scaffold(
               backgroundColor: Theme.of(context).backgroundColor,
               appBar: AppBar(
-                backgroundColor: subjectService.subjectOnHold
-                    ? Colors.deepPurpleAccent[400]
-                    : Theme.of(context).appBarTheme.backgroundColor,
-                systemOverlayStyle: subjectService.subjectOnHold
-                    ? SystemUiOverlayStyle(statusBarColor: Colors.deepPurpleAccent[400])
-                    : Theme.of(context).appBarTheme.systemOverlayStyle,
+                backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+                systemOverlayStyle: Theme.of(context).appBarTheme.systemOverlayStyle,
                 elevation: Theme.of(context).appBarTheme.elevation,
 
-                title: const Text('WhatsNote', style: TextStyle(fontSize: 24)),
+                title: Text('WhatsNote', style: Theme.of(context).textTheme.headline1),
                 actions: <Widget>[
                   // Subject Delete Button
-                  subjectService.subjectOnHold ? const SubjectDeleteButton() : const SizedBox(),
+                  subjectService.subjectsOnHold ? const SubjectDeleteButton() : const SizedBox(),
+
+                  // Subject Edit Button
+                  subjectService.selectedSubjects.length == 1 ? const SubjectEditButton() : const SizedBox(),
 
                   // Document Delete Button
                   ref.watch(documentServiceProvider).selectedDocuments.isNotEmpty
@@ -140,9 +145,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
                       ? const DocumentShareButton()
                       : const SizedBox(),
 
-                  // Edit Button
-                  subjectService.subjectOnHold ? const SubjectEditButton() : const SizedBox(),
-
                   // Search Button
                   Padding(
                     padding: const EdgeInsets.all(0),
@@ -152,11 +154,14 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
                       color: Colors.transparent,
                       child: IconButton(
                         onPressed: () async {
-                          // showSearch(context: context, delegate: SearchDelegate<Subject>);
+                          showSearch(context: context, delegate: SubjectSearchPage(subjects));
                         },
-                        icon: const Icon(
-                          Icons.search_rounded,
-                          size: 26.0,
+                        icon: IconTheme(
+                          data: Theme.of(context).iconTheme,
+                          child: const Icon(
+                            Icons.search_rounded,
+                            size: 26.0,
+                          ),
                         ),
                       ),
                     ),
@@ -169,25 +174,26 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
                       shape: const CircleBorder(),
                       clipBehavior: Clip.hardEdge,
                       color: Colors.transparent,
-                      child: PopupMenuButton(
-                        color: Colors.white,
-                        elevation: 5,
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            child: Text(
-                              "View Details",
-                              style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400),
+                      child: PopupMenuTheme(
+                        data: Theme.of(context).popupMenuTheme,
+                        child: PopupMenuButton(
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              child: Text(
+                                "View Details",
+                                style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400),
+                              ),
+                              value: 1,
                             ),
-                            value: 1,
-                          ),
-                          const PopupMenuItem(
-                            child: Text(
-                              "Second",
-                              style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400),
-                            ),
-                            value: 2,
-                          )
-                        ],
+                            const PopupMenuItem(
+                              child: Text(
+                                "Second",
+                                style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400),
+                              ),
+                              value: 2,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -196,11 +202,57 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
                 // TAB BAR
                 bottom: TabBar(
                   controller: _tabController,
-                  indicatorColor: Colors.white,
+                  indicatorColor: Colors.black,
                   // indicatorPadding: EdgeInsets.all(8),
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicatorWeight: 3,
-                  tabs: tabItemList,
+                  tabs: [
+                    Tab(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // IconTheme(
+                          //   data: Theme.of(context).iconTheme,
+                          //   child: const Icon(Icons.library_books_rounded),
+                          // ),
+                          Text(
+                            "  TOPICS",
+                            style: Theme.of(context).textTheme.headline3,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Tab(
+                      icon: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // IconTheme(
+                          //   data: Theme.of(context).iconTheme,
+                          //   child: const Icon(Icons.picture_as_pdf_rounded),
+                          // ),
+                          Text(
+                            "  BOOKS",
+                            style: Theme.of(context).textTheme.headline3,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Tab(
+                      icon: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // IconTheme(
+                          //   data: Theme.of(context).iconTheme,
+                          //   child: const Icon(Icons.star_rounded),
+                          // ),
+                          Text(
+                            "  FAVORITE",
+                            style: Theme.of(context).textTheme.headline3,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               body: TabBarView(
@@ -208,10 +260,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
                 children: const [
                   SubjectListPage(),
                   PdfsPage(),
-                  Text(
-                    "_sharedFiles",
-                    style: TextStyle(color: Colors.black),
-                  ),
+                  StarredMessagesPage(from: "HomePage"),
                 ],
               ),
             ),

@@ -7,18 +7,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/repositories/message_repository.dart';
 import 'package:frontend/models/message_model.dart';
+import 'package:frontend/services/subject_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-final messageServiceProvider = ChangeNotifierProvider((ref) => MessageService());
+final messageServiceProvider =
+    ChangeNotifierProvider((ref) => MessageService(ref.watch(subjectServiceProvider).subjectName));
 
 class MessageService extends ChangeNotifier {
+  late String messageSubjectName;
+  MessageService(this.messageSubjectName);
+
   XFile? _image;
   final ImagePicker _picker = ImagePicker();
   List<Message> messages = [];
 
   /// separate [starredMessages] variable for [StarredMessagePage]
-  List<Message> starredMessages = [];
 
   // ===========================================================================================
   // ===========================================================================================
@@ -43,7 +47,6 @@ class MessageService extends ChangeNotifier {
   // ===========================================================================================
   // ===========================================================================================
   // General CRUD
-
   /// Adds a new [Message] to message repository/database.
   Future<void> addMessage(String title, String body, int subjectRowId, String type) async {
     if (body == "") return;
@@ -51,9 +54,9 @@ class MessageService extends ChangeNotifier {
     await MessageRepository().addMessageToLocalDatabase(Message(
       rowId: null,
       id: const Uuid().v1(),
-      title: "",
+      title: title,
       body: body,
-      // subjectName: subjectName,
+      subjectName: messageSubjectName,
       subjectRowId: subjectRowId,
       timeCreated: DateTime.now().millisecondsSinceEpoch,
       timeUpdated: DateTime.now().millisecondsSinceEpoch,
@@ -87,12 +90,7 @@ class MessageService extends ChangeNotifier {
     deleteStates();
     notifyListeners();
   }
-
-  //
-  // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  //
-  //
-  //
+  // ===================================================================================================
 
   Future<void> retrieveLostData() async {
     final LostDataResponse response = await _picker.retrieveLostData();
@@ -117,7 +115,6 @@ class MessageService extends ChangeNotifier {
   void messageOnTap(Message message) {
     if (selectedMessages.isNotEmpty && !selectedMessages.contains(message)) {
       selectedMessages.add(message);
-
       showHoldMessageIcons = selectedMessages.isNotEmpty;
     } else {
       selectedMessages.remove(message);
@@ -132,15 +129,18 @@ class MessageService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// delete the hold effects and [selectedMessages] after the work with said [selectedMessages] is done.
+  ///
+  /// does not call notifyListeners(), caller function have to do it themselves.
   void deleteStates() {
     selectedMessages = [];
     showHoldMessageIcons = false;
-
-    // notifyListeners();
   }
 
-  /// Returns wheather the screen should [pop] or not. returns [true] if should [pop].
   /// To check if user has selected any messages, if so then remove them from [selectedMessages] and return false
+  ///
+  /// Returns wheather the screen should [pop] or not. returns [true] if should [pop].
+  ///
   /// If [selectedMessages] is already empty then return true.
   Future<bool> willPopScreen() async {
     if (selectedMessages.isNotEmpty) {
@@ -159,7 +159,6 @@ class MessageService extends ChangeNotifier {
 
   bool cameraIconVisible = true;
   bool galleryIconVisible = true;
-  // bool _sendIconVisible = false;
 
   TextEditingController newTextController = TextEditingController();
 
@@ -168,12 +167,10 @@ class MessageService extends ChangeNotifier {
 
   /// sends input [text] to [addMessage] method and clears the [newTextController] text
   void sendInputText(String text, int subjectRowId) async {
-    const bool isFavourite = false;
     const String type = "text";
 
     addMessage("", text, subjectRowId, type);
     newTextController.clear();
-    // updateInputText(text);
   }
 
   void updateInputText(String value) {
@@ -195,7 +192,6 @@ class MessageService extends ChangeNotifier {
   Future imgFromCamera(String imagePath, int subjectRowId) async {
     debugPrint(imagePath);
     if (imagePath != "") {
-      const bool isFavourite = false;
       const String type = "image";
       addMessage("", imagePath, subjectRowId, type);
     }
@@ -211,8 +207,6 @@ class MessageService extends ChangeNotifier {
       _image = image;
       notifyListeners();
       if (_image != null) {
-        // const bool isFavourite = false;
-        // const bool isText = false;
         const String type = "image";
         addMessage("", _image!.path, subjectRowId, type);
       }
@@ -261,21 +255,5 @@ class MessageService extends ChangeNotifier {
     }
     deleteStates();
     notifyListeners();
-  }
-
-  /// set the [starredMessages] on initial load of [StarredMessagesPage]
-  Future<void> setStarredMessages(int subjectRowId) async {
-    starredMessages = [];
-    starredMessages = await MessageRepository().getStarredMessagesFromLocalDatabase(subjectRowId);
-    for (var element in starredMessages) {
-      debugPrint(element.body + "-----" + element.isFavourite.toString());
-    }
-    notifyListeners();
-  }
-
-  /// dispose the [starredMessages] on destroying the [StarredMessagesPage]
-  void disposeStarredMessages() {
-    starredMessages = [];
-    // notifyListeners();
   }
 }

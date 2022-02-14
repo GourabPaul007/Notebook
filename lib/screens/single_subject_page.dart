@@ -10,14 +10,9 @@ import 'package:frontend/services/message_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/subject_service.dart';
 
-// import 'single_subject/camera_screen.dart';
-
 class SingleSubject extends ConsumerStatefulWidget {
-// CameraDescription camera;
-
   const SingleSubject({
     Key? key,
-    // required this.camera,
   }) : super(key: key);
 
   @override
@@ -75,7 +70,8 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
         ),
         body: Container(
           decoration: const BoxDecoration(
-            color: Color(0xFFDBD4CC),
+            // color: Color(0xFFDBD4CC),
+            color: Colors.white,
           ),
           child: Column(
             children: [
@@ -115,8 +111,8 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
                               Flexible(
                                 flex: 7,
                                 child: EachMessage(
-                                  index: index,
-                                  parentType: 'SingleSubjectPage',
+                                  message: messageService.messages.elementAt(index),
+                                  from: 'SingleSubjectPage',
                                 ),
                               ),
                             ],

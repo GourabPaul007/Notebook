@@ -112,7 +112,7 @@ class SubjectDetailsPage extends ConsumerWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const StarredMessagesPage(),
+                                builder: (context) => const StarredMessagesPage(from: "SubjectDetailsPage"),
                               ),
                             );
                           },

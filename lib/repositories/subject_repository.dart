@@ -26,13 +26,23 @@ class SubjectRepository {
     return returnCode;
   }
 
-  Future<int> deleteSubjectFromLocalDatabase(Subject subject) async {
+  Future<int> deleteSubjectsFromLocalDatabase(List<Subject> subjects) async {
     Database db = await DBHelper.instance.database;
-    // Deleting the messages tied to the subject First
-    int messagesDeletedCount =
-        await db.delete("messages_table", where: "subject_row_id = ?", whereArgs: [subject.rowId]);
+    List<int?> subjectRowIds = [];
+    for (int i = 0; i < subjects.length; i++) {
+      subjectRowIds.add(subjects[i].rowId);
+    }
+    int messagesDeletedCount = await db.delete(
+      "messages_table",
+      where: "subject_row_id IN (${List.filled(subjectRowIds.length, '?').join(',')})",
+      whereArgs: subjectRowIds,
+    );
     // Deleting the subject
-    int subjectsDeletedCount = await db.delete("subjects_table", where: "row_id = ?", whereArgs: [subject.rowId]);
+    int subjectsDeletedCount = await db.delete(
+      "subjects_table",
+      where: "row_id IN (${List.filled(subjectRowIds.length, '?').join(',')})",
+      whereArgs: subjectRowIds,
+    );
     // await db.close();
     MessageRepository().printAllMessagesFromLocalDatabase();
     return subjectsDeletedCount + messagesDeletedCount;
@@ -46,7 +56,7 @@ class SubjectRepository {
     };
 
     Database db = await DBHelper.instance.database;
-    int returnCode = await db.update(subjectsTable, row, where: "rowId = ?", whereArgs: [rowId]);
+    int returnCode = await db.update(subjectsTable, row, where: "row_id = ?", whereArgs: [rowId]);
     // await db.close();
     return returnCode;
   }

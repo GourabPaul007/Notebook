@@ -59,6 +59,7 @@ class DBHelper {
           time_updated INTEGER NOT NULL,
           type TEXT NOT NULL,
           is_favourite BOOLEAN NOT NULL DEFAULT 0,
+          subject_name TEXT NOT NULL,
           subject_row_id INTEGER NOT NULL,
           FOREIGN KEY(subject_row_id) REFERENCES $subjectsTable(row_id)
         )

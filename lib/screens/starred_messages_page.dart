@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/helpers/date_time.dart';
+import 'package:frontend/models/message_model.dart';
 import 'package:frontend/screens/single_subject/each_message.dart';
 import 'package:frontend/services/message_service.dart';
+import 'package:frontend/services/starredMessageService.dart';
 import 'package:frontend/services/subject_service.dart';
 
+/// Will show starred messages.
+///
+/// If called from [HomePage], It will show all starred messages
+///
+/// If called from [SubjectDetailsPage], It will show subject specific starred messages
 class StarredMessagesPage extends ConsumerStatefulWidget {
-  const StarredMessagesPage({Key? key}) : super(key: key);
+  final String from;
+  const StarredMessagesPage({Key? key, required this.from}) : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _StarredMessagesPageState();
@@ -15,38 +24,45 @@ class _StarredMessagesPageState extends ConsumerState<StarredMessagesPage> {
   @override
   void initState() {
     super.initState();
-    ref.read(messageServiceProvider).setStarredMessages(ref.read(subjectServiceProvider).getSubjectRowId);
-  }
 
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   ref.read(messageServiceProvider).disposeStarredMessages();
-  // }
+    void initGetData() async {
+      if (widget.from == "HomePage") {
+        await ref.read(starredMessageServiceProvider).setStarredMessages(widget.from);
+      } else {
+        await ref.read(starredMessageServiceProvider).setStarredMessages(
+              widget.from,
+              ref.read(subjectServiceProvider).getSubjectRowId,
+            );
+      }
+    }
+
+    initGetData();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final messageService = ref.watch(messageServiceProvider);
+    final starredMessages = ref.watch(starredMessageServiceProvider).starredMessages;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Starred Messages",
-          style: TextStyle(fontSize: 22),
-        ),
-      ),
+      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: widget.from == "HomePage"
+          ? null
+          : AppBar(
+              title: Text(
+                "Starred Messages",
+                style: Theme.of(context).textTheme.headline2,
+              ),
+            ),
       body: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: ListView.separated(
           shrinkWrap: true,
-          itemCount: messageService.starredMessages.length,
+          itemCount: starredMessages.length,
           itemBuilder: (BuildContext context, int index) {
+            final singleMessage = starredMessages.elementAt(index);
             return Material(
-              color: messageService.selectedMessages.contains(
-                messageService.starredMessages.elementAt(index),
-              )
-                  ? Colors.grey[400]
-                  : Colors.transparent,
+              // color: selectedMessages.contains(singleMessage) ? Colors.grey[400] : Colors.transparent,
+              color: Colors.transparent,
               child: InkWell(
                 splashColor: Colors.black12,
                 onLongPress: () {
@@ -56,24 +72,55 @@ class _StarredMessagesPageState extends ConsumerState<StarredMessagesPage> {
                 onTap: () {
                   // ref.read(messageServiceProvider).messageOnTap(messageService.messages.elementAt(index));
                 },
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Flexible(
-                      flex: 4,
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        child: EachMessage(
-                          index: index,
-                          parentType: 'StarredMessagesPage',
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 0, bottom: 2, left: 8, right: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            "Topic  ►  ",
+                            style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                          ),
+                          Text(
+                            singleMessage.subjectName,
+                            style: TextStyle(color: Colors.grey[900], fontSize: 16),
+                          ),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                unixToDate(singleMessage.timeCreated),
+                                style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        child: const SizedBox(),
-                      ),
+                    Row(
+                      children: [
+                        Flexible(
+                          flex: 7,
+                          child: Container(
+                            alignment: Alignment.centerLeft,
+                            child: EachMessage(
+                              // index: index,
+                              message: singleMessage,
+                              from: 'StarredMessagesPage',
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            alignment: Alignment.centerLeft,
+                            child: const SizedBox(),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -81,7 +128,9 @@ class _StarredMessagesPageState extends ConsumerState<StarredMessagesPage> {
             );
           },
           separatorBuilder: (BuildContext context, int index) {
-            return const Divider();
+            return Divider(
+              color: Colors.grey[700],
+            );
           },
         ),
       ),

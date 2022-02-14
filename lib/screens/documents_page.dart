@@ -171,7 +171,7 @@ class _PdfsPageState extends ConsumerState<PdfsPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        label: const Text("Add Document"),
+        label: const Text("Add Books"),
         icon: const Icon(
           Icons.add_rounded,
           size: 28,

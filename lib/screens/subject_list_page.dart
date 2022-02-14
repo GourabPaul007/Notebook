@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/models/subject_model.dart';
 import 'package:frontend/screens/single_subject_page.dart';
+import 'package:frontend/screens/subject_list_page/hold_subject_dialog.dart';
 import 'package:frontend/screens/subject_list_page/single_subject_tile.dart';
 import 'package:frontend/screens/subject_list_page/edit_subject_dialog.dart';
 import 'package:frontend/services/documents_service.dart';
@@ -14,9 +16,15 @@ class SubjectListPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _SubjectListPageState();
 }
 
-class _SubjectListPageState extends ConsumerState<SubjectListPage> with AutomaticKeepAliveClientMixin {
+class _SubjectListPageState extends ConsumerState<SubjectListPage> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(subjectServiceProvider).getAllSubjects("HomePage");
+  }
+
   void _onTap(BuildContext context, Subject subject) {
-    if (ref.read(subjectServiceProvider).setAfterSubjectOnTap(subject)) {
+    if (ref.read(subjectServiceProvider).subjectOnTap(subject)) {
       return;
     }
 
@@ -28,14 +36,14 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> with Automati
 
     Navigator.push(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => const SingleSubject(),
       ),
     );
   }
 
-  @override
-  bool get wantKeepAlive => true;
+  // @override
+  // bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
@@ -71,21 +79,36 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> with Automati
         itemCount: subjects.length,
         itemBuilder: (BuildContext context, int index) {
           // Material because "chat on hold" tasks
-          return Material(
-            color: ref.read(subjectServiceProvider).selectedSubjects.contains(subjects[index])
-                ? Colors.grey[400]
-                : Colors.transparent,
-            child: InkWell(
-              splashColor: Colors.grey[400],
-              onLongPress: () {
-                ref.read(subjectServiceProvider).subjectOnLongPress(subjects[index]);
-              },
-              onTap: () {
-                // ref.read(subjectServiceProvider).onTap(context, subjects[index]);
-                _onTap(context, subjects[index]);
-              },
-              child: SingleSubjectTile(
-                subject: subjects[index],
+          return Container(
+            margin: const EdgeInsets.only(left: 8, right: 8, top: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              // color: Colors.red,
+            ),
+            clipBehavior: Clip.hardEdge,
+            child: Material(
+              color: ref.read(subjectServiceProvider).selectedSubjects.contains(subjects[index])
+                  ? Colors.indigo[100]
+                  : Colors.transparent,
+              child: InkWell(
+                splashColor: Colors.indigo[100],
+                onLongPress: () {
+                  ref.read(subjectServiceProvider).subjectOnLongPress(subjects[index]);
+                  // showDialog(
+                  //   barrierColor: Colors.transparent,
+                  //   context: context,
+                  //   builder: (BuildContext context) {
+                  //     return HoldSubjectDialog();
+                  //   },
+                  // );
+                },
+                onTap: () {
+                  // ref.read(subjectServiceProvider).onTap(context, subjects[index]);
+                  _onTap(context, subjects[index]);
+                },
+                child: SingleSubjectTile(
+                  subject: subjects[index],
+                ),
               ),
             ),
           );
@@ -101,11 +124,12 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> with Automati
         ),
         onPressed: () async {
           ref.read(subjectServiceProvider).resetHoldSubjectEffects();
-          Navigator.of(context).push(
-            PageRouteBuilder(
-              opaque: false,
-              pageBuilder: (context, _, __) => const EditSubjectDialog(type: "add"),
-            ),
+          showDialog(
+            context: context,
+            barrierColor: Colors.transparent,
+            builder: (BuildContext context) {
+              return const EditSubjectDialog(type: "add");
+            },
           );
         },
       ),

@@ -56,13 +56,12 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
           Expanded(
             flex: 12,
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 // color: Color(0xFF555a5d),
-                color: Colors.white,
-                borderRadius: BorderRadius.all(
+                color: Colors.grey[300],
+                borderRadius: const BorderRadius.all(
                   Radius.circular(50),
                 ),
-                boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 0.5, offset: Offset(0, 0.5))],
               ),
               child: Material(
                 type: MaterialType.transparency,
@@ -91,9 +90,9 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                         ),
                                       );
                                     },
-                                    icon: const Icon(Icons.camera_alt_rounded),
+                                    icon: const Icon(Icons.camera_alt_outlined),
                                     splashColor: Colors.amber,
-                                    color: Colors.black54,
+                                    color: Colors.black,
                                   ),
                                 ),
                               ),
@@ -117,8 +116,8 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                           );
                                     },
                                     splashColor: Colors.amber,
-                                    icon: const Icon(Icons.photo),
-                                    color: Colors.black54,
+                                    icon: const Icon(Icons.photo_outlined),
+                                    color: Colors.black,
                                   ),
                                 ),
                               ),
@@ -133,16 +132,17 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                             onPressed: () async {
                               // ref.read(messageServiceProvider).pickFiles(subjectService.subjectRowId);
                               showModalBottomSheet(
-                                  context: context,
-                                  backgroundColor: Colors.transparent,
-                                  barrierColor: Colors.transparent,
-                                  builder: (BuildContext context) {
-                                    return SingleSubjectBottomSheet(subjectRowId: subjectService.subjectRowId);
-                                  });
+                                context: context,
+                                backgroundColor: Colors.transparent,
+                                barrierColor: Colors.transparent,
+                                builder: (BuildContext context) {
+                                  return SingleSubjectBottomSheet(subjectRowId: subjectService.subjectRowId);
+                                },
+                              );
                             },
                             icon: Transform.rotate(angle: 45, child: const Icon(Icons.attach_file_rounded)),
                             splashColor: Colors.amber,
-                            color: Colors.black54,
+                            color: Colors.black,
                           ),
                         ),
                       ),
@@ -158,10 +158,8 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                             decoration: const InputDecoration(
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.only(
-                                top: 2.0,
-                                left: 12.0,
+                                left: 8.0,
                                 right: 12.0,
-                                bottom: 2.0,
                               ),
                               hintText: "Type your message",
                               hintStyle: TextStyle(
@@ -195,6 +193,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                 // iconSize: 48,
                 icon: const Icon(
                   Icons.send_rounded,
+                  color: Colors.white,
                 ),
               ),
             ),

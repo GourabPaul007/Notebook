@@ -4,7 +4,7 @@ class Message {
   final String id;
   String title;
   String body;
-  // final String subjectName;
+  final String subjectName;
   final int subjectRowId;
   final int timeCreated;
   int timeUpdated;
@@ -16,7 +16,7 @@ class Message {
       required this.id,
       required this.title,
       required this.body,
-      // required this.subjectName,
+      required this.subjectName,
       required this.subjectRowId,
       required this.timeCreated,
       required this.timeUpdated,
@@ -28,7 +28,7 @@ class Message {
         id: json['id'],
         title: json['title'],
         body: json['body'],
-        // subjectName: json['subject_name'],
+        subjectName: json['subject_name'],
         subjectRowId: json['subject_row_id'],
         timeCreated: json['time_created'],
         timeUpdated: json['time_updated'],
@@ -42,7 +42,7 @@ class Message {
       'id': id,
       'title': title,
       'body': body,
-      // 'subject_name': subjectName,
+      'subject_name': subjectName,
       'subject_row_id': subjectRowId,
       'time_created': timeCreated,
       'time_updated': timeUpdated,
