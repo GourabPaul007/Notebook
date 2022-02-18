@@ -17,16 +17,25 @@ class SubjectDetailsPage extends ConsumerWidget {
     final subjectService = ref.watch(subjectServiceProvider);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_rounded,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Column(
         children: [
           Expanded(
             flex: 4,
             child: Stack(children: [
-              // subjectService.
               Image.network(
                 """https://images.unsplash.com/photo-1489549132488-d00b7eee80f1?ixlib=rb-1.2.1&
                 ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80""",
@@ -37,9 +46,7 @@ class SubjectDetailsPage extends ConsumerWidget {
               Positioned(
                 bottom: 8,
                 left: 16,
-                // width: double.maxFinite,
                 child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
@@ -48,7 +55,9 @@ class SubjectDetailsPage extends ConsumerWidget {
                     ),
                     Text(
                       "Created at  " +
-                          formatDate(DateTime.fromMillisecondsSinceEpoch(subjectService.subject.timeCreated)),
+                          formatDate(DateTime.fromMillisecondsSinceEpoch(
+                            subjectService.subject.timeCreated,
+                          )),
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                     ),
                   ],
@@ -73,7 +82,7 @@ class SubjectDetailsPage extends ConsumerWidget {
                         ),
                       );
                     },
-                    icon: const Icon(Icons.edit_rounded),
+                    icon: const Icon(Icons.edit_rounded, color: Colors.white),
                   ),
                 ),
               )
@@ -82,7 +91,7 @@ class SubjectDetailsPage extends ConsumerWidget {
           Expanded(
               flex: 8,
               child: Container(
-                color: const Color(0xFFECE5DD),
+                color: Colors.transparent,
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
@@ -93,17 +102,20 @@ class SubjectDetailsPage extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text("Description", style: TextStyle(fontSize: 18, color: Colors.grey[800])),
+                            Text(
+                              "Description",
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
                             Text(
                               subjectService.subjectDescription,
-                              style: const TextStyle(fontSize: 18, color: Colors.black),
+                              style: Theme.of(context).textTheme.bodyText1,
                             ),
                           ],
                         ),
                       ),
                       Container(
                         height: 8,
-                        color: Colors.grey[400],
+                        color: Theme.of(context).backgroundColor,
                       ),
                       Material(
                         color: Colors.transparent,
@@ -116,21 +128,20 @@ class SubjectDetailsPage extends ConsumerWidget {
                               ),
                             );
                           },
-                          title: const Text(
+                          title: Text(
                             "Starred Messages",
-                            style: TextStyle(fontSize: 20, color: Colors.black),
+                            style: Theme.of(context).textTheme.headline4,
                           ),
                           trailing: const Icon(
                             Icons.star_rate_rounded,
-                            color: Colors.black54,
                           ),
                           // subtitle: Text("subtitle"),
                         ),
                       ),
-                      Divider(
-                        color: Colors.grey[500],
-                        indent: 16,
-                      ),
+                      // Divider(
+                      //   color: Colors.grey[500],
+                      //   indent: 16,
+                      // ),
                     ],
                   ),
                 ),

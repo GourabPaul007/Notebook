@@ -29,7 +29,7 @@ class _PdfsPageState extends ConsumerState<PdfsPage> {
   Widget build(BuildContext context) {
     final documents = ref.watch(documentServiceProvider).documents;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).backgroundColor,
       // body: GridView.builder(
       //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       //   itemCount: documents.length,
@@ -85,7 +85,7 @@ class _PdfsPageState extends ConsumerState<PdfsPage> {
                       },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
+                        children: <Widget>[
                           Expanded(
                             flex: 5,
                             child: Container(
@@ -151,12 +151,13 @@ class _PdfsPageState extends ConsumerState<PdfsPage> {
                                         .substring(singleDocument.path.lastIndexOf(".") + 1)
                                         .toUpperCase(),
                                 style: TextStyle(
-                                    color: ref.watch(documentServiceProvider).selectedDocuments.contains(singleDocument)
-                                        ? singleDocument.type == "pdf"
-                                            ? Colors.red[100]
-                                            : Colors.blue[100]
-                                        : Colors.white,
-                                    fontSize: 14),
+                                  color: ref.watch(documentServiceProvider).selectedDocuments.contains(singleDocument)
+                                      ? singleDocument.type == "pdf"
+                                          ? Colors.red[100]
+                                          : Colors.blue[100]
+                                      : Colors.white,
+                                  fontSize: 14,
+                                ),
                               ),
                             ),
                           ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/screens/single_subject/styles.dart';
+import 'package:frontend/screens/single_subject_page/styles.dart';
 import 'package:frontend/services/subject_service.dart';
+import 'package:frontend/services/theme_service.dart';
 
 // class EditSubjectDialog extends ConsumerStatefulWidget {
 //   final int? rowId;
@@ -245,7 +246,7 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
       // margin: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
-        color: Colors.white,
+        color: Theme.of(context).backgroundColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: kElevationToShadow[1],
       ),
@@ -270,14 +271,21 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
                   child: TextField(
                     controller: _subjectNameController,
                     maxLines: 1,
-                    style: const TextStyle(color: Colors.black),
+                    style: TextStyle(
+                      color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.white : Colors.black,
+                    ),
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                       hintText: "Topic Name",
-                      hintStyle: TextStyle(color: Colors.grey[700]),
-                      fillColor: Colors.grey[200],
+                      hintStyle: TextStyle(
+                        color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey : Colors.grey[700],
+                      ),
+                      fillColor: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey[900] : Colors.grey[300],
                       filled: true,
-                      border: textfieldBorder,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
                   ),
                 ),
@@ -295,14 +303,21 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
                   child: TextField(
                     controller: _subjectDescriptionController,
                     maxLines: 1,
-                    style: const TextStyle(color: Colors.black),
+                    style: TextStyle(
+                      color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.white : Colors.black,
+                    ),
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                       hintText: "Topic Description (Optional)",
-                      hintStyle: TextStyle(color: Colors.grey[700]),
-                      fillColor: Colors.grey[200],
+                      hintStyle: TextStyle(
+                        color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey : Colors.grey[700],
+                      ),
+                      fillColor: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey[900] : Colors.grey[300],
                       filled: true,
-                      border: textfieldBorder,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
                   ),
                 ),

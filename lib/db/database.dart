@@ -53,8 +53,9 @@ class DBHelper {
         CREATE TABLE IF NOT EXISTS $messagesTable(
           row_id INTEGER PRIMARY KEY AUTOINCREMENT,
           id TEXT NOT NULL,
-          title TEXT,
-          body TEXT,
+          title TEXT NOT NULL,
+          body TEXT NOT NULL,
+          color INTEGER NOT NULL,
           time_created INTEGER NOT NULL,
           time_updated INTEGER NOT NULL,
           type TEXT NOT NULL,
@@ -73,6 +74,7 @@ class DBHelper {
           path TEXT NOT NULL,
           size INTEGER NOT NULL,
           type TEXT NOT NULL,
+          color INTEGER NOT NULL,
           time_added INTEGER NOT NULL,
           is_favourite BOOLEAN NOT NULL DEFAULT 0
         )

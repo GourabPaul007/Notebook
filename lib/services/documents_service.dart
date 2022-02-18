@@ -68,6 +68,7 @@ class PdfService extends ChangeNotifier {
       rowId: null,
       name: basename(file.path),
       path: file.path,
+      color: const Color(0xFFff5722).value,
       size: (file.lengthSync() / 1000).floor(),
       type: file.path.substring(file.path.lastIndexOf(".") + 1),
       timeAdded: DateTime.now().millisecondsSinceEpoch,

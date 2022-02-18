@@ -88,10 +88,10 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> {
             clipBehavior: Clip.hardEdge,
             child: Material(
               color: ref.read(subjectServiceProvider).selectedSubjects.contains(subjects[index])
-                  ? Colors.indigo[100]
+                  ? Theme.of(context).splashColor
                   : Colors.transparent,
               child: InkWell(
-                splashColor: Colors.indigo[100],
+                splashColor: Theme.of(context).splashColor,
                 onLongPress: () {
                   ref.read(subjectServiceProvider).subjectOnLongPress(subjects[index]);
                   // showDialog(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/single_subject/edit_message_dialog.dart';
+import 'package:frontend/screens/single_subject_page/edit_message_dialog.dart';
 
 class MessageEditButton extends StatelessWidget {
   const MessageEditButton({

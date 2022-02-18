@@ -4,6 +4,7 @@ class Message {
   final String id;
   String title;
   String body;
+  int color;
   final String subjectName;
   final int subjectRowId;
   final int timeCreated;
@@ -11,23 +12,26 @@ class Message {
   bool isFavourite;
   final String type;
 
-  Message(
-      {required this.rowId,
-      required this.id,
-      required this.title,
-      required this.body,
-      required this.subjectName,
-      required this.subjectRowId,
-      required this.timeCreated,
-      required this.timeUpdated,
-      required this.isFavourite,
-      required this.type});
+  Message({
+    required this.rowId,
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.color,
+    required this.subjectName,
+    required this.subjectRowId,
+    required this.timeCreated,
+    required this.timeUpdated,
+    required this.isFavourite,
+    required this.type,
+  });
 
   factory Message.fromMap(Map<String, dynamic> json) => Message(
         rowId: json["row_id"],
         id: json['id'],
         title: json['title'],
         body: json['body'],
+        color: json['color'],
         subjectName: json['subject_name'],
         subjectRowId: json['subject_row_id'],
         timeCreated: json['time_created'],
@@ -42,6 +46,7 @@ class Message {
       'id': id,
       'title': title,
       'body': body,
+      'color': color,
       'subject_name': subjectName,
       'subject_row_id': subjectRowId,
       'time_created': timeCreated,

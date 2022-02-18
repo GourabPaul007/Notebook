@@ -43,12 +43,13 @@ class MessageService extends ChangeNotifier {
   // Get all the message info on edit message modal
   String get getEditMessageTitle => selectedMessages[0].title;
   String get getEditMessageBody => selectedMessages[0].body;
+  int get getEditMessageColor => selectedMessages[0].color;
 
   // ===========================================================================================
   // ===========================================================================================
   // General CRUD
   /// Adds a new [Message] to message repository/database.
-  Future<void> addMessage(String title, String body, int subjectRowId, String type) async {
+  Future<void> addMessage(String title, String body, int color, int subjectRowId, String type) async {
     if (body == "") return;
 
     await MessageRepository().addMessageToLocalDatabase(Message(
@@ -56,6 +57,10 @@ class MessageService extends ChangeNotifier {
       id: const Uuid().v1(),
       title: title,
       body: body,
+      // titleColor: const Color(0xFFff5722).value,
+      // bodyColor: const Color(0xFFff5722).value,
+      // color: const Color(0xFFff5722).value,
+      color: color,
       subjectName: messageSubjectName,
       subjectRowId: subjectRowId,
       timeCreated: DateTime.now().millisecondsSinceEpoch,
@@ -71,9 +76,16 @@ class MessageService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> editMessage(int messsageRowId, String messageTitle, String messageBody) async {
+  Future<void> getMessages(int subjectRowId) async {
+    var result = await MessageRepository().getMessagesFromLocalDatabase(subjectRowId);
+    messages = result;
+    notifyListeners();
+  }
+
+  Future<void> editMessage(int messsageRowId, String messageTitle, String messageBody, int color) async {
     selectedMessages[0].title = messageTitle;
     selectedMessages[0].body = messageBody;
+    selectedMessages[0].color = color;
     selectedMessages[0].timeUpdated = DateTime.now().millisecondsSinceEpoch;
 
     await MessageRepository().editMessageFromLocalDatabase(selectedMessages.first);
@@ -89,20 +101,6 @@ class MessageService extends ChangeNotifier {
     // Other Stuff
     deleteStates();
     notifyListeners();
-  }
-  // ===================================================================================================
-
-  Future<void> retrieveLostData() async {
-    final LostDataResponse response = await _picker.retrieveLostData();
-    if (response.isEmpty) {
-      return;
-    }
-    if (response.file != null) {
-      _image = response.file;
-      notifyListeners();
-    } else {
-      debugPrint(response.exception.toString());
-    }
   }
 
   void messageOnLongPress(Message message) {
@@ -122,11 +120,19 @@ class MessageService extends ChangeNotifier {
     }
     notifyListeners();
   }
+  // ===================================================================================================
 
-  void getMessages(int subjectRowId) async {
-    var result = await MessageRepository().getMessagesFromLocalDatabase(subjectRowId);
-    messages = result;
-    notifyListeners();
+  Future<void> retrieveLostData() async {
+    final LostDataResponse response = await _picker.retrieveLostData();
+    if (response.isEmpty) {
+      return;
+    }
+    if (response.file != null) {
+      _image = response.file;
+      notifyListeners();
+    } else {
+      debugPrint(response.exception.toString());
+    }
   }
 
   /// delete the hold effects and [selectedMessages] after the work with said [selectedMessages] is done.
@@ -169,7 +175,7 @@ class MessageService extends ChangeNotifier {
   void sendInputText(String text, int subjectRowId) async {
     const String type = "text";
 
-    addMessage("", text, subjectRowId, type);
+    addMessage("", text, Colors.deepPurpleAccent.value, subjectRowId, type);
     newTextController.clear();
   }
 
@@ -193,7 +199,7 @@ class MessageService extends ChangeNotifier {
     debugPrint(imagePath);
     if (imagePath != "") {
       const String type = "image";
-      addMessage("", imagePath, subjectRowId, type);
+      addMessage("", imagePath, Colors.deepPurpleAccent.value, subjectRowId, type);
     }
   }
 
@@ -208,7 +214,7 @@ class MessageService extends ChangeNotifier {
       notifyListeners();
       if (_image != null) {
         const String type = "image";
-        addMessage("", _image!.path, subjectRowId, type);
+        addMessage("", _image!.path, Colors.deepPurpleAccent.value, subjectRowId, type);
       }
     } on Exception catch (e) {
       await retrieveLostData();
@@ -229,7 +235,7 @@ class MessageService extends ChangeNotifier {
       return File(path!);
     }).toList();
     for (var file in files) {
-      addMessage("", file.path, subjectRowId, "document");
+      addMessage("", file.path, Colors.deepPurpleAccent.value, subjectRowId, "document");
     }
   }
 

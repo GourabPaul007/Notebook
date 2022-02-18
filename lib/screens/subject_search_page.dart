@@ -25,10 +25,7 @@ class SubjectSearchPage extends SearchDelegate {
       onPressed: () {
         close(context, null);
       },
-      icon: const Icon(
-        Icons.arrow_back_rounded,
-        color: Colors.black,
-      ),
+      icon: const Icon(Icons.arrow_back_rounded),
     );
   }
 
@@ -73,9 +70,9 @@ class SubjectSearchPage extends SearchDelegate {
     super.appBarTheme(context);
     // final ThemeData theme = Theme.of(context);
     return Theme.of(context).copyWith(
-      appBarTheme: const AppBarTheme(color: Colors.white, elevation: 0),
+      appBarTheme: AppBarTheme(color: Theme.of(context).backgroundColor, elevation: 0),
       inputDecorationTheme: const InputDecorationTheme(border: InputBorder.none),
-      scaffoldBackgroundColor: Colors.white,
+      scaffoldBackgroundColor: Theme.of(context).backgroundColor,
     );
   }
 }

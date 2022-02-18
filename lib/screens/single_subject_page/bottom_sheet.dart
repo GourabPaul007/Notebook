@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/screens/single_subject/camera_screen.dart';
-import 'package:frontend/screens/single_subject/edit_message_dialog.dart';
+import 'package:frontend/screens/single_subject_page/camera_screen.dart';
+import 'package:frontend/screens/single_subject_page/edit_message_dialog.dart';
 import 'package:frontend/services/message_service.dart';
-import 'package:frontend/services/subject_service.dart';
 
 class SingleSubjectBottomSheet extends StatelessWidget {
   final int subjectRowId;

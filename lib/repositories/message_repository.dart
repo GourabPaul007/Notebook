@@ -48,6 +48,7 @@ class MessageRepository {
     Map<String, dynamic> values = {
       "title": message.title,
       "body": message.body,
+      "color": message.color,
       "time_updated": message.timeUpdated,
     };
     final returnCode = await db.update(messageTable, values, where: "row_id = ?", whereArgs: [message.rowId]);

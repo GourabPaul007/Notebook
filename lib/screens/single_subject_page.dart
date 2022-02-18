@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/single_subject/each_message.dart';
-import 'package:frontend/screens/single_subject/input_area.dart';
-import 'package:frontend/screens/single_subject/messages_appbar/message_delete_button.dart';
-import 'package:frontend/screens/single_subject/messages_appbar/message_edit_button.dart';
-import 'package:frontend/screens/single_subject/messages_appbar/message_star_button.dart';
-import 'package:frontend/screens/single_subject/messages_appbar/subject_title.dart';
+import 'package:frontend/screens/single_subject_page/each_message.dart';
+import 'package:frontend/screens/single_subject_page/input_area.dart';
+import 'package:frontend/screens/single_subject_page/messages_appbar/message_delete_button.dart';
+import 'package:frontend/screens/single_subject_page/messages_appbar/message_edit_button.dart';
+import 'package:frontend/screens/single_subject_page/messages_appbar/message_star_button.dart';
+import 'package:frontend/screens/single_subject_page/messages_appbar/subject_title.dart';
 import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/message_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,9 +69,9 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
           ],
         ),
         body: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             // color: Color(0xFFDBD4CC),
-            color: Colors.white,
+            color: Theme.of(context).backgroundColor,
           ),
           child: Column(
             children: [

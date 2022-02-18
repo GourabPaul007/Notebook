@@ -46,6 +46,7 @@ class _TakePictureScreenState extends ConsumerState<TakePictureScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       appBar: AppBar(
         title: const Text('Take a picture'),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
       // You must wait until the controller is initialized before displaying the
       // camera preview. Use a FutureBuilder to display a loading spinner until the
@@ -57,7 +58,7 @@ class _TakePictureScreenState extends ConsumerState<TakePictureScreen> {
             // If the Future is complete, display the preview.
 
             return Container(
-              color: Colors.black,
+              color: Theme.of(context).backgroundColor,
               child: Column(
                 children: [
                   Expanded(
@@ -81,7 +82,6 @@ class _TakePictureScreenState extends ConsumerState<TakePictureScreen> {
                                   ref.watch(cameraServiceProvider).flashOn
                                       ? Icons.flash_on_rounded
                                       : Icons.flash_off_rounded,
-                                  color: Colors.white,
                                   size: 24,
                                 ),
                                 iconSize: 36,
@@ -155,7 +155,6 @@ class _TakePictureScreenState extends ConsumerState<TakePictureScreen> {
                                 },
                                 icon: const Icon(
                                   Icons.camera_alt_rounded,
-                                  color: Colors.white,
                                   size: 36,
                                 ),
                               ),
@@ -173,7 +172,6 @@ class _TakePictureScreenState extends ConsumerState<TakePictureScreen> {
                                 },
                                 icon: const Icon(
                                   Icons.camera_front_rounded,
-                                  color: Colors.white,
                                   size: 24,
                                 ),
                               ),
@@ -214,7 +212,7 @@ class DisplayPictureScreen extends StatelessWidget {
       // The image is stored as a file on the device. Use the `Image.file`
       // constructor with the given path to display the image.
       body: Container(
-        color: Colors.black,
+        color: Theme.of(context).backgroundColor,
         child: Column(
           children: [
             Expanded(
@@ -239,7 +237,6 @@ class DisplayPictureScreen extends StatelessWidget {
                           },
                           icon: const Icon(
                             Icons.refresh,
-                            color: Colors.white,
                             size: 36,
                           ),
                         ),
@@ -258,7 +255,6 @@ class DisplayPictureScreen extends StatelessWidget {
                             },
                             icon: const Icon(
                               Icons.check,
-                              color: Colors.white,
                               size: 36,
                             ),
                           );

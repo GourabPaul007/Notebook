@@ -3,6 +3,7 @@ class Document {
   final String name;
   final String path;
   final String type;
+  int color;
 
   /// [size] is Stored as KB
   final int size;
@@ -13,6 +14,7 @@ class Document {
     required this.rowId,
     required this.name,
     required this.path,
+    required this.color,
     required this.size,
     required this.type,
     required this.timeAdded,
@@ -24,6 +26,7 @@ class Document {
       rowId: json['row_id'],
       name: json['name'],
       path: json['path'],
+      color: json['color'],
       size: json['size'],
       type: json['type'],
       timeAdded: json['time_added'],
@@ -35,6 +38,7 @@ class Document {
     return {
       'name': name,
       'path': path,
+      'color': color,
       'size': size,
       'type': type,
       'time_added': timeAdded,

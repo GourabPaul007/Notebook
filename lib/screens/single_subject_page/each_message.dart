@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/helpers/change_color.dart';
 import 'package:frontend/helpers/date_time.dart';
 import 'package:frontend/models/message_model.dart';
-import 'package:frontend/screens/single_subject/view_image.dart';
+import 'package:frontend/screens/single_subject_page/view_image.dart';
 import 'package:frontend/services/message_service.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart';
@@ -26,11 +27,16 @@ class EachMessage extends ConsumerWidget {
     ref.read(messageServiceProvider).setImages();
 
     return Container(
-      padding: const EdgeInsets.all(4),
+      // padding: const EdgeInsets.all(4),
       margin: const EdgeInsets.only(left: 4, right: 8, top: 2, bottom: 2),
       decoration: BoxDecoration(
+        border: Border.all(
+          color: Color(message.color),
+          width: 3,
+        ),
         borderRadius: BorderRadius.circular(8),
-        color: Theme.of(context).primaryColor,
+        color: Color(message.color),
+        // color: Colors.transparent,
       ),
       child: IntrinsicWidth(
         child: Column(
@@ -41,7 +47,8 @@ class EachMessage extends ConsumerWidget {
             message.title != ""
                 ? Container(
                     padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                    margin: const EdgeInsets.only(bottom: 2),
+                    // margin: const EdgeInsets.only(bottom: 2),
+                    color: Color(message.color),
                     child: Text(
                       message.title,
                       style: const TextStyle(fontSize: 18, color: Colors.white),
@@ -58,7 +65,8 @@ class EachMessage extends ConsumerWidget {
                         : const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(6.0),
-                      color: message.title != "" ? Colors.deepPurple : Colors.transparent,
+                      color: message.title != "" ? darkenColor(Color(message.color)) : Colors.transparent,
+                      // backgroundBlendMode: BlendMode.color,
                     ),
                     child: IntrinsicHeight(
                       child: Row(
@@ -67,7 +75,8 @@ class EachMessage extends ConsumerWidget {
                           Flexible(
                             child: Text(
                               message.body,
-                              style: const TextStyle(fontSize: 16, color: Colors.white),
+                              // style: const TextStyle(fontSize: 16, color: Colors.white),
+                              style: const TextStyle(color: Colors.white),
                               softWrap: true,
                             ),
                           ),
@@ -204,12 +213,13 @@ class OtherMessageInfo extends StatelessWidget {
               ? const Icon(
                   Icons.star_rate_rounded,
                   size: 12,
+                  color: Colors.white,
                 )
               : const SizedBox(),
           const SizedBox(width: 4),
           Text(
             unixToTime(message.timeCreated),
-            style: const TextStyle(fontSize: 12),
+            style: const TextStyle(color: Colors.white, fontSize: 12),
           ),
         ],
       ),

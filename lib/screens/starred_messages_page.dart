@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/helpers/date_time.dart';
-import 'package:frontend/models/message_model.dart';
-import 'package:frontend/screens/single_subject/each_message.dart';
-import 'package:frontend/services/message_service.dart';
+import 'package:frontend/screens/single_subject_page/each_message.dart';
 import 'package:frontend/services/starredMessageService.dart';
 import 'package:frontend/services/subject_service.dart';
 
@@ -61,7 +59,6 @@ class _StarredMessagesPageState extends ConsumerState<StarredMessagesPage> {
           itemBuilder: (BuildContext context, int index) {
             final singleMessage = starredMessages.elementAt(index);
             return Material(
-              // color: selectedMessages.contains(singleMessage) ? Colors.grey[400] : Colors.transparent,
               color: Colors.transparent,
               child: InkWell(
                 splashColor: Colors.black12,
@@ -82,18 +79,18 @@ class _StarredMessagesPageState extends ConsumerState<StarredMessagesPage> {
                         children: <Widget>[
                           Text(
                             "Topic  ►  ",
-                            style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                            style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 16, color: Colors.black),
                           ),
                           Text(
                             singleMessage.subjectName,
-                            style: TextStyle(color: Colors.grey[900], fontSize: 16),
+                            style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 16),
                           ),
                           Expanded(
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
                                 unixToDate(singleMessage.timeCreated),
-                                style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                                style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 16),
                               ),
                             ),
                           )
