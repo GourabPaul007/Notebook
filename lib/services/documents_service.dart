@@ -16,7 +16,7 @@ final documentServiceProvider = ChangeNotifierProvider((ref) {
 
 class PdfService extends ChangeNotifier {
   List<Document> documents = [];
-  bool isDocumentsSelected = false;
+  bool documentsOnHold = false;
   List<Document> selectedDocuments = [];
 
   void documentOnTap(BuildContext context, Document document) async {
@@ -28,10 +28,10 @@ class PdfService extends ChangeNotifier {
       );
     } else if (selectedDocuments.contains(document)) {
       selectedDocuments.remove(document);
-      isDocumentsSelected = selectedDocuments.isNotEmpty;
+      documentsOnHold = selectedDocuments.isNotEmpty;
     } else {
       selectedDocuments.add(document);
-      isDocumentsSelected = selectedDocuments.isNotEmpty;
+      documentsOnHold = selectedDocuments.isNotEmpty;
     }
     notifyListeners();
   }
@@ -43,7 +43,7 @@ class PdfService extends ChangeNotifier {
     } else {
       selectedDocuments.add(document);
     }
-    isDocumentsSelected = selectedDocuments.isNotEmpty;
+    documentsOnHold = selectedDocuments.isNotEmpty;
     // subjectOnHold = hasSelectedSubjects();
     notifyListeners();
   }
@@ -121,7 +121,7 @@ class PdfService extends ChangeNotifier {
 
   void disposeStates() {
     // documents = [];
-    isDocumentsSelected = false;
+    documentsOnHold = false;
     selectedDocuments = [];
     notifyListeners();
   }

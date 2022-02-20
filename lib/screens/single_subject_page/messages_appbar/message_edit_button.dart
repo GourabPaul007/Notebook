@@ -16,13 +16,19 @@ class MessageEditButton extends StatelessWidget {
         color: Colors.transparent,
         child: IconButton(
           onPressed: () {
-            Navigator.of(context).push(
-              // have to use PageRouteBuilder if want opacity
-              PageRouteBuilder(
-                opaque: false,
-                pageBuilder: (context, _, __) => const EditMessageDialog(type: "edit"),
-              ),
-            );
+            // Navigator.of(context).push(
+            //   // have to use PageRouteBuilder if want opacity
+            //   PageRouteBuilder(
+            //     opaque: false,
+            //     pageBuilder: (context, _, __) => const EditMessageDialog(type: "edit"),
+            //   ),
+            // );
+            showDialog(
+                context: context,
+                barrierColor: Colors.transparent,
+                builder: (context) {
+                  return const EditMessageDialog(type: "edit");
+                });
             // Navigator.of(context).push(
             //   MaterialPageRoute(builder: (context) => const EditMessageDialog(type: "edit")),
             // );

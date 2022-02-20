@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/screens/single_subject_page/styles.dart';
 import 'package:frontend/services/subject_service.dart';
 import 'package:frontend/services/theme_service.dart';
 
@@ -250,137 +249,141 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: kElevationToShadow[1],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const SizedBox(
-            height: 12,
-          ),
-          Text(
-            widget.type == "add" ? "ADD NEW TOPIC" : "EDIT TOPIC",
-            style: Theme.of(context).textTheme.headline2,
-          ),
-          // Subject Name TextField
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8, bottom: 8),
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  margin: const EdgeInsets.only(top: 8, left: 8, right: 8),
-                  child: TextField(
-                    controller: _subjectNameController,
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.white : Colors.black,
-                    ),
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                      hintText: "Topic Name",
-                      hintStyle: TextStyle(
-                        color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey : Colors.grey[700],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const SizedBox(
+              height: 12,
+            ),
+            Text(
+              widget.type == "add" ? "ADD NEW TOPIC" : "EDIT TOPIC",
+              style: Theme.of(context).textTheme.headline2,
+            ),
+            // Subject Name TextField
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 8),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 8, left: 8, right: 8),
+                    child: TextField(
+                      controller: _subjectNameController,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.white : Colors.black,
                       ),
-                      fillColor: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey[900] : Colors.grey[300],
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                        hintText: "Topic Name",
+                        hintStyle: TextStyle(
+                          color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey : Colors.grey[700],
+                        ),
+                        fillColor:
+                            ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey[900] : Colors.grey[300],
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          // Subject About TextField
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8, bottom: 8),
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
-                  child: TextField(
-                    controller: _subjectDescriptionController,
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.white : Colors.black,
-                    ),
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                      hintText: "Topic Description (Optional)",
-                      hintStyle: TextStyle(
-                        color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey : Colors.grey[700],
+            // Subject About TextField
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 8),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+                    child: TextField(
+                      controller: _subjectDescriptionController,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.white : Colors.black,
                       ),
-                      fillColor: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey[900] : Colors.grey[300],
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                        hintText: "Topic Description (Optional)",
+                        hintStyle: TextStyle(
+                          color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey : Colors.grey[700],
+                        ),
+                        fillColor:
+                            ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey[900] : Colors.grey[300],
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          // const SizedBox(
-          //   height: 22,
-          // ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  "CANCEL",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).primaryColor,
+            // const SizedBox(
+            //   height: 22,
+            // ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    "CANCEL",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              // color: _buttonDisabled ? Colors.grey[800] : Theme.of(context).primaryColor,
-              TextButton(
-                onPressed: _buttonDisabled
-                    ? null
-                    : widget.type == "add"
-                        ? () {
-                            ref.read(subjectServiceProvider).addSubject(
-                                  _subjectNameController.text,
-                                  _subjectDescriptionController.text,
-                                );
-                            _subjectNameController.text = "";
-                            _subjectDescriptionController.text = "";
-                            Navigator.of(context).pop();
-                          }
-                        : () {
-                            ref.read(subjectServiceProvider).editSubject(
-                                  widget.rowId!,
-                                  _subjectNameController.text,
-                                  _subjectDescriptionController.text,
-                                );
-                            _subjectNameController.text = "";
-                            _subjectDescriptionController.text = "";
-                            Navigator.of(context).pop();
-                          },
-                child: Text(
-                  widget.type == "add" ? "CREATE" : "UPDATE",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: _buttonDisabled ? Colors.grey[700] : Theme.of(context).primaryColor,
+                const SizedBox(width: 8),
+                // color: _buttonDisabled ? Colors.grey[800] : Theme.of(context).primaryColor,
+                TextButton(
+                  onPressed: _buttonDisabled
+                      ? null
+                      : widget.type == "add"
+                          ? () {
+                              ref.read(subjectServiceProvider).addSubject(
+                                    _subjectNameController.text,
+                                    _subjectDescriptionController.text,
+                                  );
+                              _subjectNameController.text = "";
+                              _subjectDescriptionController.text = "";
+                              Navigator.of(context).pop();
+                            }
+                          : () {
+                              ref.read(subjectServiceProvider).editSubject(
+                                    widget.rowId!,
+                                    _subjectNameController.text,
+                                    _subjectDescriptionController.text,
+                                  );
+                              _subjectNameController.text = "";
+                              _subjectDescriptionController.text = "";
+                              Navigator.of(context).pop();
+                            },
+                  child: Text(
+                    widget.type == "add" ? "CREATE" : "UPDATE",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: _buttonDisabled ? Colors.grey[700] : Theme.of(context).primaryColor,
+                    ),
                   ),
+                  // style: ButtonStyle(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.green)),
                 ),
-                // style: ButtonStyle(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.green)),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

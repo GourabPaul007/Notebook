@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/screens/subject_list_page/subject_delete_button.dart';
-import 'package:frontend/screens/subject_list_page/subject_edit_button.dart';
-import 'package:frontend/services/subject_service.dart';
+import 'package:frontend/screens/documents_page/document_delete_button.dart';
+import 'package:frontend/screens/documents_page/document_share_button.dart';
+import 'package:frontend/services/documents_service.dart';
 
-class HoldSubjectDialog extends ConsumerStatefulWidget {
-  const HoldSubjectDialog({Key? key}) : super(key: key);
+class HoldDocumentDialog extends ConsumerStatefulWidget {
+  const HoldDocumentDialog({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _HoldSubjectDialogState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _HoldDocumentDialogState();
 }
 
-class _HoldSubjectDialogState extends ConsumerState<HoldSubjectDialog> {
+class _HoldDocumentDialogState extends ConsumerState<HoldDocumentDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -28,13 +28,13 @@ class _HoldSubjectDialogState extends ConsumerState<HoldSubjectDialog> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // Subject Delete Button
-          ref.watch(subjectServiceProvider).subjectsOnHold
-              ? const Expanded(child: SubjectDeleteButton())
+          // Document Delete Button
+          ref.watch(documentServiceProvider).documentsOnHold
+              ? const Expanded(child: DocumentDeleteButton())
               : const SizedBox(),
-          // Subject Edit Button
-          ref.watch(subjectServiceProvider).selectedSubjects.length == 1
-              ? const Expanded(child: SubjectEditButton())
+          // Document Edit Button
+          ref.watch(documentServiceProvider).selectedDocuments.length == 1
+              ? const Expanded(child: DocumentShareButton())
               : const SizedBox(),
           Expanded(
             child: Material(

@@ -51,14 +51,14 @@ class SubjectDetailsPage extends ConsumerWidget {
                   children: <Widget>[
                     Text(
                       subjectService.subjectName,
-                      style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: Colors.white),
                     ),
                     Text(
                       "Created at  " +
                           formatDate(DateTime.fromMillisecondsSinceEpoch(
                             subjectService.subject.timeCreated,
                           )),
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white70),
                     ),
                   ],
                 ),

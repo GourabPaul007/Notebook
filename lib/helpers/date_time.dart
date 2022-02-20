@@ -18,7 +18,7 @@ String unixToDate(int unixTimestamp) {
 
   final timeDelay = now.millisecondsSinceEpoch - unixTimestamp;
   // Return weekday of timeStamp
-  if (timeDelay > 172800000 && timeDelay <= 604800000) {
+  if (timeDelay <= 604800000) {
     switch (then.weekday) {
       case 1:
         return "mon";
@@ -40,10 +40,9 @@ String unixToDate(int unixTimestamp) {
   }
   // If older than a week
   if (timeDelay > 604800000) {
-    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(unixTimestamp);
-    String day = dateTime.day < 10 ? "0${dateTime.day.toString()}" : dateTime.day.toString();
-    String month = dateTime.month < 10 ? "0${dateTime.month.toString()}" : dateTime.month.toString();
-    String time = "$day/$month/${dateTime.year.toString().substring(2)}";
+    String day = then.day < 10 ? "0${then.day.toString()}" : then.day.toString();
+    String month = then.month < 10 ? "0${then.month.toString()}" : then.month.toString();
+    String time = "$day/$month/${then.year.toString().substring(2)}";
     return time;
   }
   // If all else fails...

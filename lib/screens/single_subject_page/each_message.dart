@@ -80,9 +80,7 @@ class EachMessage extends ConsumerWidget {
                               softWrap: true,
                             ),
                           ),
-                          OtherMessageInfo(
-                            message: message,
-                          ),
+                          OtherMessageInfo(message: message),
                         ],
                       ),
                     ),
@@ -142,7 +140,7 @@ class EachMessage extends ConsumerWidget {
                           padding: const EdgeInsets.only(top: 12, bottom: 12, left: 10, right: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(6.0),
-                            color: Colors.deepPurple,
+                            color: darkenColor(Color(message.color)),
                           ),
                           child: Row(
                             children: [
@@ -175,7 +173,7 @@ class EachMessage extends ConsumerWidget {
                             children: [
                               Text(
                                 message.body.substring(message.body.lastIndexOf(".") + 1).toUpperCase(),
-                                style: const TextStyle(fontSize: 12),
+                                style: const TextStyle(fontSize: 12, color: Colors.white),
                               ),
                               OtherMessageInfo(
                                 message: message,

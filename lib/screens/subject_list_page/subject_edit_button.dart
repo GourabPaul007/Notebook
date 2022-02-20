@@ -14,11 +14,25 @@ class SubjectEditButton extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 6),
       child: Material(
-        shape: const CircleBorder(),
+        // shape: const CircleBorder(),
         clipBehavior: Clip.hardEdge,
         color: Colors.transparent,
-        child: IconButton(
-          onPressed: () async {
+        child: InkWell(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.edit_outlined),
+                const SizedBox(height: 4),
+                Text(
+                  "Edit",
+                  style: Theme.of(context).textTheme.headline3,
+                ),
+              ],
+            ),
+          ),
+          onTap: () async {
             List<Subject> selectedSubjects = ref.watch(subjectServiceProvider).selectedSubjects;
             int? subjectRowId = selectedSubjects[0].rowId;
             ref.read(subjectServiceProvider).setSubjectDescription(selectedSubjects[0].description);
@@ -31,10 +45,6 @@ class SubjectEditButton extends ConsumerWidget {
               },
             );
           },
-          icon: const Icon(
-            Icons.edit_outlined,
-            size: 26.0,
-          ),
         ),
       ),
     );

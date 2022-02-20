@@ -86,7 +86,7 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
                       color: messageService.selectedMessages.contains(
                         messageService.messages.elementAt(index),
                       )
-                          ? Colors.grey[400]
+                          ? Theme.of(context).splashColor
                           : Colors.transparent,
                       child: InkWell(
                         splashColor: Colors.black12,

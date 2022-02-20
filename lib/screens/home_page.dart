@@ -13,8 +13,6 @@ import 'package:frontend/screens/subject_search_page.dart';
 import 'package:frontend/screens/receive_shared_intent_page.dart';
 import 'package:frontend/screens/starred_messages_page.dart';
 import 'package:frontend/screens/subject_list_page.dart';
-import 'package:frontend/screens/subject_list_page/subject_delete_button.dart';
-import 'package:frontend/screens/subject_list_page/subject_edit_button.dart';
 import 'package:frontend/services/documents_service.dart';
 import 'package:frontend/services/subject_service.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
@@ -91,16 +89,14 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
       //     break;
       // }
       if (_tabController.indexIsChanging) {
-        print("tab is animating. from active (getting the index) to inactive(getting the index) ");
+        debugPrint("tab is animating. from active (getting the index) to inactive(getting the index) ");
       } else {
         //tab is finished animating you get the current index
         //here you can get your index or run some method once.
-        print("**************" + _tabController.index.toString());
+        debugPrint("**************" + _tabController.index.toString());
         ref.read(documentServiceProvider).disposeStates();
         ref.read(subjectServiceProvider).resetHoldSubjectEffects();
       }
-
-      // debugPrint("************************************ Selected Index: " + _tabController.index.toString());
     });
   }
 
@@ -113,7 +109,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    final subjectService = ref.watch(subjectServiceProvider);
     final subjects = ref.watch(subjectServiceProvider).subjects;
     return _sharedFiles != null
         ? ReceiveSharedIntentPage(
@@ -131,22 +126,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
 
                 title: Text('WhatsNote', style: Theme.of(context).textTheme.headline1),
                 actions: <Widget>[
-                  // Subject Delete Button
-                  subjectService.subjectsOnHold ? const SubjectDeleteButton() : const SizedBox(),
-
-                  // Subject Edit Button
-                  subjectService.selectedSubjects.length == 1 ? const SubjectEditButton() : const SizedBox(),
-
-                  // Document Delete Button
-                  ref.watch(documentServiceProvider).selectedDocuments.isNotEmpty
-                      ? const DocumentDeleteButton()
-                      : const SizedBox(),
-
-                  // Document Share Button
-                  ref.watch(documentServiceProvider).selectedDocuments.isNotEmpty
-                      ? const DocumentShareButton()
-                      : const SizedBox(),
-
                   // Search Button
                   Padding(
                     padding: const EdgeInsets.all(0),
@@ -190,20 +169,6 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
                             }
                           },
                           itemBuilder: (context) => [
-                            PopupMenuItem(
-                              child: Text(
-                                "View Details",
-                                style: Theme.of(context).textTheme.headline3!.copyWith(fontSize: 16),
-                              ),
-                              value: 1,
-                            ),
-                            PopupMenuItem(
-                              child: Text(
-                                "Second",
-                                style: Theme.of(context).textTheme.headline3!.copyWith(fontSize: 16),
-                              ),
-                              value: 2,
-                            ),
                             PopupMenuItem(
                               child: Text(
                                 "Settings",

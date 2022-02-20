@@ -6,7 +6,6 @@ import 'package:frontend/screens/single_subject_page.dart';
 import 'package:frontend/screens/subject_list_page/hold_subject_dialog.dart';
 import 'package:frontend/screens/subject_list_page/single_subject_tile.dart';
 import 'package:frontend/screens/subject_list_page/edit_subject_dialog.dart';
-import 'package:frontend/services/documents_service.dart';
 import 'package:frontend/services/subject_service.dart';
 
 class SubjectListPage extends ConsumerStatefulWidget {
@@ -75,64 +74,68 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> {
           //   ],
           // ),
 
+          Stack(
+        children: [
           ListView.builder(
-        itemCount: subjects.length,
-        itemBuilder: (BuildContext context, int index) {
-          // Material because "chat on hold" tasks
-          return Container(
-            margin: const EdgeInsets.only(left: 8, right: 8, top: 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              // color: Colors.red,
-            ),
-            clipBehavior: Clip.hardEdge,
-            child: Material(
-              color: ref.read(subjectServiceProvider).selectedSubjects.contains(subjects[index])
-                  ? Theme.of(context).splashColor
-                  : Colors.transparent,
-              child: InkWell(
-                splashColor: Theme.of(context).splashColor,
-                onLongPress: () {
-                  ref.read(subjectServiceProvider).subjectOnLongPress(subjects[index]);
-                  // showDialog(
-                  //   barrierColor: Colors.transparent,
-                  //   context: context,
-                  //   builder: (BuildContext context) {
-                  //     return HoldSubjectDialog();
-                  //   },
-                  // );
-                },
-                onTap: () {
-                  // ref.read(subjectServiceProvider).onTap(context, subjects[index]);
-                  _onTap(context, subjects[index]);
-                },
-                child: SingleSubjectTile(
-                  subject: subjects[index],
+            itemCount: subjects.length,
+            itemBuilder: (BuildContext context, int index) {
+              // Each Subject Tile
+              return Container(
+                margin: const EdgeInsets.only(left: 8, right: 8, top: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-              ),
-            ),
-          );
-        },
-      ),
-
-      // FAB
-      floatingActionButton: FloatingActionButton(
-        heroTag: "fab_to_dialogbox",
-        child: const Icon(
-          Icons.add_rounded,
-          size: 32,
-        ),
-        onPressed: () async {
-          ref.read(subjectServiceProvider).resetHoldSubjectEffects();
-          showDialog(
-            context: context,
-            barrierColor: Colors.transparent,
-            builder: (BuildContext context) {
-              return const EditSubjectDialog(type: "add");
+                clipBehavior: Clip.hardEdge,
+                child: Material(
+                  color: ref.read(subjectServiceProvider).selectedSubjects.contains(subjects[index])
+                      ? Theme.of(context).splashColor
+                      : Colors.transparent,
+                  child: InkWell(
+                    splashColor: Theme.of(context).splashColor,
+                    onLongPress: () {
+                      ref.read(subjectServiceProvider).subjectOnLongPress(subjects[index]);
+                    },
+                    onTap: () {
+                      // ref.read(subjectServiceProvider).onTap(context, subjects[index]);
+                      _onTap(context, subjects[index]);
+                    },
+                    child: SingleSubjectTile(
+                      subject: subjects[index],
+                    ),
+                  ),
+                ),
+              );
             },
-          );
-        },
+          ),
+          ref.watch(subjectServiceProvider).selectedSubjects.isNotEmpty
+              ? const Positioned(left: 24, right: 24, bottom: 24, child: HoldSubjectDialog())
+              : const SizedBox(),
+        ],
       ),
+      /** 
+       * FAB
+       * If Subjects are on hold, show this fab, else show nothing(the [HoldSubjectDialog] will be shown instead)
+       */
+      floatingActionButton: ref.watch(subjectServiceProvider).selectedSubjects.isNotEmpty
+          ? null
+          : FloatingActionButton(
+              elevation: 1,
+              heroTag: "fab_to_dialogbox",
+              child: const Icon(
+                Icons.add_rounded,
+                size: 32,
+              ),
+              onPressed: () async {
+                ref.read(subjectServiceProvider).resetHoldSubjectEffects();
+                showDialog(
+                  context: context,
+                  barrierColor: Colors.transparent,
+                  builder: (BuildContext context) {
+                    return const EditSubjectDialog(type: "add");
+                  },
+                );
+              },
+            ),
     );
   }
 }

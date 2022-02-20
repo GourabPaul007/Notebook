@@ -227,9 +227,12 @@ class MessageService extends ChangeNotifier {
       allowMultiple: true,
       type: FileType.custom,
       allowedExtensions: ['pdf', 'doc', 'docx'],
+      onFileLoading: (FilePickerStatus status) {
+        debugPrint("file picker status: " + status.toString());
+      },
     );
 
-    if (result == null) return null;
+    if (result == null) return;
 
     List<File> files = result.paths.map((path) {
       return File(path!);

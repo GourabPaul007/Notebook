@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/helpers/date_time.dart';
 import 'package:frontend/screens/single_subject_page/each_message.dart';
-import 'package:frontend/services/starredMessageService.dart';
+import 'package:frontend/services/starred_message_service.dart';
 import 'package:frontend/services/subject_service.dart';
 
 /// Will show starred messages.
@@ -79,7 +79,7 @@ class _StarredMessagesPageState extends ConsumerState<StarredMessagesPage> {
                         children: <Widget>[
                           Text(
                             "Topic  ►  ",
-                            style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 16, color: Colors.black),
+                            style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 16),
                           ),
                           Text(
                             singleMessage.subjectName,

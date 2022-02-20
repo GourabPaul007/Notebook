@@ -14,12 +14,12 @@ ThemeData lightTheme = ThemeData.dark().copyWith(
     primaryVariant: Colors.deepPurple,
     secondary: Colors.deepOrangeAccent,
     secondaryVariant: Colors.deepOrange,
-    surface: Color(0xFFcfcfcf),
+    surface: Color(0xFFefefef),
     background: Color(0xFF121212),
     error: Colors.red,
     onPrimary: Colors.black,
     onSecondary: Colors.black,
-    onSurface: Colors.black,
+    onSurface: Colors.black87,
     onBackground: Colors.black,
     onError: Colors.white,
     brightness: Brightness.dark,
@@ -47,30 +47,30 @@ ThemeData lightTheme = ThemeData.dark().copyWith(
 
   // Define the default `TextTheme`. Use this to specify the default
   // text styling for headlines, titles, bodies of text, and more.
-  textTheme: TextTheme(
+  textTheme: const TextTheme(
     // Top Header of app [WhatsNote]
-    headline1: const TextStyle(
+    headline1: TextStyle(
       fontSize: 24,
       fontWeight: FontWeight.w500,
       color: Colors.black,
     ),
 
     // In Page Headers
-    headline2: const TextStyle(
+    headline2: TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.w500,
       color: Colors.black,
     ),
 
     // TabBar Headers
-    headline3: const TextStyle(
+    headline3: TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.w500,
       color: Colors.black,
     ),
 
     // Topic names in Topic List Page
-    headline4: const TextStyle(
+    headline4: TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.w400,
       color: Colors.black,
@@ -80,24 +80,17 @@ ThemeData lightTheme = ThemeData.dark().copyWith(
     headline5: TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.w400,
-      color: Colors.grey[800],
+      color: Colors.black87,
     ),
 
     // Search Text Style
-    headline6: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.normal, color: Colors.black),
+    headline6: TextStyle(fontSize: 20.0, fontWeight: FontWeight.normal, color: Colors.black),
 
-    bodyText1: const TextStyle(fontSize: 18, color: Colors.black54),
-    bodyText2: const TextStyle(fontSize: 18.0, color: Colors.black, fontFamily: 'Fira Code'),
+    bodyText1: TextStyle(fontSize: 18, color: Colors.black54),
+    bodyText2: TextStyle(fontSize: 18.0, color: Colors.black, fontFamily: 'Fira Code'),
   ),
   iconTheme: const IconThemeData(color: Colors.black87),
   popupMenuTheme: const PopupMenuThemeData(color: Colors.white, elevation: 5),
-  textButtonTheme: TextButtonThemeData(
-    style: ButtonStyle(
-      textStyle: MaterialStateProperty.all(
-        const TextStyle(fontSize: 18, color: Colors.blue),
-      ),
-    ),
-  ),
 );
 
 // =============================================================================================
@@ -202,12 +195,5 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   ),
   iconTheme: const IconThemeData(color: Colors.white70),
   popupMenuTheme: const PopupMenuThemeData(color: Colors.black, elevation: 5),
-  textButtonTheme: TextButtonThemeData(
-    style: ButtonStyle(
-      textStyle: MaterialStateProperty.all(
-        const TextStyle(fontSize: 18, color: Colors.blue),
-      ),
-    ),
-  ),
   // colorScheme: ColorScheme.fromSwatch().copyWith(secondary: const Color(0xff40bf7a)),
 );
