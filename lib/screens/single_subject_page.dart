@@ -28,8 +28,6 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
     }
 
     reqPermission();
-    // dispose the previous [states] if there are
-    ref.read(messageServiceProvider).deleteStates();
 
     // needed to check for camera idk ill check later
     ref.read(messageServiceProvider).retrieveLostData();

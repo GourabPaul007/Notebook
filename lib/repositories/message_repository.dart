@@ -43,15 +43,21 @@ class MessageRepository {
   }
 
   // Edit Message from the edit button
-  Future<int> editMessageFromLocalDatabase(Message message) async {
+  Future<int> editMessageFromLocalDatabase(
+    int messsageRowId,
+    String messageTitle,
+    String messageBody,
+    int color,
+    int timeUpdated,
+  ) async {
     Database db = await DBHelper.instance.database;
     Map<String, dynamic> values = {
-      "title": message.title,
-      "body": message.body,
-      "color": message.color,
-      "time_updated": message.timeUpdated,
+      "title": messageTitle,
+      "body": messageBody,
+      "color": color,
+      "time_updated": timeUpdated,
     };
-    final returnCode = await db.update(messageTable, values, where: "row_id = ?", whereArgs: [message.rowId]);
+    final returnCode = await db.update(messageTable, values, where: "row_id = ?", whereArgs: [messsageRowId]);
     return returnCode;
   }
 

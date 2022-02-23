@@ -65,7 +65,7 @@ class EachMessage extends ConsumerWidget {
                         : const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(6.0),
-                      color: message.title != "" ? darkenColor(Color(message.color)) : Colors.transparent,
+                      color: message.title != "" ? darkenColor(Color(message.color), 20) : Colors.transparent,
                       // backgroundBlendMode: BlendMode.color,
                     ),
                     child: IntrinsicHeight(
@@ -140,7 +140,7 @@ class EachMessage extends ConsumerWidget {
                           padding: const EdgeInsets.only(top: 12, bottom: 12, left: 10, right: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(6.0),
-                            color: darkenColor(Color(message.color)),
+                            color: darkenColor(Color(message.color), 20),
                           ),
                           child: Row(
                             children: [

@@ -57,9 +57,6 @@ class MessageService extends ChangeNotifier {
       id: const Uuid().v1(),
       title: title,
       body: body,
-      // titleColor: const Color(0xFFff5722).value,
-      // bodyColor: const Color(0xFFff5722).value,
-      // color: const Color(0xFFff5722).value,
       color: color,
       subjectName: messageSubjectName,
       subjectRowId: subjectRowId,
@@ -83,13 +80,21 @@ class MessageService extends ChangeNotifier {
   }
 
   Future<void> editMessage(int messsageRowId, String messageTitle, String messageBody, int color) async {
+    await MessageRepository().editMessageFromLocalDatabase(
+      messsageRowId,
+      messageTitle,
+      messageBody,
+      color,
+      DateTime.now().millisecondsSinceEpoch,
+    );
+    // set the data in memory so the user can see the update without refreshing
     selectedMessages[0].title = messageTitle;
     selectedMessages[0].body = messageBody;
     selectedMessages[0].color = color;
     selectedMessages[0].timeUpdated = DateTime.now().millisecondsSinceEpoch;
-
-    await MessageRepository().editMessageFromLocalDatabase(selectedMessages.first);
-    deleteStates();
+    // clean up
+    selectedMessages = [];
+    showHoldMessageIcons = false;
     notifyListeners();
   }
 
@@ -99,7 +104,8 @@ class MessageService extends ChangeNotifier {
     List<Message> newMessages = await MessageRepository().getMessagesFromLocalDatabase(subjectRowId);
     messages = newMessages;
     // Other Stuff
-    deleteStates();
+    selectedMessages = [];
+    showHoldMessageIcons = false;
     notifyListeners();
   }
 
@@ -135,14 +141,6 @@ class MessageService extends ChangeNotifier {
     }
   }
 
-  /// delete the hold effects and [selectedMessages] after the work with said [selectedMessages] is done.
-  ///
-  /// does not call notifyListeners(), caller function have to do it themselves.
-  void deleteStates() {
-    selectedMessages = [];
-    showHoldMessageIcons = false;
-  }
-
   /// To check if user has selected any messages, if so then remove them from [selectedMessages] and return false
   ///
   /// Returns wheather the screen should [pop] or not. returns [true] if should [pop].
@@ -173,27 +171,25 @@ class MessageService extends ChangeNotifier {
 
   /// sends input [text] to [addMessage] method and clears the [newTextController] text
   void sendInputText(String text, int subjectRowId) async {
-    const String type = "text";
-
-    addMessage("", text, Colors.deepPurpleAccent.value, subjectRowId, type);
+    addMessage("", text, Colors.deepPurpleAccent.value, subjectRowId, "text");
     newTextController.clear();
   }
 
-  void updateInputText(String value) {
+  /// if the user starts to type something, hide the camera & gallery icon from textfield for elegance
+  void onInputChange(String value) {
     if (value.isNotEmpty) {
       cameraIconVisible = false;
       galleryIconVisible = false;
-      // _sendIconVisible = true;
       notifyListeners();
     } else {
       cameraIconVisible = true;
       galleryIconVisible = true;
-      // _sendIconVisible = true;
       notifyListeners();
     }
   }
 
   /// Adds Image from Camera.
+  ///
   /// takes the [imagePath] sent from [Camera] and adds the image path to [Message.body]
   Future imgFromCamera(String imagePath, int subjectRowId) async {
     debugPrint(imagePath);
@@ -204,6 +200,7 @@ class MessageService extends ChangeNotifier {
   }
 
   /// Adds Image from gallery.
+  ///
   /// takes the [imagePath] sent from [ImagePicker().pickImage] and adds the image path to [Message.body]
   Future imgFromGallery(int subjectRowId) async {
     try {
@@ -222,6 +219,7 @@ class MessageService extends ChangeNotifier {
     }
   }
 
+  /// picks documents from file system...
   Future pickDocuments(int subjectRowId) async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
@@ -231,9 +229,7 @@ class MessageService extends ChangeNotifier {
         debugPrint("file picker status: " + status.toString());
       },
     );
-
     if (result == null) return;
-
     List<File> files = result.paths.map((path) {
       return File(path!);
     }).toList();
@@ -243,7 +239,9 @@ class MessageService extends ChangeNotifier {
   }
 
   /// if [flag] is 1 then unstar all messages. else star all messages
+  ///
   /// [flag] is set to 1 when [selectedMessages] includes all starred messages.
+  ///
   /// [flag] is set to 0 when [selectedMessages] include a [message] which is not favourite
   Future<void> toggleStarMessages() async {
     int flag = 1;
@@ -262,7 +260,9 @@ class MessageService extends ChangeNotifier {
         message.isFavourite = true;
       }
     }
-    deleteStates();
+    // clean up
+    selectedMessages = [];
+    showHoldMessageIcons = false;
     notifyListeners();
   }
 }

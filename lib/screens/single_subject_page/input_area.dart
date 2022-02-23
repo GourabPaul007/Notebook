@@ -75,9 +75,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const TakePictureScreen(),
-                                    ),
+                                    MaterialPageRoute(builder: (context) => const TakePictureScreen()),
                                   );
                                 },
                                 icon: const Icon(Icons.camera_alt_outlined),
@@ -101,9 +99,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                               color: Colors.transparent,
                               child: IconButton(
                                 onPressed: () async {
-                                  await ref.read(messageServiceProvider).imgFromGallery(
-                                        subjectService.getSubjectRowId,
-                                      );
+                                  await ref.read(messageServiceProvider).imgFromGallery(subjectService.getSubjectRowId);
                                 },
                                 splashColor: Colors.amber,
                                 icon: const Icon(Icons.photo_outlined),
@@ -134,10 +130,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                         },
                         child: Transform.rotate(
                             angle: 45,
-                            child: Icon(
-                              Icons.attach_file_rounded,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            )),
+                            child: Icon(Icons.attach_file_rounded, color: Theme.of(context).colorScheme.onSurface)),
                       ),
                     ),
                   ),
@@ -148,7 +141,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                         style: Theme.of(context).textTheme.bodyText2,
                         maxLines: 1,
                         controller: _inputTextController,
-                        onChanged: ref.read(messageServiceProvider).updateInputText,
+                        onChanged: ref.read(messageServiceProvider).onInputChange,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.only(left: 8.0, right: 12.0),

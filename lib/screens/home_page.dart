@@ -186,7 +186,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
                 // TAB BAR
                 bottom: TabBar(
                   controller: _tabController,
-                  indicatorColor: Colors.black,
+                  indicatorColor: Theme.of(context).primaryColor,
                   // indicatorPadding: EdgeInsets.all(8),
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicatorWeight: 3,

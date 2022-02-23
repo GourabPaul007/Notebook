@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/helpers/color_list.dart';
 import 'package:frontend/repositories/subject_repository.dart';
 import 'package:frontend/models/subject_model.dart';
 import 'package:uuid/uuid.dart';
@@ -71,7 +72,7 @@ class SubjectService extends ChangeNotifier {
   }
 
   // Adds a new subject
-  Future<void> addSubject(String subjectName, String subjectDescription) async {
+  Future<void> addSubject(String subjectName, String subjectDescription, String avatarPath) async {
     if (subjectName.isEmpty) return;
     // Database Stuff
     WidgetsFlutterBinding.ensureInitialized();
@@ -80,7 +81,8 @@ class SubjectService extends ChangeNotifier {
       id: const Uuid().v1(),
       name: subjectName,
       description: subjectDescription,
-      avatarColor: pickBgColor().value,
+      avatarColor: avatarColorList[Random().nextInt(avatarColorList.length + 1)],
+      avatarPath: avatarPath,
       timeCreated: DateTime.now().millisecondsSinceEpoch,
       timeUpdated: DateTime.now().millisecondsSinceEpoch,
     );

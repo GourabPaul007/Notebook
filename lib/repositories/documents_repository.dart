@@ -2,7 +2,7 @@ import 'package:frontend/db/database.dart';
 import 'package:frontend/models/document_model.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DocumentRepository {
+class DocumentsRepository {
   String documentsTable = "documents_table";
 
   Future<List<Document>> getDocumentsFromLocalDatabase() async {
@@ -31,6 +31,18 @@ class DocumentRepository {
       where: "row_id IN (${List.filled(rowIds.length, '?').join(',')})",
       whereArgs: rowIds.toList(),
     );
+    return returnCode;
+  }
+
+  editDocumentFromLocalDatabase(int rowId, String name, int color, int timeUpdated) async {
+    Database db = await DBHelper.instance.database;
+    Map<String, dynamic> values = {
+      "row_id": rowId,
+      "name": name,
+      "color": color,
+      "time_updated": timeUpdated,
+    };
+    final returnCode = await db.update(documentsTable, values, where: "row_id = ?", whereArgs: [rowId]);
     return returnCode;
   }
 

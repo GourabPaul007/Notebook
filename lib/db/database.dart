@@ -45,6 +45,7 @@ class DBHelper {
           name TEXT NOT NULL,
           description TEXT,
           avatar_color INTEGER,
+          avatar_path TEXT NOT NULL,
           time_created INTEGER NOT NULL,
           time_updated INTEGER NOT NULL
         )
@@ -76,6 +77,7 @@ class DBHelper {
           type TEXT NOT NULL,
           color INTEGER NOT NULL,
           time_added INTEGER NOT NULL,
+          time_updated INTEGER NOT NULL,
           is_favourite BOOLEAN NOT NULL DEFAULT 0
         )
         """);

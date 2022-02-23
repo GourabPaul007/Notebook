@@ -4,6 +4,7 @@ class Subject {
   late final String name;
   late final String description;
   final int avatarColor;
+  final String avatarPath;
   final int timeCreated;
   final int timeUpdated;
   // String? imageURL;
@@ -14,6 +15,7 @@ class Subject {
     required this.name,
     required this.description,
     required this.avatarColor,
+    required this.avatarPath,
     required this.timeCreated,
     required this.timeUpdated,
     // this.message,
@@ -29,6 +31,7 @@ class Subject {
         name: json['name'],
         description: json['description'],
         avatarColor: json['avatar_color'],
+        avatarPath: json['avatar_path'],
         timeCreated: json['time_created'],
         timeUpdated: json['time_updated'],
       );
@@ -40,6 +43,7 @@ class Subject {
       'name': name,
       'description': description,
       'avatar_color': avatarColor,
+      'avatar_path': avatarPath,
       'time_created': timeCreated,
       'time_updated': timeUpdated,
     };

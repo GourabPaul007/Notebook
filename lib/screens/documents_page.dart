@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/helpers/change_color.dart';
 import 'package:frontend/services/documents_service.dart';
 import 'package:frontend/widgets/snack_bar.dart';
+import 'package:path/path.dart';
 
 import 'documents_page/hold_document_dialog.dart';
 
@@ -64,9 +66,8 @@ class _PdfsPageState extends ConsumerState<PdfsPage> {
                     // clipBehavior: Clip.hardEdge,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: Theme.of(context).primaryColor,
                       border: Border.all(
-                        color: Theme.of(context).primaryColor,
+                        color: Color(singleDocument.color),
                         width: 4,
                       ),
                     ),
@@ -108,14 +109,13 @@ class _PdfsPageState extends ConsumerState<PdfsPage> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  // color: Colors.red,
                                   // to cover the blank area where rounded corner in bottom of title
-                                  color: Theme.of(context).primaryColor,
+                                  color: Color(singleDocument.color),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                    decoration: const BoxDecoration(
-                                      color: Colors.deepPurple,
-                                      borderRadius: BorderRadius.only(
+                                    decoration: BoxDecoration(
+                                      color: darkenColor(Color(singleDocument.color), 20),
+                                      borderRadius: const BorderRadius.only(
                                         bottomLeft: Radius.circular(4),
                                         bottomRight: Radius.circular(4),
                                       ),
@@ -123,7 +123,8 @@ class _PdfsPageState extends ConsumerState<PdfsPage> {
                                     width: double.maxFinite,
                                     child: Center(
                                       child: Text(
-                                        singleDocument.name,
+                                        // If no name then show name from file path, else show name
+                                        singleDocument.name == "" ? basename(singleDocument.path) : singleDocument.name,
                                         softWrap: false,
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2,
@@ -145,7 +146,7 @@ class _PdfsPageState extends ConsumerState<PdfsPage> {
                               Container(
                                 padding: const EdgeInsets.only(top: 2),
                                 width: double.maxFinite,
-                                color: Theme.of(context).primaryColor,
+                                color: Color(singleDocument.color),
                                 child: Center(
                                   child: Text(
                                     singleDocument.size.toString() +

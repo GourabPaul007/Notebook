@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/subject_service.dart';
-import 'package:frontend/services/theme_service.dart';
 
 // class EditSubjectDialog extends ConsumerStatefulWidget {
 //   final int? rowId;
@@ -271,17 +270,13 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
                     child: TextField(
                       controller: _subjectNameController,
                       maxLines: 1,
-                      style: TextStyle(
-                        color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.white : Colors.black,
-                      ),
+                      cursorColor: Theme.of(context).primaryColor,
+                      style: Theme.of(context).textTheme.bodyText2,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                         hintText: "Topic Name",
-                        hintStyle: TextStyle(
-                          color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey : Colors.grey[700],
-                        ),
-                        fillColor:
-                            ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey[900] : Colors.grey[300],
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        fillColor: Theme.of(context).colorScheme.surface,
                         filled: true,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -304,17 +299,13 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
                     child: TextField(
                       controller: _subjectDescriptionController,
                       maxLines: 1,
-                      style: TextStyle(
-                        color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.white : Colors.black,
-                      ),
+                      style: Theme.of(context).textTheme.bodyText2,
+                      cursorColor: Theme.of(context).primaryColor,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                         hintText: "Topic Description (Optional)",
-                        hintStyle: TextStyle(
-                          color: ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey : Colors.grey[700],
-                        ),
-                        fillColor:
-                            ref.watch(themeServiceProvider).theme == "dark" ? Colors.grey[900] : Colors.grey[300],
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        fillColor: Theme.of(context).colorScheme.surface,
                         filled: true,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -355,6 +346,7 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
                               ref.read(subjectServiceProvider).addSubject(
                                     _subjectNameController.text,
                                     _subjectDescriptionController.text,
+                                    "",
                                   );
                               _subjectNameController.text = "";
                               _subjectDescriptionController.text = "";

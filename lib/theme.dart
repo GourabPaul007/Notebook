@@ -12,8 +12,8 @@ ThemeData lightTheme = ThemeData.dark().copyWith(
   colorScheme: const ColorScheme(
     primary: Colors.deepPurpleAccent,
     primaryVariant: Colors.deepPurple,
-    secondary: Colors.deepOrangeAccent,
-    secondaryVariant: Colors.deepOrange,
+    secondary: Colors.deepPurpleAccent,
+    secondaryVariant: Colors.deepPurple,
     surface: Color(0xFFefefef),
     background: Color(0xFF121212),
     error: Colors.red,
@@ -24,7 +24,7 @@ ThemeData lightTheme = ThemeData.dark().copyWith(
     onError: Colors.white,
     brightness: Brightness.dark,
   ),
-  splashColor: Colors.indigo[100],
+  splashColor: Colors.deepPurple[50],
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: Colors.deepPurpleAccent,
     foregroundColor: Colors.white,
@@ -104,8 +104,8 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   colorScheme: const ColorScheme(
     primary: Colors.deepPurpleAccent,
     primaryVariant: Colors.deepPurple,
-    secondary: Colors.deepOrangeAccent,
-    secondaryVariant: Colors.deepOrange,
+    secondary: Colors.deepPurpleAccent,
+    secondaryVariant: Colors.deepPurple,
     surface: Color(0xFF222222),
     background: Color(0xFF121212),
     error: Colors.red,
@@ -118,13 +118,10 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   ),
   // primarySwatch: Colors.deepPurple,
   backgroundColor: const Color(0xFF121212),
-  splashColor: Colors.indigoAccent[100],
+  splashColor: Colors.deepPurple[800],
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: Colors.deepPurpleAccent,
     foregroundColor: Colors.white,
-  ),
-  buttonTheme: ButtonThemeData(
-    buttonColor: Colors.greenAccent[400],
   ),
   appBarTheme: const AppBarTheme(
     elevation: 0,

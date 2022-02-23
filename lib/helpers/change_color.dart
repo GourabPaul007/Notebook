@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-Color lightenColor(Color color) {
-  int r = color.red + 20 >= 255 ? 255 : color.red + 20;
-  int g = color.green + 20 >= 255 ? 255 : color.green + 20;
-  int b = color.blue + 20 >= 255 ? 255 : color.blue + 20;
+Color lightenColor(Color color, int valueBy) {
+  int r = color.red + valueBy >= 255 ? 255 : color.red + valueBy;
+  int g = color.green + valueBy >= 255 ? 255 : color.green + valueBy;
+  int b = color.blue + valueBy >= 255 ? 255 : color.blue + valueBy;
   return Color.fromARGB(255, r, g, b);
 }
 
-Color darkenColor(Color color) {
-  int r = color.red - 20 <= 0 ? 0 : color.red - 20;
-  int g = color.green - 20 <= 0 ? 0 : color.green - 20;
-  int b = color.blue - 20 <= 0 ? 0 : color.blue - 20;
+Color darkenColor(Color color, int valueBy) {
+  int r = color.red - valueBy <= 0 ? 0 : color.red - valueBy;
+  int g = color.green - valueBy <= 0 ? 0 : color.green - valueBy;
+  int b = color.blue - valueBy <= 0 ? 0 : color.blue - valueBy;
   return Color.fromARGB(255, r, g, b);
 }
 

@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/models/document_model.dart';
 import 'package:frontend/repositories/documents_repository.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path/path.dart';
 import 'package:share_plus/share_plus.dart';
 
 final documentServiceProvider = ChangeNotifierProvider((ref) {
@@ -18,6 +17,8 @@ class PdfService extends ChangeNotifier {
   List<Document> documents = [];
   bool documentsOnHold = false;
   List<Document> selectedDocuments = [];
+
+  int get getEditMessageColor => selectedDocuments[0].color;
 
   void documentOnTap(BuildContext context, Document document) async {
     if (selectedDocuments.isEmpty) {
@@ -66,38 +67,52 @@ class PdfService extends ChangeNotifier {
   Future<String> addDocument(File file) async {
     Document newDocument = Document(
       rowId: null,
-      name: basename(file.path),
+      name: "",
       path: file.path,
       color: const Color(0xFFff5722).value,
       size: (file.lengthSync() / 1000).floor(),
       type: file.path.substring(file.path.lastIndexOf(".") + 1),
       timeAdded: DateTime.now().millisecondsSinceEpoch,
+      timeUpdated: DateTime.now().millisecondsSinceEpoch,
       isFavourite: false,
     );
-    // file.
     for (var document in documents) {
       if (document.path == newDocument.path) {
         return "Document Already Exists";
       }
     }
-    await DocumentRepository().addDocumentToLocalDatabse(newDocument);
+    await DocumentsRepository().addDocumentToLocalDatabse(newDocument);
     await getAllDocuments();
     return "Document Added";
   }
 
   Future<void> getAllDocuments() async {
-    documents = await DocumentRepository().getDocumentsFromLocalDatabase();
+    documents = await DocumentsRepository().getDocumentsFromLocalDatabase();
     notifyListeners();
   }
 
   void deleteSelectedDocuments() async {
     Set<int> rowIds = selectedDocuments.map((e) => e.rowId!).toSet();
-    await DocumentRepository().deleteDocumentsFromLocalDatabase(rowIds);
+    await DocumentsRepository().deleteDocumentsFromLocalDatabase(rowIds);
     // getAllDocuments();
     for (Document eachSelectedDocument in selectedDocuments) {
       documents.remove(eachSelectedDocument);
     }
     disposeStates();
+  }
+
+  Future<void> editDocument(String name, int color) async {
+    await DocumentsRepository().editDocumentFromLocalDatabase(
+      selectedDocuments.first.rowId!,
+      name,
+      color,
+      DateTime.now().millisecondsSinceEpoch,
+    );
+    // setting data in memory to save db call
+    selectedDocuments[0].name = name;
+    selectedDocuments[0].color = color;
+    disposeStates();
+    notifyListeners();
   }
 
   void shareSelectedDocuments() {

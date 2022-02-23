@@ -1,6 +1,6 @@
 class Document {
   int? rowId;
-  final String name;
+  String name;
   final String path;
   final String type;
   int color;
@@ -8,6 +8,7 @@ class Document {
   /// [size] is Stored as KB
   final int size;
   final int timeAdded;
+  int timeUpdated;
   final bool isFavourite;
 
   Document({
@@ -18,6 +19,7 @@ class Document {
     required this.size,
     required this.type,
     required this.timeAdded,
+    required this.timeUpdated,
     required this.isFavourite,
   });
 
@@ -30,6 +32,7 @@ class Document {
       size: json['size'],
       type: json['type'],
       timeAdded: json['time_added'],
+      timeUpdated: json['time_updated'],
       isFavourite: json['is_favourite'] == 1 ? true : false,
     );
   }
@@ -42,6 +45,7 @@ class Document {
       'size': size,
       'type': type,
       'time_added': timeAdded,
+      'time_updated': timeUpdated,
       'is_favourite': isFavourite,
     };
   }

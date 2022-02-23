@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/helpers/acronym.dart';
+import 'package:frontend/helpers/change_color.dart';
 import 'package:frontend/helpers/date_time.dart';
 import 'package:frontend/models/subject_model.dart';
 
@@ -14,9 +16,15 @@ class SingleSubjectTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: Colors.lightBlue[100],
+        backgroundColor: Color(subject.avatarColor),
         radius: 24,
-        child: const Icon(Icons.document_scanner_outlined),
+        child: Text(
+          makeAcronym(subject.name).toUpperCase(),
+          style: Theme.of(context).textTheme.headline4!.copyWith(
+                color: darkenColor(Color(subject.avatarColor), 140),
+                fontWeight: FontWeight.w500,
+              ),
+        ),
       ),
       title: Text(
         subject.name,
