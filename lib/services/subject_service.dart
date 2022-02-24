@@ -15,19 +15,14 @@ class SubjectService extends ChangeNotifier {
 
   final Ref ref;
 
+  /// The current subject in memory
   late Subject subject;
   late int subjectRowId;
-  late String subjectName = "";
-  late String subjectDescription = "";
+  String subjectName = "";
+  String subjectDescription = "";
   List<Subject> subjects = [];
   List<Subject> selectedSubjects = [];
   bool subjectsOnHold = false;
-
-  String get getSubjectDescription => subjectDescription;
-  void setSubjectDescription(String description) {
-    subjectDescription = description;
-    notifyListeners();
-  }
 
   Subject get getSubject => subject;
   void setSubject(Subject s) {
@@ -35,28 +30,23 @@ class SubjectService extends ChangeNotifier {
     notifyListeners();
   }
 
-  String get getSubjectName => subjectName;
-  void setSubjectName(String name) {
-    subjectName = name;
-    notifyListeners();
-  }
+  // String get getSubjectDescription => subjectDescription;
+  // void setSubjectDescription(String description) {
+  //   subjectDescription = description;
+  //   notifyListeners();
+  // }
 
-  int get getSubjectRowId => subjectRowId;
-  void setSubjectRowId(int id) {
-    subjectRowId = id;
-    notifyListeners();
-  }
+  // String get getSubjectName => subjectName;
+  // void setSubjectName(String name) {
+  //   subjectName = name;
+  //   notifyListeners();
+  // }
 
-  Color pickBgColor() {
-    return [
-      Colors.redAccent,
-      Colors.amberAccent,
-      Colors.greenAccent[400],
-      Colors.blueAccent,
-      Colors.pinkAccent,
-      Colors.purpleAccent,
-    ][Random().nextInt(6)]!;
-  }
+  // int get getSubjectRowId => subjectRowId;
+  // void setSubjectRowId(int id) {
+  //   subjectRowId = id;
+  //   notifyListeners();
+  // }
 
   // =================================Main Features===================================
 
@@ -99,11 +89,18 @@ class SubjectService extends ChangeNotifier {
   }
 
   // Update Subject(eg. subjectName, subjectAbout etc. )
-  Future<void> editSubject(int rowId, String name, String about) async {
+  Future<void> editSubject(int rowId, String name, String description) async {
     int timeUpdated = DateTime.now().millisecondsSinceEpoch;
-    int status = await SubjectRepository().updateSubjectFromLocalDatabase(rowId, name, about, timeUpdated);
+    int status = await SubjectRepository().updateSubjectFromLocalDatabase(rowId, name, description, timeUpdated);
     // int status = await ref.read(subjectRepositoryProvider).updateSubject(rowId, name, about, timeUpdated);
-    getSubjects(status);
+    if (status == 1) {
+      selectedSubjects[0].name = name;
+      selectedSubjects[0].description = description;
+    }
+    // clean up
+    selectedSubjects = [];
+    subjectsOnHold = false;
+    notifyListeners();
   }
 
   // Updates the state with subjects after adding or deleting a subject
@@ -134,18 +131,23 @@ class SubjectService extends ChangeNotifier {
   /// What happens when you tap on a Subject Tile.
   ///
   /// When you tap on the already selected subject, it should unselect, not go inside the page.
-  bool subjectOnTap(Subject message) {
+  bool subjectOnTap(Subject subject) {
     if (selectedSubjects.isEmpty) {
       return false;
-    } else if (selectedSubjects.isNotEmpty && !selectedSubjects.contains(message)) {
-      selectedSubjects.add(message);
+    } else if (selectedSubjects.isNotEmpty && !selectedSubjects.contains(subject)) {
+      selectedSubjects.add(subject);
       subjectsOnHold = selectedSubjects.isNotEmpty;
     } else {
-      selectedSubjects.remove(message);
+      selectedSubjects.remove(subject);
       subjectsOnHold = selectedSubjects.isNotEmpty;
     }
     notifyListeners();
     return true;
+  }
+
+  void selectSubject() {
+    selectedSubjects.add(subject);
+    // notifyListeners();
   }
 
   void resetHoldSubjectEffects() {

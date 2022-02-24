@@ -57,6 +57,7 @@ class MessageService extends ChangeNotifier {
       id: const Uuid().v1(),
       title: title,
       body: body,
+      srcs: [],
       color: color,
       subjectName: messageSubjectName,
       subjectRowId: subjectRowId,

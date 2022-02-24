@@ -1,12 +1,12 @@
 class Subject {
   final int? rowId;
   final String id;
-  late final String name;
-  late final String description;
-  final int avatarColor;
+  String name;
+  String description;
+  int avatarColor;
   final String avatarPath;
   final int timeCreated;
-  final int timeUpdated;
+  int timeUpdated;
   // String? imageURL;
   // String? time;
   Subject({

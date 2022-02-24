@@ -29,7 +29,7 @@ class _StarredMessagesPageState extends ConsumerState<StarredMessagesPage> {
       } else {
         await ref.read(starredMessageServiceProvider).setStarredMessages(
               widget.from,
-              ref.read(subjectServiceProvider).getSubjectRowId,
+              ref.read(subjectServiceProvider).getSubject.rowId!,
             );
       }
     }

@@ -33,7 +33,7 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
     ref.read(messageServiceProvider).retrieveLostData();
 
     // get the initial [messages] to show on page load
-    ref.read(messageServiceProvider).getMessages(ref.read(subjectServiceProvider).getSubjectRowId);
+    ref.read(messageServiceProvider).getMessages(ref.read(subjectServiceProvider).getSubject.rowId!);
   }
 
   @override

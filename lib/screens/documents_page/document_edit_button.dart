@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/helpers/color_list.dart';
 import 'package:frontend/screens/documents_page/edit_document_dialog.dart';
-import 'package:frontend/services/documents_service.dart';
-import 'package:frontend/services/theme_service.dart';
-import 'package:frontend/widgets/snack_bar.dart';
 
 class DocumentEditButton extends ConsumerStatefulWidget {
   const DocumentEditButton({Key? key}) : super(key: key);

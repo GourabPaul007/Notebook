@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/helpers/acronym.dart';
+import 'package:frontend/helpers/change_color.dart';
 import 'package:frontend/screens/starred_messages_page.dart';
 import 'package:frontend/screens/subject_list_page/edit_subject_dialog.dart';
 import 'package:frontend/services/subject_service.dart';
@@ -14,7 +16,7 @@ class SubjectDetailsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final messageService = ref.watch(messageServiceProvider);
-    final subjectService = ref.watch(subjectServiceProvider);
+    final subject = ref.watch(subjectServiceProvider).subject;
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -36,12 +38,25 @@ class SubjectDetailsPage extends ConsumerWidget {
           Expanded(
             flex: 4,
             child: Stack(children: [
-              Image.network(
-                """https://images.unsplash.com/photo-1489549132488-d00b7eee80f1?ixlib=rb-1.2.1&
-                ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80""",
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
+              // Image.network(
+              //   """https://images.unsplash.com/photo-1489549132488-d00b7eee80f1?ixlib=rb-1.2.1&
+              //   ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80""",
+              //   fit: BoxFit.cover,
+              //   width: double.infinity,
+              //   height: double.infinity,
+              // ),
+              Container(
+                color: Color(subject.avatarColor),
+                child: Center(
+                  child: Text(
+                    makeAcronym(subject.name).toUpperCase(),
+                    style: TextStyle(
+                      color: darkenColor(Color(subject.avatarColor), 140),
+                      fontSize: 72,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
               ),
               Positioned(
                 bottom: 8,
@@ -50,13 +65,13 @@ class SubjectDetailsPage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      subjectService.subjectName,
+                      subject.name,
                       style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: Colors.white),
                     ),
                     Text(
                       "Created at  " +
                           formatDate(DateTime.fromMillisecondsSinceEpoch(
-                            subjectService.subject.timeCreated,
+                            subject.timeCreated,
                           )),
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white70),
                     ),
@@ -72,15 +87,25 @@ class SubjectDetailsPage extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(50),
                   child: IconButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditSubjectDialog(
-                            rowId: subjectService.subjectRowId,
+                      showDialog(
+                        context: context,
+                        barrierColor: Colors.transparent,
+                        builder: (context) {
+                          return EditSubjectDialog(
+                            rowId: subject.rowId,
                             type: "edit",
-                          ),
-                        ),
+                          );
+                        },
                       );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => EditSubjectDialog(
+                      //       rowId: subject.rowId,
+                      //       type: "edit",
+                      //     ),
+                      //   ),
+                      // );
                     },
                     icon: const Icon(Icons.edit_rounded, color: Colors.white),
                   ),
@@ -107,7 +132,7 @@ class SubjectDetailsPage extends ConsumerWidget {
                               style: Theme.of(context).textTheme.headline4,
                             ),
                             Text(
-                              subjectService.subjectDescription,
+                              subject.description,
                               style: Theme.of(context).textTheme.bodyText1,
                             ),
                           ],

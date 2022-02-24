@@ -99,7 +99,9 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                               color: Colors.transparent,
                               child: IconButton(
                                 onPressed: () async {
-                                  await ref.read(messageServiceProvider).imgFromGallery(subjectService.getSubjectRowId);
+                                  await ref
+                                      .read(messageServiceProvider)
+                                      .imgFromGallery(subjectService.getSubject.rowId!);
                                 },
                                 splashColor: Colors.amber,
                                 icon: const Icon(Icons.photo_outlined),

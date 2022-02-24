@@ -20,10 +20,11 @@ class SingleSubjectTile extends StatelessWidget {
         radius: 24,
         child: Text(
           makeAcronym(subject.name).toUpperCase(),
-          style: Theme.of(context).textTheme.headline4!.copyWith(
-                color: darkenColor(Color(subject.avatarColor), 140),
-                fontWeight: FontWeight.w500,
-              ),
+          style: TextStyle(
+            color: darkenColor(Color(subject.avatarColor), 140),
+            fontSize: 24,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
       title: Text(

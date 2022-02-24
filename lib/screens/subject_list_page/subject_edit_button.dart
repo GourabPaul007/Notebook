@@ -35,8 +35,7 @@ class SubjectEditButton extends ConsumerWidget {
           onTap: () async {
             List<Subject> selectedSubjects = ref.watch(subjectServiceProvider).selectedSubjects;
             int? subjectRowId = selectedSubjects[0].rowId;
-            ref.read(subjectServiceProvider).setSubjectDescription(selectedSubjects[0].description);
-            ref.read(subjectServiceProvider).setSubjectName(selectedSubjects[0].name);
+            ref.read(subjectServiceProvider).setSubject(selectedSubjects[0]);
             showDialog(
               context: context,
               barrierColor: Colors.transparent,

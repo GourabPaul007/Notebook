@@ -212,8 +212,9 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
     super.initState();
     _buttonDisabled = widget.type == "add" ? true : false;
     if (widget.type == "edit") {
-      _subjectNameController.text = ref.read(subjectServiceProvider).getSubjectName;
-      _subjectDescriptionController.text = ref.read(subjectServiceProvider).getSubjectDescription;
+      final subject = ref.read(subjectServiceProvider).getSubject;
+      _subjectNameController.text = subject.name;
+      _subjectDescriptionController.text = subject.description;
     }
     // If body textfield is empty then button should be disabled
     _subjectNameController.addListener(() {

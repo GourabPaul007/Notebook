@@ -7,8 +7,7 @@ String makeAcronym(String input) {
   }
   if (acronym.length < 2) {
     acronym += input[input.length - 1];
-  }
-  if (acronym.length > 2) {
+  } else {
     acronym = acronym[0] + input[input.length - 1];
   }
   return acronym;
