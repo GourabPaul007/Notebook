@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/theme_service.dart';
 
@@ -59,7 +58,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   return Dialog(
                     backgroundColor: Theme.of(context).backgroundColor,
                     elevation: 5,
-                    child: ThemeDialog(),
+                    child: const ThemeDialog(),
                   );
                 },
               );

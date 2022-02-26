@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/home_page.dart';
 import 'package:frontend/services/theme_service.dart';
 import 'package:frontend/theme.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   // Ensure that plugin services are initialized so that `availableCameras()`

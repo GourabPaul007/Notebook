@@ -1,13 +1,9 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/documents_page.dart';
-import 'package:frontend/screens/documents_page/document_delete_button.dart';
-import 'package:frontend/screens/documents_page/document_share_button.dart';
 import 'package:frontend/screens/settings_page.dart';
 import 'package:frontend/screens/subject_search_page.dart';
 import 'package:frontend/screens/receive_shared_intent_page.dart';

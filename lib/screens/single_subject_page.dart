@@ -5,7 +5,6 @@ import 'package:frontend/screens/single_subject_page/messages_appbar/message_del
 import 'package:frontend/screens/single_subject_page/messages_appbar/message_edit_button.dart';
 import 'package:frontend/screens/single_subject_page/messages_appbar/message_star_button.dart';
 import 'package:frontend/screens/single_subject_page/messages_appbar/subject_title.dart';
-import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/message_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/subject_service.dart';
