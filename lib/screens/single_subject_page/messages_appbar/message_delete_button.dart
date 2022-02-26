@@ -34,7 +34,9 @@ class MessageDeleteButton extends ConsumerWidget {
                     ),
                     TextButton(
                       onPressed: () => {
-                        ref.read(messageServiceProvider).deleteMessages(ref.watch(subjectServiceProvider).subjectRowId),
+                        ref
+                            .read(messageServiceProvider)
+                            .deleteMessages(ref.watch(subjectServiceProvider).subject.rowId!),
                         Navigator.pop(context),
                       },
                       child: Text("Delete", style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 20)),

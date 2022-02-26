@@ -28,6 +28,14 @@ class _TakePictureScreenState extends ConsumerState<TakePictureScreen> {
   void initState() {
     super.initState();
     ref.read(cameraServiceProvider).initCameraController();
+
+    // Future<void> reqCameraPermission() async {
+    //   if (!await ref.read(cameraServiceProvider).requestCameraPermission()) {
+    //     Navigator.pop(context);
+    //   }
+    // }
+
+    // reqCameraPermission();
   }
 
   @override
@@ -130,7 +138,10 @@ class _TakePictureScreenState extends ConsumerState<TakePictureScreen> {
                                     //   localImageFile =
                                     //       await File(tempImageFile.path).copy('${myImgDir.path}/$fileName');
                                     // }
-                                    if (!await ref.read(cameraServiceProvider).requestPermission()) {
+                                    if (!await ref.read(cameraServiceProvider).requestStoragePermission()) {
+                                      return Navigator.pop(context);
+                                    }
+                                    if (!await ref.read(cameraServiceProvider).requestCameraPermission()) {
                                       return Navigator.pop(context);
                                     }
                                     String localImageFilePath =
@@ -249,7 +260,7 @@ class DisplayPictureScreen extends StatelessWidget {
                             onPressed: () async {
                               await ref
                                   .read(messageServiceProvider)
-                                  .imgFromCamera(imagePath, singleSubjectRef.subjectRowId);
+                                  .imgFromCamera(imagePath, singleSubjectRef.subject.rowId!);
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             },

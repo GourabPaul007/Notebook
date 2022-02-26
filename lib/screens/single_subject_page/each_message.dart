@@ -89,102 +89,105 @@ class EachMessage extends ConsumerWidget {
 
             // FOR IMAGE MESSAGES
             message.type == "image"
-                ? Stack(
-                    children: [
-                      InkWell(
-                        onTap: from == "SingleSubjectPage"
-                            ? () {
-                                final images = ref.watch(messageServiceProvider).images;
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ViewImage(
-                                      index: images.indexOf(message),
-                                    ),
-                                  ),
-                                );
-                              }
-                            : () {},
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5.0),
-                          child: Container(
-                            constraints: const BoxConstraints(minWidth: 200, maxWidth: double.maxFinite),
-                            child: Image.file(
-                              File(message.body),
-                              width: double.maxFinite,
-                              height: 200,
-                              fit: BoxFit.cover,
+                ? File(message.body).existsSync()
+                    ? Stack(
+                        children: [
+                          InkWell(
+                            onTap: from == "SingleSubjectPage"
+                                ? () {
+                                    final images = ref.watch(messageServiceProvider).images;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ViewImage(
+                                          index: images.indexOf(message),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                : () {},
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5.0),
+                              child: Container(
+                                constraints: const BoxConstraints(minWidth: 200, maxWidth: double.maxFinite),
+                                child: Image.file(
+                                  File(message.body),
+                                  width: double.maxFinite,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 2,
-                        right: 4,
-                        child: OtherMessageInfo(message: message),
-                      ),
-                    ],
-                  )
+                          Positioned(
+                            bottom: 2,
+                            right: 4,
+                            child: OtherMessageInfo(message: message),
+                          ),
+                        ],
+                      )
+                    : const FileHasBeenDeleted()
                 : const SizedBox(),
 
             // FOR DOCUMENT CHATS
             message.type == "document"
-                ? InkWell(
-                    onTap: () {
-                      OpenFile.open(message.body);
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 5 / 7,
-                          padding: const EdgeInsets.only(top: 12, bottom: 12, left: 10, right: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6.0),
-                            color: darkenColor(Color(message.color), 20),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                message.body.endsWith(".pdf")
-                                    ? Icons.picture_as_pdf_rounded
-                                    : Icons.description_rounded,
-                                color: message.body.endsWith(".pdf") ? Colors.redAccent : Colors.blue,
-                                size: 32,
+                ? File(message.body).existsSync()
+                    ? InkWell(
+                        onTap: () {
+                          OpenFile.open(message.body);
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * 5 / 7,
+                              padding: const EdgeInsets.only(top: 12, bottom: 12, left: 10, right: 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6.0),
+                                color: darkenColor(Color(message.color), 20),
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  basename(message.body),
-                                  style: const TextStyle(fontSize: 16, color: Colors.white),
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    message.body.endsWith(".pdf")
+                                        ? Icons.picture_as_pdf_rounded
+                                        : Icons.description_rounded,
+                                    color: message.body.endsWith(".pdf") ? Colors.redAccent : Colors.blue,
+                                    size: 32,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      basename(message.body),
+                                      style: const TextStyle(fontSize: 16, color: Colors.white),
+                                      softWrap: false,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(top: 2, bottom: 0, left: 4, right: 4),
+                              color: Colors.deepPurpleAccent,
+                              // height: 24,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    message.body.substring(message.body.lastIndexOf(".") + 1).toUpperCase(),
+                                    style: const TextStyle(fontSize: 12, color: Colors.white),
+                                  ),
+                                  OtherMessageInfo(
+                                    message: message,
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.only(top: 2, bottom: 0, left: 4, right: 4),
-                          color: Colors.deepPurpleAccent,
-                          // height: 24,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                message.body.substring(message.body.lastIndexOf(".") + 1).toUpperCase(),
-                                style: const TextStyle(fontSize: 12, color: Colors.white),
-                              ),
-                              OtherMessageInfo(
-                                message: message,
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                // )
+                      )
+                    : const FileHasBeenDeleted()
                 : const SizedBox(),
           ],
         ),
@@ -224,6 +227,29 @@ class OtherMessageInfo extends StatelessWidget {
     );
   }
 }
+
+class FileHasBeenDeleted extends StatelessWidget {
+  const FileHasBeenDeleted({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(5.0),
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.all(8.0),
+        constraints: const BoxConstraints(minWidth: 200, maxWidth: double.maxFinite),
+        child: Center(
+          child: Text(
+            "File has been deleted",
+            style: TextStyle(color: Colors.grey[300], fontStyle: FontStyle.italic),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 // import 'dart:io';
 // import 'package:flutter/cupertino.dart';

@@ -17,8 +17,6 @@ class PdfsPage extends ConsumerStatefulWidget {
 }
 
 class _PdfsPageState extends ConsumerState<PdfsPage> {
-  late final TabController _tabController;
-
   @override
   void initState() {
     super.initState();
@@ -205,37 +203,3 @@ class _PdfsPageState extends ConsumerState<PdfsPage> {
     );
   }
 }
-
-// Container(
-//   // height: double.infinity,
-//   child: Column(
-//     children: [
-//       ListView.builder(itemBuilder: (BuildContext context, int index) {
-//         return ListTile(
-//           title: Text(pdfs[index].name),
-//         );
-//       }),
-//       // TextButton(
-//       //   onPressed: () async {
-//       //     final File? file = await pickFile();
-//       //     if (file == null) return;
-//       //     openPDF(context, file);
-//       //   },
-//       //   child: const Text("Load Pdf"),
-//       // ),
-//       // //
-//       // //
-//       // //
-//       // TextButton(
-//       //   onPressed: () async {
-//       //     final File? pdf = await pickFile();
-//       //     if (pdf == null) return;
-//       //     openPDF2(context, pdf);
-//       //   },
-//       //   child: const Text("Open Pdf"),
-//       // ),
-//     ],
-//   ),
-// ),
-
-

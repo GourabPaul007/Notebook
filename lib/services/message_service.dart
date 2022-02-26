@@ -12,7 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 final messageServiceProvider =
-    ChangeNotifierProvider((ref) => MessageService(ref.watch(subjectServiceProvider).subjectName));
+    ChangeNotifierProvider((ref) => MessageService(ref.watch(subjectServiceProvider).subject.name));
 
 class MessageService extends ChangeNotifier {
   late String messageSubjectName;
@@ -57,7 +57,6 @@ class MessageService extends ChangeNotifier {
       id: const Uuid().v1(),
       title: title,
       body: body,
-      srcs: [],
       color: color,
       subjectName: messageSubjectName,
       subjectRowId: subjectRowId,

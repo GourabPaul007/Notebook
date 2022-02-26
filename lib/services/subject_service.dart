@@ -17,8 +17,7 @@ class SubjectService extends ChangeNotifier {
 
   /// The current subject in memory
   late Subject subject;
-  late int subjectRowId;
-  String subjectName = "";
+  // late int subjectRowId;
   String subjectDescription = "";
   List<Subject> subjects = [];
   List<Subject> selectedSubjects = [];

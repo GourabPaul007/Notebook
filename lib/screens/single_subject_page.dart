@@ -23,17 +23,20 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
   @override
   void initState() {
     super.initState();
-    Future<void> reqPermission() async {
-      await ref.read(cameraServiceProvider).requestPermission();
-    }
-
-    reqPermission();
-
     // needed to check for camera idk ill check later
     ref.read(messageServiceProvider).retrieveLostData();
 
     // get the initial [messages] to show on page load
     ref.read(messageServiceProvider).getMessages(ref.read(subjectServiceProvider).getSubject.rowId!);
+
+    // Future<void> reqPermission() async {
+    //   await ref.read(cameraServiceProvider).requestStoragePermission();
+    //   if (!await ref.read(cameraServiceProvider).requestCameraPermission()) {
+    //     Navigator.pop(context);
+    //   }
+    // }
+
+    // reqPermission();
   }
 
   @override

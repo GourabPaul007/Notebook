@@ -15,7 +15,7 @@ class SubjectTitle extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedMessages = ref.watch(messageServiceProvider).selectedMessages;
-    final subjectName = ref.watch(subjectServiceProvider).subjectName;
+    final subjectName = ref.watch(subjectServiceProvider).subject.name;
 
     return SizedBox(
       height: kToolbarHeight,

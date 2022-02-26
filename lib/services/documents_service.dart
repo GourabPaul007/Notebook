@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/models/document_model.dart';
 import 'package:frontend/repositories/documents_repository.dart';
+import 'package:frontend/widgets/snack_bar.dart';
 import 'package:open_file/open_file.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -22,11 +23,15 @@ class PdfService extends ChangeNotifier {
 
   void documentOnTap(BuildContext context, Document document) async {
     if (selectedDocuments.isEmpty) {
-      debugPrint("inside OpenFile");
-      await OpenFile.open(
-        document.path,
-        // type: "application/pdf",
-      );
+      // if the file exists then open, otherwise show snackbar saying "file has been deleted"
+      if (File(document.path).existsSync()) {
+        await OpenFile.open(
+          document.path,
+          // type: "application/pdf",
+        );
+      } else {
+        SnackBarWidget.buildSnackbar(context, "File has been deleted");
+      }
     } else if (selectedDocuments.contains(document)) {
       selectedDocuments.remove(document);
       documentsOnHold = selectedDocuments.isNotEmpty;

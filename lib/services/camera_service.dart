@@ -48,13 +48,24 @@ class CameraService extends ChangeNotifier {
     initializeControllerFuture = controller.initialize();
   }
 
-  Future<bool> requestPermission() async {
+  Future<bool> requestStoragePermission() async {
     if (await Permission.storage.isGranted) {
       return true;
-    } else if (await Permission.storage.request().isPermanentlyDenied) {
-      return await openAppSettings();
     } else if (await Permission.storage.request().isDenied) {
       return false;
+    } else if (await Permission.storage.request().isPermanentlyDenied) {
+      await openAppSettings();
+    }
+    return false;
+  }
+
+  Future<bool> requestCameraPermission() async {
+    if (await Permission.camera.request().isGranted) {
+      return true;
+    } else if (await Permission.camera.request().isDenied) {
+      return false;
+    } else if (await Permission.camera.request().isPermanentlyDenied) {
+      await openAppSettings();
     }
     return false;
   }

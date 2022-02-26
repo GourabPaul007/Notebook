@@ -72,11 +72,16 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                               clipBehavior: Clip.hardEdge,
                               color: Colors.transparent,
                               child: IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const TakePictureScreen()),
-                                  );
+                                onPressed: () async {
+                                  if (await ref.read(cameraServiceProvider).requestCameraPermission() == false &&
+                                      await ref.read(cameraServiceProvider).requestStoragePermission() == false) {
+                                    return;
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const TakePictureScreen()),
+                                    );
+                                  }
                                 },
                                 icon: const Icon(Icons.camera_alt_outlined),
                                 splashColor: Colors.amber,
@@ -99,9 +104,13 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                               color: Colors.transparent,
                               child: IconButton(
                                 onPressed: () async {
-                                  await ref
-                                      .read(messageServiceProvider)
-                                      .imgFromGallery(subjectService.getSubject.rowId!);
+                                  if (await ref.read(cameraServiceProvider).requestStoragePermission() == false) {
+                                    return;
+                                  } else {
+                                    await ref
+                                        .read(messageServiceProvider)
+                                        .imgFromGallery(subjectService.getSubject.rowId!);
+                                  }
                                 },
                                 splashColor: Colors.amber,
                                 icon: const Icon(Icons.photo_outlined),
@@ -126,7 +135,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                             backgroundColor: Colors.transparent,
                             barrierColor: Colors.transparent,
                             builder: (BuildContext context) {
-                              return SingleSubjectBottomSheet(subjectRowId: subjectService.subjectRowId);
+                              return SingleSubjectBottomSheet(subjectRowId: subjectService.subject.rowId!);
                             },
                           );
                         },
@@ -167,7 +176,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
               onPressed: () {
                 ref.read(messageServiceProvider).sendInputText(
                       _inputTextController.text,
-                      subjectService.subjectRowId,
+                      subjectService.subject.rowId!,
                     );
                 _inputTextController.clear();
               },
