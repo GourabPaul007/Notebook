@@ -82,49 +82,53 @@ class _EditDocumentDialogState extends ConsumerState<EditDocumentDialog> {
                   ),
                 ),
               ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0, left: 8.0, bottom: 8.0),
-                  child: Text(
-                    "Set document color",
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                ),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: GridView.count(
-                    shrinkWrap: true,
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 2,
-                    crossAxisSpacing: 16,
-                    children: List.generate(
-                      documentColorList.length,
-                      (int index) {
-                        List<int> colors = documentColorList;
-                        return ChoiceChip(
-                          shape: const CircleBorder(),
-                          side: BorderSide(
-                            color: _value == colors[index] ? Colors.white54 : Colors.transparent,
-                            width: 3,
-                          ),
-                          backgroundColor: Color(colors[index]),
-                          selectedColor: Color(colors[index]),
-                          padding: const EdgeInsets.all(20),
-                          label: const SizedBox(),
-                          selected: _value == colors[index],
-                          onSelected: (bool selected) {
-                            setState(() {
-                              _value = colors[index];
-                            });
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
+
+              // TODO: UnComment for future update
+              // Flexible(
+              //   child: Padding(
+              //     padding: const EdgeInsets.only(top: 16.0, left: 8.0, bottom: 8.0),
+              //     child: Text(
+              //       "Set document color",
+              //       style: Theme.of(context).textTheme.bodyText1,
+              //     ),
+              //   ),
+              // ),
+              // Flexible(
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              //     child: GridView.count(
+              //       shrinkWrap: true,
+              //       crossAxisCount: 4,
+              //       mainAxisSpacing: 2,
+              //       crossAxisSpacing: 16,
+              //       children: List.generate(
+              //         documentColorList.length,
+              //         (int index) {
+              //           List<int> colors = documentColorList;
+              //           return ChoiceChip(
+              //             shape: const CircleBorder(),
+              //             side: BorderSide(
+              //               color:
+              //                   _value == colors[index] ? Theme.of(context).colorScheme.onPrimary : Colors.transparent,
+              //               width: 3,
+              //             ),
+              //             backgroundColor: Color(colors[index]),
+              //             selectedColor: Color(colors[index]),
+              //             padding: const EdgeInsets.all(20),
+              //             label: const SizedBox(),
+              //             selected: _value == colors[index],
+              //             onSelected: (bool selected) {
+              //               setState(() {
+              //                 _value = colors[index];
+              //               });
+              //             },
+              //           );
+              //         },
+              //       ),
+              //     ),
+              //   ),
+              // ),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

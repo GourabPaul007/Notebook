@@ -72,24 +72,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
      *  when the tab changes, reset all the states(if subject or documents on hold)
      */
     _tabController.addListener(() {
-      // switch (_tabController.index) {
-      //   case 0:
-      //     ref.read(documentServiceProvider).disposeStates();
-      //     break;
-      //   case 1:
-      //     ref.read(subjectServiceProvider).resetHoldSubjectEffects();
-      //     break;
-      //   default:
-      //     ref.read(documentServiceProvider).disposeStates();
-      //     ref.read(subjectServiceProvider).resetHoldSubjectEffects();
-      //     break;
-      // }
       if (_tabController.indexIsChanging) {
         debugPrint("tab is animating. from active (getting the index) to inactive(getting the index) ");
       } else {
-        //tab is finished animating you get the current index
-        //here you can get your index or run some method once.
-        debugPrint("**************" + _tabController.index.toString());
+        debugPrint("tab index: " + _tabController.index.toString());
         ref.read(documentServiceProvider).disposeStates();
         ref.read(subjectServiceProvider).resetHoldSubjectEffects();
       }

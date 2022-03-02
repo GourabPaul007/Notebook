@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/helpers/color_list.dart';
 import 'package:frontend/services/subject_service.dart';
 
 // class EditSubjectDialog extends ConsumerStatefulWidget {
@@ -206,6 +207,7 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
 
   // If body textfield is empty then button should be disabled
   bool _buttonDisabled = true;
+  int _value = Colors.deepPurple[100]!.value;
 
   @override
   void initState() {
@@ -215,6 +217,7 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
       final subject = ref.read(subjectServiceProvider).getSubject;
       _subjectNameController.text = subject.name;
       _subjectDescriptionController.text = subject.description;
+      _value = ref.read(subjectServiceProvider).subject.avatarColor;
     }
     // If body textfield is empty then button should be disabled
     _subjectNameController.addListener(() {
@@ -258,7 +261,7 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
             ),
             Text(
               widget.type == "add" ? "ADD NEW TOPIC" : "EDIT TOPIC",
-              style: Theme.of(context).textTheme.headline2,
+              style: Theme.of(context).textTheme.bodyText1,
             ),
             // Subject Name TextField
             Flexible(
@@ -318,9 +321,43 @@ class _EditSubjectDialogState extends ConsumerState<EditSubjectDialog> {
                 ),
               ),
             ),
-            // const SizedBox(
-            //   height: 22,
+
+            // TODO: UnComment for future update
+            // Flexible(
+            //   child: Padding(
+            //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            //     child: GridView.count(
+            //       shrinkWrap: true,
+            //       crossAxisCount: 4,
+            //       mainAxisSpacing: 2,
+            //       crossAxisSpacing: 16,
+            //       children: List.generate(
+            //         avatarColorList.length,
+            //         (int index) {
+            //           List<int> colors = avatarColorList;
+            //           return ChoiceChip(
+            //             shape: const CircleBorder(),
+            //             side: BorderSide(
+            //               color: _value == colors[index] ? Theme.of(context).colorScheme.onPrimary : Colors.transparent,
+            //               width: 3,
+            //             ),
+            //             backgroundColor: Color(colors[index]),
+            //             selectedColor: Color(colors[index]),
+            //             padding: const EdgeInsets.all(20),
+            //             label: const SizedBox(),
+            //             selected: _value == colors[index],
+            //             onSelected: (bool selected) {
+            //               setState(() {
+            //                 _value = colors[index];
+            //               });
+            //             },
+            //           );
+            //         },
+            //       ),
+            //     ),
+            //   ),
             // ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

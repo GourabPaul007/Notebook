@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/single_subject_page/each_message.dart';
+import 'package:frontend/screens/single_subject_page/edit_message_dialog.dart';
 import 'package:frontend/screens/single_subject_page/input_area.dart';
-import 'package:frontend/screens/single_subject_page/messages_appbar/message_delete_button.dart';
-import 'package:frontend/screens/single_subject_page/messages_appbar/message_edit_button.dart';
-import 'package:frontend/screens/single_subject_page/messages_appbar/message_star_button.dart';
-import 'package:frontend/screens/single_subject_page/messages_appbar/subject_title.dart';
+import 'package:frontend/screens/subject_details_page.dart';
 import 'package:frontend/services/message_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/services/subject_service.dart';
@@ -24,18 +22,8 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
     super.initState();
     // needed to check for camera idk ill check later
     ref.read(messageServiceProvider).retrieveLostData();
-
     // get the initial [messages] to show on page load
     ref.read(messageServiceProvider).getMessages(ref.read(subjectServiceProvider).getSubject.rowId!);
-
-    // Future<void> reqPermission() async {
-    //   await ref.read(cameraServiceProvider).requestStoragePermission();
-    //   if (!await ref.read(cameraServiceProvider).requestCameraPermission()) {
-    //     Navigator.pop(context);
-    //   }
-    // }
-
-    // reqPermission();
   }
 
   @override
@@ -131,6 +119,168 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ===============================================================================================================================
+// ===============================================================================================================================
+// ===============================================================================================================================
+// AppBar Area Widgets
+
+class SubjectTitle extends ConsumerWidget {
+  const SubjectTitle({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedMessages = ref.watch(messageServiceProvider).selectedMessages;
+    final subjectName = ref.watch(subjectServiceProvider).subject.name;
+
+    return SizedBox(
+      height: kToolbarHeight,
+      child: selectedMessages.isNotEmpty
+          ? Container(
+              padding: const EdgeInsets.only(left: 4),
+              alignment: Alignment.centerLeft,
+              width: double.maxFinite,
+              child: Text(
+                selectedMessages.length.toString(),
+                style: Theme.of(context).textTheme.headline1,
+              ),
+            )
+          : Material(
+              color: Colors.transparent,
+              child: InkWell(
+                child: Container(
+                  padding: const EdgeInsets.only(left: 4),
+                  alignment: Alignment.centerLeft,
+                  width: double.maxFinite,
+                  child: Text(
+                    subjectName,
+                    style: Theme.of(context).textTheme.headline1,
+                    maxLines: 1,
+                  ),
+                ),
+                onTap: () {
+                  ref.read(subjectServiceProvider).selectSubject();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SubjectDetailsPage()),
+                  );
+                },
+              ),
+            ),
+    );
+  }
+}
+
+class MessageStarButton extends ConsumerWidget {
+  const MessageStarButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedMessages = ref.watch(messageServiceProvider).selectedMessages;
+    selectedMessages.any((element) => element.isFavourite);
+    // selectedMessages.where((element) => element.isFavourite)
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 6),
+      child: Material(
+        shape: const CircleBorder(),
+        clipBehavior: Clip.hardEdge,
+        color: Colors.transparent,
+        child: IconButton(
+          onPressed: () async {
+            await ref.read(messageServiceProvider).toggleStarMessages();
+          },
+          icon: Icon(
+            ref.watch(messageServiceProvider).selectedMessages.every((element) => element.isFavourite)
+                ? Icons.star_rate_rounded
+                : Icons.star_border_rounded,
+            size: 28.0,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MessageEditButton extends StatelessWidget {
+  const MessageEditButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 6),
+      child: Material(
+        shape: const CircleBorder(),
+        clipBehavior: Clip.hardEdge,
+        color: Colors.transparent,
+        child: IconButton(
+          onPressed: () {
+            showDialog(
+                context: context,
+                barrierColor: Colors.transparent,
+                builder: (context) {
+                  return const EditMessageDialog(type: "edit");
+                });
+          },
+          icon: const Icon(Icons.edit_outlined, size: 26.0),
+        ),
+      ),
+    );
+  }
+}
+
+class MessageDeleteButton extends ConsumerWidget {
+  const MessageDeleteButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 6),
+      child: Material(
+        shape: const CircleBorder(),
+        clipBehavior: Clip.hardEdge,
+        color: Colors.transparent,
+        child: IconButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  backgroundColor: Colors.white,
+                  title: const Text(
+                    "Delete Message?",
+                    style: TextStyle(color: Colors.black, fontSize: 26, fontWeight: FontWeight.w400),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => {() {}, Navigator.pop(context, 'Cancel')},
+                      child: Text("Cancel", style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 20)),
+                    ),
+                    TextButton(
+                      onPressed: () => {
+                        ref
+                            .read(messageServiceProvider)
+                            .deleteMessages(ref.watch(subjectServiceProvider).subject.rowId!),
+                        Navigator.pop(context),
+                      },
+                      child: Text("Delete", style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 20)),
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                );
+              },
+            );
+          },
+          icon: const Icon(Icons.delete_outline_rounded, size: 26.0),
         ),
       ),
     );

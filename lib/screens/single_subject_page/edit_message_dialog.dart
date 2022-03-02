@@ -90,34 +90,38 @@ class _EditMessageDialogState extends ConsumerState<EditMessageDialog> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              const SizedBox(
+                height: 12,
+              ),
               Center(
                 child: Text(
                   widget.type == "new" ? "NEW RICH TEXT" : "EDIT MESSAGE",
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
               ),
+              const SizedBox(
+                height: 12,
+              ),
+
               // Subject Name TextField
               Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 8),
-                      child: TextField(
-                        controller: _messageTitleController,
-                        maxLines: 1,
-                        style: Theme.of(context).textTheme.bodyText2,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                          hintText: "Title",
-                          hintStyle: const TextStyle(color: Colors.grey),
-                          fillColor: Theme.of(context).colorScheme.surface,
-                          filled: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 8),
+                    child: TextField(
+                      controller: _messageTitleController,
+                      maxLines: 1,
+                      style: Theme.of(context).textTheme.bodyText2,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        hintText: "Title",
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        fillColor: Theme.of(context).colorScheme.surface,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
                         ),
                       ),
                     ),
@@ -157,50 +161,53 @@ class _EditMessageDialogState extends ConsumerState<EditMessageDialog> {
                       ),
                     )
                   : const SizedBox(),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0, left: 8.0, bottom: 8.0),
-                  child: Text(
-                    "Set message color",
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                ),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: GridView.count(
-                    shrinkWrap: true,
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 2,
-                    crossAxisSpacing: 16,
-                    children: List.generate(
-                      messageColorList.length,
-                      (int index) {
-                        List<int> colors = messageColorList;
-                        return ChoiceChip(
-                          shape: const CircleBorder(),
-                          side: BorderSide(
-                            color:
-                                _value == colors[index] ? Theme.of(context).colorScheme.onPrimary : Colors.transparent,
-                            width: 3,
-                          ),
-                          backgroundColor: Color(colors[index]),
-                          selectedColor: Color(colors[index]),
-                          padding: const EdgeInsets.all(20),
-                          label: const SizedBox(),
-                          selected: _value == colors[index],
-                          onSelected: (bool selected) {
-                            setState(() {
-                              _value = colors[index];
-                            });
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
+
+              // TODO: UnComment for future update
+              // Flexible(
+              //   child: Padding(
+              //     padding: const EdgeInsets.only(top: 16.0, left: 8.0, bottom: 8.0),
+              //     child: Text(
+              //       "Set message color",
+              //       style: Theme.of(context).textTheme.bodyText1,
+              //     ),
+              //   ),
+              // ),
+              // Flexible(
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              //     child: GridView.count(
+              //       shrinkWrap: true,
+              //       crossAxisCount: 4,
+              //       mainAxisSpacing: 2,
+              //       crossAxisSpacing: 16,
+              //       children: List.generate(
+              //         messageColorList.length,
+              //         (int index) {
+              //           List<int> colors = messageColorList;
+              //           return ChoiceChip(
+              //             shape: const CircleBorder(),
+              //             side: BorderSide(
+              //               color:
+              //                   _value == colors[index] ? Theme.of(context).colorScheme.onPrimary : Colors.transparent,
+              //               width: 3,
+              //             ),
+              //             backgroundColor: Color(colors[index]),
+              //             selectedColor: Color(colors[index]),
+              //             padding: const EdgeInsets.all(20),
+              //             label: const SizedBox(),
+              //             selected: _value == colors[index],
+              //             onSelected: (bool selected) {
+              //               setState(() {
+              //                 _value = colors[index];
+              //               });
+              //             },
+              //           );
+              //         },
+              //       ),
+              //     ),
+              //   ),
+              // ),
+
               Flexible(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -279,7 +286,6 @@ class _EditMessageDialogState extends ConsumerState<EditMessageDialog> {
           ),
         ),
       ),
-      // ),
     );
   }
 }

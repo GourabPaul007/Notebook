@@ -111,7 +111,11 @@ class MessageService extends ChangeNotifier {
 
   void messageOnLongPress(Message message) {
     HapticFeedback.vibrate();
-    selectedMessages.add(message);
+    if (selectedMessages.contains(message)) {
+      selectedMessages.remove(message);
+    } else {
+      selectedMessages.add(message);
+    }
     showHoldMessageIcons = selectedMessages.isNotEmpty;
     notifyListeners();
   }

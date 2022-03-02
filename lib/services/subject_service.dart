@@ -29,24 +29,6 @@ class SubjectService extends ChangeNotifier {
     notifyListeners();
   }
 
-  // String get getSubjectDescription => subjectDescription;
-  // void setSubjectDescription(String description) {
-  //   subjectDescription = description;
-  //   notifyListeners();
-  // }
-
-  // String get getSubjectName => subjectName;
-  // void setSubjectName(String name) {
-  //   subjectName = name;
-  //   notifyListeners();
-  // }
-
-  // int get getSubjectRowId => subjectRowId;
-  // void setSubjectRowId(int id) {
-  //   subjectRowId = id;
-  //   notifyListeners();
-  // }
-
   // =================================Main Features===================================
 
   /// get all [subjects] from database
@@ -117,7 +99,6 @@ class SubjectService extends ChangeNotifier {
 
   void subjectOnLongPress(Subject subject) {
     HapticFeedback.vibrate();
-    // selectedSubjects = [subject];
     if (selectedSubjects.contains(subject)) {
       selectedSubjects.remove(subject);
     } else {
