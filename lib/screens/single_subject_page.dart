@@ -164,7 +164,7 @@ class SubjectTitle extends ConsumerWidget {
                   ),
                 ),
                 onTap: () {
-                  ref.read(subjectServiceProvider).selectSubject();
+                  // ref.read(subjectServiceProvider).selectSubject();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const SubjectDetailsPage()),

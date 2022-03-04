@@ -43,14 +43,16 @@ class _StarredMessagesPageState extends ConsumerState<StarredMessagesPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: widget.from == "HomePage"
-          ? null
-          : AppBar(
-              title: Text(
-                "Starred Messages",
-                style: Theme.of(context).textTheme.headline2,
-              ),
-            ),
+      appBar:
+          // widget.from == "HomePage"
+          //     ? null
+          //     :
+          AppBar(
+        title: Text(
+          "Starred Messages",
+          style: Theme.of(context).textTheme.headline2,
+        ),
+      ),
       body: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: ListView.separated(

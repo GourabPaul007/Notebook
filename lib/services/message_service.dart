@@ -11,13 +11,9 @@ import 'package:frontend/services/subject_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-final messageServiceProvider =
-    ChangeNotifierProvider((ref) => MessageService(ref.watch(subjectServiceProvider).subject.name));
+final messageServiceProvider = ChangeNotifierProvider((ref) => MessageService());
 
 class MessageService extends ChangeNotifier {
-  late String messageSubjectName;
-  MessageService(this.messageSubjectName);
-
   XFile? _image;
   final ImagePicker _picker = ImagePicker();
   List<Message> messages = [];
@@ -49,7 +45,8 @@ class MessageService extends ChangeNotifier {
   // ===========================================================================================
   // General CRUD
   /// Adds a new [Message] to message repository/database.
-  Future<void> addMessage(String title, String body, int color, int subjectRowId, String type) async {
+  Future<void> addMessage(
+      String title, String body, int color, String subjectName, int subjectRowId, String type) async {
     if (body == "") return;
 
     await MessageRepository().addMessageToLocalDatabase(Message(
@@ -58,7 +55,7 @@ class MessageService extends ChangeNotifier {
       title: title,
       body: body,
       color: color,
-      subjectName: messageSubjectName,
+      subjectName: subjectName,
       subjectRowId: subjectRowId,
       timeCreated: DateTime.now().millisecondsSinceEpoch,
       timeUpdated: DateTime.now().millisecondsSinceEpoch,
@@ -174,8 +171,8 @@ class MessageService extends ChangeNotifier {
   late CameraDescription cameraNew;
 
   /// sends input [text] to [addMessage] method and clears the [newTextController] text
-  void sendInputText(String text, int subjectRowId) async {
-    addMessage("", text, Colors.deepPurpleAccent.value, subjectRowId, "text");
+  void sendInputText(String text, String subjectName, int subjectRowId) async {
+    addMessage("", text, Colors.deepPurpleAccent.value, subjectName, subjectRowId, "text");
     newTextController.clear();
   }
 
@@ -195,18 +192,18 @@ class MessageService extends ChangeNotifier {
   /// Adds Image from Camera.
   ///
   /// takes the [imagePath] sent from [Camera] and adds the image path to [Message.body]
-  Future imgFromCamera(String imagePath, int subjectRowId) async {
+  Future imgFromCamera(String imagePath, String subjectName, int subjectRowId) async {
     debugPrint(imagePath);
     if (imagePath != "") {
       const String type = "image";
-      addMessage("", imagePath, Colors.deepPurpleAccent.value, subjectRowId, type);
+      addMessage("", imagePath, Colors.deepPurpleAccent.value, subjectName, subjectRowId, type);
     }
   }
 
   /// Adds Image from gallery.
   ///
   /// takes the [imagePath] sent from [ImagePicker().pickImage] and adds the image path to [Message.body]
-  Future imgFromGallery(int subjectRowId) async {
+  Future imgFromGallery(String subjectName, int subjectRowId) async {
     try {
       XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -215,7 +212,7 @@ class MessageService extends ChangeNotifier {
       notifyListeners();
       if (_image != null) {
         const String type = "image";
-        addMessage("", _image!.path, Colors.deepPurpleAccent.value, subjectRowId, type);
+        addMessage("", _image!.path, Colors.deepPurpleAccent.value, subjectName, subjectRowId, type);
       }
     } on Exception catch (e) {
       await retrieveLostData();
@@ -224,7 +221,7 @@ class MessageService extends ChangeNotifier {
   }
 
   /// picks documents from file system...
-  Future pickDocuments(int subjectRowId) async {
+  Future pickDocuments(String subjectName, int subjectRowId) async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
@@ -238,7 +235,7 @@ class MessageService extends ChangeNotifier {
       return File(path!);
     }).toList();
     for (var file in files) {
-      addMessage("", file.path, Colors.deepPurpleAccent.value, subjectRowId, "document");
+      addMessage("", file.path, Colors.deepPurpleAccent.value, subjectName, subjectRowId, "document");
     }
   }
 

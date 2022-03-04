@@ -8,12 +8,10 @@ import 'package:frontend/repositories/subject_repository.dart';
 import 'package:frontend/models/subject_model.dart';
 import 'package:uuid/uuid.dart';
 
-final subjectServiceProvider = ChangeNotifierProvider((ref) => SubjectService(ref));
+final subjectServiceProvider = ChangeNotifierProvider((ref) => SubjectService());
 
 class SubjectService extends ChangeNotifier {
-  SubjectService(this.ref);
-
-  final Ref ref;
+  SubjectService();
 
   /// The current subject in memory
   late Subject subject;
@@ -125,10 +123,10 @@ class SubjectService extends ChangeNotifier {
     return true;
   }
 
-  void selectSubject() {
-    selectedSubjects.add(subject);
-    // notifyListeners();
-  }
+  // void selectSubject() {
+  //   selectedSubjects.add(subject);
+  //   // notifyListeners();
+  // }
 
   void resetHoldSubjectEffects() {
     selectedSubjects = [];

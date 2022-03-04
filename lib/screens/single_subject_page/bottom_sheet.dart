@@ -6,8 +6,9 @@ import 'package:frontend/services/message_service.dart';
 
 class SingleSubjectBottomSheet extends StatelessWidget {
   final int subjectRowId;
+  final String subjectName;
 
-  const SingleSubjectBottomSheet({Key? key, required this.subjectRowId}) : super(key: key);
+  const SingleSubjectBottomSheet({Key? key, required this.subjectName, required this.subjectRowId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +30,33 @@ class SingleSubjectBottomSheet extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  BottomSheetAction(actionType: "document", subjectRowId: subjectRowId),
-                  BottomSheetAction(actionType: "camera", subjectRowId: subjectRowId),
-                  BottomSheetAction(actionType: "gallery", subjectRowId: subjectRowId),
+                  BottomSheetAction(
+                    actionType: "document",
+                    subjectRowId: subjectRowId,
+                    subjectName: subjectName,
+                  ),
+                  BottomSheetAction(
+                    actionType: "camera",
+                    subjectRowId: subjectRowId,
+                    subjectName: subjectName,
+                  ),
+                  BottomSheetAction(
+                    actionType: "gallery",
+                    subjectRowId: subjectRowId,
+                    subjectName: subjectName,
+                  ),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  BottomSheetAction(actionType: "richNote", subjectRowId: subjectRowId),
-                  BottomSheetAction(subjectRowId: subjectRowId),
-                  BottomSheetAction(subjectRowId: subjectRowId),
+                  BottomSheetAction(
+                    actionType: "richNote",
+                    subjectRowId: subjectRowId,
+                    subjectName: subjectName,
+                  ),
+                  BottomSheetAction(subjectName: subjectName, subjectRowId: subjectRowId),
+                  BottomSheetAction(subjectName: subjectName, subjectRowId: subjectRowId),
                 ],
               ),
             ],
@@ -63,10 +80,12 @@ class SingleSubjectBottomSheet extends StatelessWidget {
 class BottomSheetAction extends StatelessWidget {
   final String? actionType;
   final int subjectRowId;
+  final String subjectName;
 
   const BottomSheetAction({
     Key? key,
     this.actionType,
+    required this.subjectName,
     required this.subjectRowId,
   }) : super(key: key);
 
@@ -99,7 +118,7 @@ class BottomSheetAction extends StatelessWidget {
                   builder: (BuildContext context, WidgetRef ref, Widget? child) {
                     return IconButton(
                       onPressed: () async {
-                        await ref.read(messageServiceProvider).pickDocuments(subjectRowId);
+                        await ref.read(messageServiceProvider).pickDocuments(subjectName, subjectRowId);
                         Navigator.pop(context);
                       },
                       icon: const Icon(
@@ -164,7 +183,7 @@ class BottomSheetAction extends StatelessWidget {
                 child: Consumer(builder: (BuildContext context, WidgetRef ref, Widget? child) {
                   return IconButton(
                     onPressed: () async {
-                      await ref.read(messageServiceProvider).imgFromGallery(subjectRowId);
+                      await ref.read(messageServiceProvider).imgFromGallery(subjectName, subjectRowId);
                       Navigator.pop(context);
                     },
                     icon: const Icon(

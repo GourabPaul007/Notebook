@@ -15,7 +15,7 @@ ThemeData lightTheme = ThemeData.dark().copyWith(
     secondary: Colors.deepPurpleAccent,
     secondaryVariant: Colors.deepPurple,
     surface: Color(0xFFefefef),
-    background: Color(0xFF121212),
+    background: Color(0xFFffffff),
     error: Colors.red,
     onPrimary: Colors.black,
     onSecondary: Colors.black,

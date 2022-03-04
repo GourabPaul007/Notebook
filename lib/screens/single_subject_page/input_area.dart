@@ -39,7 +39,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
   @override
   Widget build(BuildContext context) {
     // final messageService = ref.watch(messageServiceProvider);
-    final subjectService = ref.watch(subjectServiceProvider);
+    final subject = ref.watch(subjectServiceProvider).subject;
 
     return Container(
       color: Colors.transparent,
@@ -107,9 +107,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                   if (await ref.read(cameraServiceProvider).requestStoragePermission() == false) {
                                     return;
                                   } else {
-                                    await ref
-                                        .read(messageServiceProvider)
-                                        .imgFromGallery(subjectService.getSubject.rowId!);
+                                    await ref.read(messageServiceProvider).imgFromGallery(subject.name, subject.rowId!);
                                   }
                                 },
                                 splashColor: Colors.amber,
@@ -135,7 +133,7 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                             backgroundColor: Colors.transparent,
                             barrierColor: Colors.transparent,
                             builder: (BuildContext context) {
-                              return SingleSubjectBottomSheet(subjectRowId: subjectService.subject.rowId!);
+                              return SingleSubjectBottomSheet(subjectName: subject.name, subjectRowId: subject.rowId!);
                             },
                           );
                         },
@@ -176,7 +174,8 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
               onPressed: () {
                 ref.read(messageServiceProvider).sendInputText(
                       _inputTextController.text,
-                      subjectService.subject.rowId!,
+                      subject.name,
+                      subject.rowId!,
                     );
                 _inputTextController.clear();
               },

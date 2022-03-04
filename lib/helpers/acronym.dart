@@ -1,14 +1,13 @@
 String makeAcronym(String input) {
   String acronym = "";
   List<String> allWords = input.split(" ");
-  for (int i = 0; i < allWords.length; i++) {
+
+  if (allWords.length == 2) {
+    // acronym += input[input.length - 1];
     // add the first letter of each word
-    acronym += allWords[i][0];
-  }
-  if (acronym.length < 2) {
-    acronym += input[input.length - 1];
+    acronym = allWords[0][0] + allWords[1][0];
   } else {
-    acronym = acronym[0] + input[input.length - 1];
+    acronym = allWords[0][0] + input[input.length - 1];
   }
   return acronym;
 }

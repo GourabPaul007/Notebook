@@ -10,9 +10,11 @@ class SubjectSearchPage extends SearchDelegate {
   List<Widget>? buildActions(BuildContext context) {
     return <Widget>[
       IconButton(
-        onPressed: () {},
+        onPressed: () {
+          query = "";
+        },
         icon: const Icon(
-          Icons.ac_unit,
+          Icons.close_rounded,
           color: Colors.black,
         ),
       ),

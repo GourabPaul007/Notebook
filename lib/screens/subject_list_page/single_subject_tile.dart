@@ -19,7 +19,7 @@ class SingleSubjectTile extends StatelessWidget {
         backgroundColor: Color(subject.avatarColor),
         radius: 24,
         child: Text(
-          makeAcronym(subject.name).toUpperCase(),
+          makeAcronym(subject.name.trim()).toUpperCase(),
           style: TextStyle(
             color: darkenColor(Color(subject.avatarColor), 140),
             fontSize: 24,

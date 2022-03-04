@@ -254,13 +254,13 @@ class DisplayPictureScreen extends StatelessWidget {
                       ),
                       Expanded(
                         child: Consumer(builder: (context, ref, child) {
-                          final singleSubjectRef = ref.watch(subjectServiceProvider);
+                          final subject = ref.watch(subjectServiceProvider).subject;
 
                           return IconButton(
                             onPressed: () async {
                               await ref
                                   .read(messageServiceProvider)
-                                  .imgFromCamera(imagePath, singleSubjectRef.subject.rowId!);
+                                  .imgFromCamera(imagePath, subject.name, subject.rowId!);
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             },

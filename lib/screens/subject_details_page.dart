@@ -97,15 +97,6 @@ class SubjectDetailsPage extends ConsumerWidget {
                           );
                         },
                       );
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => EditSubjectDialog(
-                      //       rowId: subject.rowId,
-                      //       type: "edit",
-                      //     ),
-                      //   ),
-                      // );
                     },
                     icon: const Icon(Icons.edit_rounded, color: Colors.white),
                   ),
