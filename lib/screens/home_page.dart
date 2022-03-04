@@ -92,7 +92,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
               systemOverlayStyle: Theme.of(context).appBarTheme.systemOverlayStyle,
               elevation: Theme.of(context).appBarTheme.elevation,
-              title: Text('    WhatsNote', style: Theme.of(context).textTheme.headline1),
+              title: Text('  WhatsNote', style: Theme.of(context).textTheme.headline1),
               actions: <Widget>[
                 // Search Button
                 Padding(
@@ -178,7 +178,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
             bottomNavigationBar: Container(
               padding: const EdgeInsets.all(0),
               decoration: BoxDecoration(
-                boxShadow: kElevationToShadow[1],
+                border: const Border(top: BorderSide(color: Color(0xFF424242), width: 0.5)),
+                // boxShadow: kElevationToShadow[1],
                 color: Theme.of(context).colorScheme.background,
               ),
 
@@ -229,9 +230,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.library_books_outlined),
+                            Icon(Icons.library_books_outlined, color: Theme.of(context).colorScheme.secondary),
                             const SizedBox(width: 8),
-                            Text("Topics", style: TextStyle(color: Theme.of(context).primaryColor)),
+                            Text("Topics", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
                           ],
                         ),
                       ),
@@ -249,9 +250,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.book_outlined),
+                            Icon(Icons.book_outlined, color: Theme.of(context).colorScheme.secondary),
                             const SizedBox(width: 8),
-                            Text("Books", style: TextStyle(color: Theme.of(context).primaryColor)),
+                            Text("Books", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
                           ],
                         ),
                       ),

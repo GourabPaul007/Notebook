@@ -10,10 +10,12 @@ class ThemeService extends ChangeNotifier {
   static const themeKey = "theme_key";
   late String theme = "system";
 
+  /// get theme on runtime
   String getTheme() {
     return theme;
   }
 
+  /// set theme from settings menu
   void setTheme(String value) async {
     final sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setString(themeKey, value);
@@ -21,6 +23,7 @@ class ThemeService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// load theme on application startup
   void loadTheme() async {
     final sharedPreferences = await SharedPreferences.getInstance();
     theme = sharedPreferences.getString(themeKey) ?? "system";

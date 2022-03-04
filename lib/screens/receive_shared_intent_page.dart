@@ -294,10 +294,10 @@ class _TopicsAreaState extends ConsumerState<TopicsArea> {
               onTap: () {
                 for (var file in widget.files) {
                   if (file.path.endsWith(".pdf") || file.path.endsWith(".doc") || file.path.endsWith(".docx")) {
-                    ref.read(messageServiceProvider).addMessage("", file.path, Colors.deepPurpleAccent.value,
+                    ref.read(messageServiceProvider).addMessage("", "", file.path, Colors.deepPurpleAccent.value,
                         subjects[index].name, subjects[index].rowId!, "document");
                   } else if (file.path.endsWith(".jpg") || file.path.endsWith(".png")) {
-                    ref.read(messageServiceProvider).addMessage("", file.path, Colors.deepPurpleAccent.value,
+                    ref.read(messageServiceProvider).addMessage("", "", file.path, Colors.deepPurpleAccent.value,
                         subjects[index].name, subjects[index].rowId!, "image");
                   } else {
                     // do nothing

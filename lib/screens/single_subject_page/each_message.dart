@@ -89,7 +89,7 @@ class EachMessage extends ConsumerWidget {
 
             // FOR IMAGE MESSAGES
             message.type == "image"
-                ? File(message.body).existsSync()
+                ? File(message.path).existsSync()
                     ? Stack(
                         children: [
                           InkWell(
@@ -111,7 +111,7 @@ class EachMessage extends ConsumerWidget {
                               child: Container(
                                 constraints: const BoxConstraints(minWidth: 200, maxWidth: double.maxFinite),
                                 child: Image.file(
-                                  File(message.body),
+                                  File(message.path),
                                   width: double.maxFinite,
                                   height: 200,
                                   fit: BoxFit.cover,
@@ -131,10 +131,10 @@ class EachMessage extends ConsumerWidget {
 
             // FOR DOCUMENT CHATS
             message.type == "document"
-                ? File(message.body).existsSync()
+                ? File(message.path).existsSync()
                     ? InkWell(
                         onTap: () {
-                          OpenFile.open(message.body);
+                          OpenFile.open(message.path);
                         },
                         child: Column(
                           children: [
@@ -148,16 +148,16 @@ class EachMessage extends ConsumerWidget {
                               child: Row(
                                 children: [
                                   Icon(
-                                    message.body.endsWith(".pdf")
+                                    message.path.endsWith(".pdf")
                                         ? Icons.picture_as_pdf_rounded
                                         : Icons.description_rounded,
-                                    color: message.body.endsWith(".pdf") ? Colors.redAccent : Colors.blue,
+                                    color: message.path.endsWith(".pdf") ? Colors.redAccent : Colors.blue,
                                     size: 32,
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
-                                      basename(message.body),
+                                      basename(message.path),
                                       style: const TextStyle(fontSize: 16, color: Colors.white),
                                       softWrap: false,
                                       overflow: TextOverflow.ellipsis,
@@ -175,7 +175,7 @@ class EachMessage extends ConsumerWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    message.body.substring(message.body.lastIndexOf(".") + 1).toUpperCase(),
+                                    message.path.substring(message.path.lastIndexOf(".") + 1).toUpperCase(),
                                     style: const TextStyle(fontSize: 12, color: Colors.white),
                                   ),
                                   OtherMessageInfo(

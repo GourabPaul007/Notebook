@@ -56,6 +56,7 @@ class DBHelper {
           id TEXT NOT NULL,
           title TEXT NOT NULL,
           body TEXT NOT NULL,
+          path TEXT NOT NULL,
           color INTEGER NOT NULL,
           time_created INTEGER NOT NULL,
           time_updated INTEGER NOT NULL,

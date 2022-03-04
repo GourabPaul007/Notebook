@@ -17,7 +17,7 @@ ThemeData lightTheme = ThemeData.dark().copyWith(
     surface: Color(0xFFefefef),
     background: Color(0xFFffffff),
     error: Colors.red,
-    onPrimary: Colors.black,
+    onPrimary: Color(0xFF232323),
     onSecondary: Colors.black,
     onSurface: Colors.black87,
     onBackground: Colors.black,
@@ -104,7 +104,7 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   colorScheme: const ColorScheme(
     primary: Colors.deepPurpleAccent,
     primaryVariant: Colors.deepPurple,
-    secondary: Colors.deepPurpleAccent,
+    secondary: Colors.white,
     secondaryVariant: Colors.deepPurple,
     surface: Color(0xFF222222),
     background: Color(0xFF121212),
@@ -118,7 +118,8 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   ),
   // primarySwatch: Colors.deepPurple,
   backgroundColor: const Color(0xFF121212),
-  splashColor: Colors.deepPurple[800],
+  splashColor: const Color(0xFF1d1830),
+  // splashColor: Colors.deepPurple[900],
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: Colors.deepPurpleAccent,
     foregroundColor: Colors.white,

@@ -13,10 +13,7 @@ class SubjectSearchPage extends SearchDelegate {
         onPressed: () {
           query = "";
         },
-        icon: const Icon(
-          Icons.close_rounded,
-          color: Colors.black,
-        ),
+        icon: const Icon(Icons.close_rounded),
       ),
     ];
   }

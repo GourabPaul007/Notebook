@@ -46,7 +46,7 @@ class MessageService extends ChangeNotifier {
   // General CRUD
   /// Adds a new [Message] to message repository/database.
   Future<void> addMessage(
-      String title, String body, int color, String subjectName, int subjectRowId, String type) async {
+      String title, String body, String path, int color, String subjectName, int subjectRowId, String type) async {
     if (body == "") return;
 
     await MessageRepository().addMessageToLocalDatabase(Message(
@@ -54,6 +54,7 @@ class MessageService extends ChangeNotifier {
       id: const Uuid().v1(),
       title: title,
       body: body,
+      path: path,
       color: color,
       subjectName: subjectName,
       subjectRowId: subjectRowId,
@@ -172,7 +173,7 @@ class MessageService extends ChangeNotifier {
 
   /// sends input [text] to [addMessage] method and clears the [newTextController] text
   void sendInputText(String text, String subjectName, int subjectRowId) async {
-    addMessage("", text, Colors.deepPurpleAccent.value, subjectName, subjectRowId, "text");
+    addMessage("", text, "", Colors.deepPurpleAccent.value, subjectName, subjectRowId, "text");
     newTextController.clear();
   }
 
@@ -196,7 +197,7 @@ class MessageService extends ChangeNotifier {
     debugPrint(imagePath);
     if (imagePath != "") {
       const String type = "image";
-      addMessage("", imagePath, Colors.deepPurpleAccent.value, subjectName, subjectRowId, type);
+      addMessage("", "", imagePath, Colors.deepPurpleAccent.value, subjectName, subjectRowId, type);
     }
   }
 
@@ -212,7 +213,7 @@ class MessageService extends ChangeNotifier {
       notifyListeners();
       if (_image != null) {
         const String type = "image";
-        addMessage("", _image!.path, Colors.deepPurpleAccent.value, subjectName, subjectRowId, type);
+        addMessage("", "", _image!.path, Colors.deepPurpleAccent.value, subjectName, subjectRowId, type);
       }
     } on Exception catch (e) {
       await retrieveLostData();
@@ -235,7 +236,7 @@ class MessageService extends ChangeNotifier {
       return File(path!);
     }).toList();
     for (var file in files) {
-      addMessage("", file.path, Colors.deepPurpleAccent.value, subjectName, subjectRowId, "document");
+      addMessage("", "", file.path, Colors.deepPurpleAccent.value, subjectName, subjectRowId, "document");
     }
   }
 

@@ -1,6 +1,7 @@
 class Document {
   int? rowId;
   String name;
+  String about;
   final String path;
   final String type;
   int color;
@@ -14,6 +15,7 @@ class Document {
   Document({
     required this.rowId,
     required this.name,
+    required this.about,
     required this.path,
     required this.color,
     required this.size,
@@ -27,6 +29,7 @@ class Document {
     return Document(
       rowId: json['row_id'],
       name: json['name'],
+      about: json['about'],
       path: json['path'],
       color: json['color'],
       size: json['size'],
@@ -40,6 +43,7 @@ class Document {
   Map<String, dynamic> toMap() {
     return {
       'name': name,
+      'about': about,
       'path': path,
       'color': color,
       'size': size,

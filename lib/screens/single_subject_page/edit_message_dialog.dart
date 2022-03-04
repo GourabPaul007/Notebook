@@ -249,6 +249,7 @@ class _EditMessageDialogState extends ConsumerState<EditMessageDialog> {
                                         ref.read(messageServiceProvider).addMessage(
                                               _messageTitleController.text,
                                               _messageBodyController.text,
+                                              "",
                                               _value,
                                               ref.watch(subjectServiceProvider).subject.name,
                                               ref.watch(subjectServiceProvider).subject.rowId!,

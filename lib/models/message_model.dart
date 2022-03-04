@@ -4,6 +4,7 @@ class Message {
   final String id;
   String title;
   String body;
+  String path;
   int color;
   String subjectName;
   final int subjectRowId;
@@ -17,6 +18,7 @@ class Message {
     required this.id,
     required this.title,
     required this.body,
+    required this.path,
     required this.color,
     required this.subjectName,
     required this.subjectRowId,
@@ -31,6 +33,7 @@ class Message {
         id: json['id'],
         title: json['title'],
         body: json['body'],
+        path: json['path'],
         color: json['color'],
         subjectName: json['subject_name'],
         subjectRowId: json['subject_row_id'],
@@ -46,6 +49,7 @@ class Message {
       'id': id,
       'title': title,
       'body': body,
+      'path': path,
       'color': color,
       'subject_name': subjectName,
       'subject_row_id': subjectRowId,

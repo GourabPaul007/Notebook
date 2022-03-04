@@ -73,6 +73,7 @@ class PdfService extends ChangeNotifier {
     Document newDocument = Document(
       rowId: null,
       name: "",
+      about: "",
       path: file.path,
       color: Colors.deepPurpleAccent.value,
       size: (file.lengthSync() / 1000).floor(),

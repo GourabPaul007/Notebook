@@ -24,9 +24,9 @@ class SubjectDetailsPage extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_rounded,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -38,13 +38,6 @@ class SubjectDetailsPage extends ConsumerWidget {
           Expanded(
             flex: 4,
             child: Stack(children: [
-              // Image.network(
-              //   """https://images.unsplash.com/photo-1489549132488-d00b7eee80f1?ixlib=rb-1.2.1&
-              //   ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80""",
-              //   fit: BoxFit.cover,
-              //   width: double.infinity,
-              //   height: double.infinity,
-              // ),
               Container(
                 color: Color(subject.avatarColor),
                 child: Center(
@@ -66,14 +59,16 @@ class SubjectDetailsPage extends ConsumerWidget {
                   children: <Widget>[
                     Text(
                       subject.name,
-                      style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 28, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onPrimary),
                     ),
                     Text(
                       "Created at  " +
                           formatDate(DateTime.fromMillisecondsSinceEpoch(
                             subject.timeCreated,
                           )),
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white70),
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w400, color: Theme.of(context).colorScheme.onPrimary),
                     ),
                   ],
                 ),
@@ -98,7 +93,7 @@ class SubjectDetailsPage extends ConsumerWidget {
                         },
                       );
                     },
-                    icon: const Icon(Icons.edit_rounded, color: Colors.white),
+                    icon: Icon(Icons.edit_rounded, color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               )
