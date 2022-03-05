@@ -2,6 +2,7 @@ class Document {
   int? rowId;
   String name;
   String about;
+  String thumbnailPath;
   final String path;
   final String type;
   int color;
@@ -16,6 +17,7 @@ class Document {
     required this.rowId,
     required this.name,
     required this.about,
+    required this.thumbnailPath,
     required this.path,
     required this.color,
     required this.size,
@@ -30,6 +32,7 @@ class Document {
       rowId: json['row_id'],
       name: json['name'],
       about: json['about'],
+      thumbnailPath: json['thumbnail_path'],
       path: json['path'],
       color: json['color'],
       size: json['size'],
@@ -44,6 +47,7 @@ class Document {
     return {
       'name': name,
       'about': about,
+      'thumbnail_path': thumbnailPath,
       'path': path,
       'color': color,
       'size': size,

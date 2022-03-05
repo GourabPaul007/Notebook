@@ -8,6 +8,9 @@ import 'package:frontend/models/document_model.dart';
 import 'package:frontend/repositories/documents_repository.dart';
 import 'package:frontend/widgets/snack_bar.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdfx/pdfx.dart';
 import 'package:share_plus/share_plus.dart';
 
 final documentServiceProvider = ChangeNotifierProvider((ref) {
@@ -70,10 +73,33 @@ class PdfService extends ChangeNotifier {
   }
 
   Future<String> addDocument(File file) async {
+    // creating the directory
+    File returnedImageFile;
+    String returnedImageFilePath = "";
+    if (file.path.substring(file.path.lastIndexOf(".") + 1) == "pdf") {
+      final Directory documentDirectory = await getApplicationDocumentsDirectory();
+      final imageFile = File(join(
+        documentDirectory.path,
+        "document_thumbnails",
+        basename(file.path),
+      ));
+      if (!await imageFile.exists()) {
+        imageFile.create(recursive: true);
+      }
+
+      // saving the image in directory
+      final document = await PdfDocument.openFile(file.path);
+      final page = await document.getPage(1);
+      final pageImage = await page.render(height: 120, width: 90);
+      returnedImageFile = await imageFile.writeAsBytes(pageImage!.bytes);
+      returnedImageFilePath = returnedImageFile.path;
+    } else {}
+
     Document newDocument = Document(
       rowId: null,
       name: "",
       about: "",
+      thumbnailPath: returnedImageFilePath,
       path: file.path,
       color: Colors.deepPurpleAccent.value,
       size: (file.lengthSync() / 1000).floor(),

@@ -74,6 +74,7 @@ class DBHelper {
           row_id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           about TEXT NOT NULL,
+          thumbnail_path TEXT NOT NULL,
           path TEXT NOT NULL,
           size INTEGER NOT NULL,
           type TEXT NOT NULL,
