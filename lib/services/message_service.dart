@@ -7,8 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/repositories/message_repository.dart';
 import 'package:frontend/models/message_model.dart';
-import 'package:frontend/services/subject_service.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
 
 final messageServiceProvider = ChangeNotifierProvider((ref) => MessageService());
@@ -223,20 +223,29 @@ class MessageService extends ChangeNotifier {
 
   /// picks documents from file system...
   Future pickDocuments(String subjectName, int subjectRowId) async {
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx'],
-      onFileLoading: (FilePickerStatus status) {
-        debugPrint("file picker status: " + status.toString());
-      },
-    );
-    if (result == null) return;
-    List<File> files = result.paths.map((path) {
-      return File(path!);
-    }).toList();
-    for (var file in files) {
-      addMessage("", "", file.path, Colors.deepPurpleAccent.value, subjectName, subjectRowId, "document");
+    if (await Permission.storage.request().isGranted) {
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx'],
+        onFileLoading: (FilePickerStatus status) {
+          debugPrint("file picker status: " + status.toString());
+        },
+      );
+      if (result == null) return;
+      List<File> files = result.paths.map((path) {
+        return File(path!);
+      }).toList();
+      for (var file in files) {
+        addMessage("", "", file.path, Colors.deepPurpleAccent.value, subjectName, subjectRowId, "document");
+      }
+    }
+    // If not granted, do nothing (the null checking on returned documents is done on the ui code)
+    else if (await Permission.storage.request().isDenied) {
+    }
+    // If permanently denied, then open settings page
+    else if (await Permission.storage.request().isPermanentlyDenied) {
+      await openAppSettings();
     }
   }
 
