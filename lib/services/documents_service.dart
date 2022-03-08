@@ -11,6 +11,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdfx/pdfx.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 
 final documentServiceProvider = ChangeNotifierProvider((ref) {
@@ -58,18 +59,28 @@ class PdfService extends ChangeNotifier {
   }
 
   Future<List<File>?> pickFiles() async {
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx'],
-    );
+    // request storage, if granted, proceed
+    if (await Permission.storage.request().isGranted) {
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx'],
+      );
 
-    if (result == null) return null;
+      if (result == null) return null;
 
-    List<File> files = result.paths.map((path) {
-      return File(path!);
-    }).toList();
-    return files;
+      List<File> files = result.paths.map((path) {
+        return File(path!);
+      }).toList();
+      return files;
+    }
+    // If not granted, do nothing (the null checking on returned documents is done on the ui code)
+    else if (await Permission.storage.request().isDenied) {
+    }
+    // If permanently denied, then open settings page
+    else if (await Permission.storage.request().isPermanentlyDenied) {
+      await openAppSettings();
+    }
   }
 
   Future<String> addDocument(File file) async {
