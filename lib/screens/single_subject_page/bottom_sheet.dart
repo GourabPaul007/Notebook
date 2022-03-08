@@ -20,7 +20,7 @@ class SingleSubjectBottomSheet extends StatelessWidget {
           margin: const EdgeInsets.only(left: 8, right: 8, top: 0, bottom: 0),
           height: 260,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.background,
             borderRadius: BorderRadius.circular(12),
             boxShadow: kElevationToShadow[1],
           ),
@@ -99,7 +99,7 @@ class BottomSheetAction extends StatelessWidget {
             children: const [
               CircleAvatar(
                 backgroundColor: Colors.transparent,
-                radius: 32,
+                radius: 28,
               ),
             ],
           ),
@@ -113,7 +113,7 @@ class BottomSheetAction extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: Colors.deepPurpleAccent,
-                radius: 32,
+                radius: 28,
                 child: Consumer(
                   builder: (BuildContext context, WidgetRef ref, Widget? child) {
                     return IconButton(
@@ -124,7 +124,7 @@ class BottomSheetAction extends StatelessWidget {
                       icon: const Icon(
                         Icons.insert_drive_file_rounded,
                         color: Colors.white,
-                        size: 32,
+                        size: 28,
                       ),
                     );
                   },
@@ -133,7 +133,7 @@ class BottomSheetAction extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 "Document",
-                style: TextStyle(color: Colors.grey[700]),
+                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
               )
             ],
           ),
@@ -145,7 +145,7 @@ class BottomSheetAction extends StatelessWidget {
             children: [
               CircleAvatar(
                   backgroundColor: Colors.pink,
-                  radius: 32,
+                  radius: 28,
                   child: Consumer(builder: (BuildContext context, WidgetRef ref, Widget? child) {
                     return IconButton(
                       onPressed: () async {
@@ -160,14 +160,14 @@ class BottomSheetAction extends StatelessWidget {
                       icon: const Icon(
                         Icons.camera_alt_rounded,
                         color: Colors.white,
-                        size: 32,
+                        size: 28,
                       ),
                     );
                   })),
               const SizedBox(height: 8),
               Text(
                 "Camera",
-                style: TextStyle(color: Colors.grey[700]),
+                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
               )
             ],
           ),
@@ -179,7 +179,7 @@ class BottomSheetAction extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: Colors.purple,
-                radius: 32,
+                radius: 28,
                 child: Consumer(builder: (BuildContext context, WidgetRef ref, Widget? child) {
                   return IconButton(
                     onPressed: () async {
@@ -189,7 +189,7 @@ class BottomSheetAction extends StatelessWidget {
                     icon: const Icon(
                       Icons.image_rounded,
                       color: Colors.white,
-                      size: 32,
+                      size: 28,
                     ),
                   );
                 }),
@@ -197,7 +197,7 @@ class BottomSheetAction extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 "Gallery",
-                style: TextStyle(color: Colors.grey[700]),
+                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
               )
             ],
           ),
@@ -209,7 +209,7 @@ class BottomSheetAction extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: Colors.lightBlue,
-                radius: 32,
+                radius: 28,
                 child: IconButton(
                   onPressed: () async {
                     await Navigator.of(context).push(
@@ -228,14 +228,14 @@ class BottomSheetAction extends StatelessWidget {
                   icon: const Icon(
                     Icons.text_format_rounded,
                     color: Colors.white,
-                    size: 32,
+                    size: 28,
                   ),
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 "Rich Note",
-                style: TextStyle(color: Colors.grey[700]),
+                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
               )
             ],
           ),
