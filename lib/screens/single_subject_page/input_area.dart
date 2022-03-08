@@ -73,8 +73,8 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                               color: Colors.transparent,
                               child: IconButton(
                                 onPressed: () async {
-                                  if (await ref.read(cameraServiceProvider).requestCameraPermission() == false &&
-                                      await ref.read(cameraServiceProvider).requestStoragePermission() == false) {
+                                  if (!await ref.read(cameraServiceProvider).requestCameraPermission() &&
+                                      !await ref.read(cameraServiceProvider).requestStoragePermission()) {
                                     return;
                                   } else {
                                     Navigator.push(

@@ -44,12 +44,13 @@ class CameraService extends ChangeNotifier {
     controller = CameraController(
       camera,
       ResolutionPreset.veryHigh,
+      enableAudio: false,
     );
     initializeControllerFuture = controller.initialize();
   }
 
   Future<bool> requestStoragePermission() async {
-    if (await Permission.storage.isGranted) {
+    if (await Permission.storage.request().isGranted) {
       return true;
     } else if (await Permission.storage.request().isDenied) {
       return false;
@@ -93,7 +94,7 @@ class CameraService extends ChangeNotifier {
     return "Permission Denied on SaveFile";
   }
 
-  Future<void> disposeState() async {
+  Future<void> disposeCameraController() async {
     await controller.dispose();
   }
 }
