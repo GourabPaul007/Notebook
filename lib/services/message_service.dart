@@ -47,8 +47,6 @@ class MessageService extends ChangeNotifier {
   /// Adds a new [Message] to message repository/database.
   Future<void> addMessage(
       String title, String body, String path, int color, String subjectName, int subjectRowId, String type) async {
-    if (body == "") return;
-
     await MessageRepository().addMessageToLocalDatabase(Message(
       rowId: null,
       id: const Uuid().v1(),
@@ -74,6 +72,9 @@ class MessageService extends ChangeNotifier {
   Future<void> getMessages(int subjectRowId) async {
     var result = await MessageRepository().getMessagesFromLocalDatabase(subjectRowId);
     messages = result;
+    for (var element in messages) {
+      print(element.body + element.path);
+    }
     notifyListeners();
   }
 
@@ -173,7 +174,7 @@ class MessageService extends ChangeNotifier {
 
   /// sends input [text] to [addMessage] method and clears the [newTextController] text
   void sendInputText(String text, String subjectName, int subjectRowId) async {
-    addMessage("", text, "", Colors.deepPurpleAccent.value, subjectName, subjectRowId, "text");
+    await addMessage("", text, "", Colors.deepPurpleAccent.value, subjectName, subjectRowId, "text");
     newTextController.clear();
   }
 
@@ -192,12 +193,12 @@ class MessageService extends ChangeNotifier {
 
   /// Adds Image from Camera.
   ///
-  /// takes the [imagePath] sent from [Camera] and adds the image path to [Message.body]
+  /// takes the [imagePath] sent from [Camera] and adds the image path to [Message.path]
   Future imgFromCamera(String imagePath, String subjectName, int subjectRowId) async {
-    debugPrint(imagePath);
+    debugPrint(imagePath + subjectName + subjectRowId.toString());
     if (imagePath != "") {
       const String type = "image";
-      addMessage("", "", imagePath, Colors.deepPurpleAccent.value, subjectName, subjectRowId, type);
+      await addMessage("", "", imagePath, Colors.deepPurpleAccent.value, subjectName, subjectRowId, type);
     }
   }
 
@@ -213,7 +214,7 @@ class MessageService extends ChangeNotifier {
       notifyListeners();
       if (_image != null) {
         const String type = "image";
-        addMessage("", "", _image!.path, Colors.deepPurpleAccent.value, subjectName, subjectRowId, type);
+        await addMessage("", "", _image!.path, Colors.deepPurpleAccent.value, subjectName, subjectRowId, type);
       }
     } on Exception catch (e) {
       await retrieveLostData();

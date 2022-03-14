@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/screens/single_subject_page/bottom_sheet.dart';
-import 'package:frontend/screens/single_subject_page/camera_screen.dart';
+import 'package:frontend/screens/camera_screen.dart';
 import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/message_service.dart';
 import 'package:frontend/services/subject_service.dart';
@@ -79,7 +79,9 @@ class _InputAreaWidgetState extends ConsumerState<InputAreaWidget> {
                                   } else {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => const TakePictureScreen()),
+                                      MaterialPageRoute(
+                                        builder: (context) => const TakePictureScreen(from: "SingleSubjectPage"),
+                                      ),
                                     );
                                   }
                                 },

@@ -144,7 +144,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
                         itemBuilder: (context) => [
                           PopupMenuItem(
                             child: Text(
-                              "Favourite Messages",
+                              "Favourite Notes",
                               style: Theme.of(context).textTheme.headline3!.copyWith(fontSize: 16),
                             ),
                             value: 1,

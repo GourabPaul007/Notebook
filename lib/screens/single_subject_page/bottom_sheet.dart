@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/screens/single_subject_page/camera_screen.dart';
+import 'package:frontend/screens/camera_screen.dart';
 import 'package:frontend/screens/single_subject_page/edit_message_dialog.dart';
 import 'package:frontend/services/message_service.dart';
 
@@ -152,7 +152,7 @@ class BottomSheetAction extends StatelessWidget {
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const TakePictureScreen(),
+                            builder: (context) => const TakePictureScreen(from: "SingleSubjectPage"),
                           ),
                         );
                         Navigator.pop(context);

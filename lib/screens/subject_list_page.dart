@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/models/subject_model.dart';
 import 'package:frontend/screens/single_subject_page.dart';
+import 'package:frontend/screens/camera_screen.dart';
 import 'package:frontend/screens/subject_list_page/hold_subject_dialog.dart';
 import 'package:frontend/screens/subject_list_page/single_subject_tile.dart';
 import 'package:frontend/screens/subject_list_page/edit_subject_dialog.dart';
+import 'package:frontend/services/camera_service.dart';
 import 'package:frontend/services/subject_service.dart';
 
 class SubjectListPage extends ConsumerStatefulWidget {
@@ -19,6 +21,7 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> {
   @override
   void initState() {
     super.initState();
+    ref.read(cameraServiceProvider).initCameras();
     ref.read(subjectServiceProvider).getAllSubjects("HomePage");
   }
 
@@ -118,23 +121,49 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> {
        */
       floatingActionButton: ref.watch(subjectServiceProvider).selectedSubjects.isNotEmpty
           ? null
-          : FloatingActionButton(
-              elevation: 1,
-              heroTag: "fab_to_dialogbox",
-              child: const Icon(
-                Icons.add_rounded,
-                size: 32,
-              ),
-              onPressed: () async {
-                ref.read(subjectServiceProvider).resetHoldSubjectEffects();
-                showDialog(
-                  context: context,
-                  barrierColor: Colors.transparent,
-                  builder: (BuildContext context) {
-                    return const EditSubjectDialog(type: "add");
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  elevation: 5,
+                  child: const Icon(
+                    Icons.camera_alt_rounded,
+                    size: 32,
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  onPressed: () async {
+                    if (!await ref.read(cameraServiceProvider).requestCameraPermission() &&
+                        !await ref.read(cameraServiceProvider).requestStoragePermission()) {
+                      return;
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const TakePictureScreen(from: "SubjectListPage")),
+                      );
+                    }
                   },
-                );
-              },
+                ),
+                const SizedBox(height: 24),
+                FloatingActionButton(
+                  elevation: 1,
+                  heroTag: "fab_to_dialogbox",
+                  child: const Icon(
+                    Icons.add_rounded,
+                    size: 32,
+                  ),
+                  onPressed: () async {
+                    ref.read(subjectServiceProvider).resetHoldSubjectEffects();
+                    showDialog(
+                      context: context,
+                      barrierColor: Colors.transparent,
+                      builder: (BuildContext context) {
+                        return const EditSubjectDialog(type: "add");
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
     );
   }

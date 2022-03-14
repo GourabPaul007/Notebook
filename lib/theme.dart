@@ -36,7 +36,7 @@ ThemeData lightTheme = ThemeData.dark().copyWith(
     elevation: 0,
     backgroundColor: Colors.white,
     iconTheme: IconThemeData(color: Colors.black),
-    shadowColor: (Colors.white),
+    shadowColor: Colors.white,
     systemOverlayStyle: SystemUiOverlayStyle(
       statusBarColor: Colors.white,
       // Status bar brightness (optional)

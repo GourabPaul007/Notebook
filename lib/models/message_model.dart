@@ -4,7 +4,7 @@ class Message {
   final String id;
   String title;
   String body;
-  String path;
+  final String path;
   int color;
   String subjectName;
   final int subjectRowId;
