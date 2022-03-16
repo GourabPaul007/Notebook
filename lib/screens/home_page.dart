@@ -178,8 +178,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
             bottomNavigationBar: Container(
               padding: const EdgeInsets.all(0),
               decoration: BoxDecoration(
-                border: const Border(top: BorderSide(color: Color(0xFF424242), width: 0.5)),
-                // boxShadow: kElevationToShadow[1],
+                // border: const Border(top: BorderSide(color: Color(0xFF424242), width: 0.5)),
+                boxShadow: kElevationToShadow[1],
                 color: Theme.of(context).colorScheme.background,
               ),
 
@@ -193,8 +193,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with SingleTickerProvid
                     ref.read(subjectServiceProvider).resetHoldSubjectEffects();
                     _pageController.animateToPage(
                       index,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.ease,
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.fastOutSlowIn,
                     );
                   },
                   elevation: 0,
