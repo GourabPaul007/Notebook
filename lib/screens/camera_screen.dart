@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/models/subject_model.dart';
 import 'package:frontend/screens/subject_list_page/single_subject_tile.dart';
@@ -114,23 +113,11 @@ class _TakePictureScreenState extends ConsumerState<TakePictureScreen> {
                                     final tempImageFile =
                                         await ref.watch(cameraServiceProvider).controller.takePicture();
 
-                                    // TODO: SEPERATE METHOD FOR CREATION OF FOLDER AND STUFF
-                                    // late String localImageFilePath;
-                                    // if (Platform.isAndroid) {
-                                    //   final appDir = await getExternalStorageDirectory();
-                                    //   final myImagePath = '${appDir!.path}/CameraImages';
-                                    //   final myImgDir =
-                                    //       await Directory("storage/emulated/0/Pictures/Notebook").create();
-                                    //   debugPrint("*******************************" + appDir.path);
-                                    //   final String fileName = tempImageFile.path.split('/').last;
-                                    //   localImageFile =
-                                    //       await File(tempImageFile.path).copy('${myImgDir.path}/$fileName');
-                                    // }
                                     if (!await ref.read(cameraServiceProvider).requestStoragePermission() &&
                                         !await ref.read(cameraServiceProvider).requestCameraPermission()) {
                                       return Navigator.pop(context);
                                     }
-                                    String localImageFilePath =
+                                    String? localImageFilePath =
                                         await ref.read(cameraServiceProvider).saveFile(tempImageFile);
 
                                     // turn off flash after clicking the photo
@@ -140,7 +127,7 @@ class _TakePictureScreenState extends ConsumerState<TakePictureScreen> {
                                     await Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (context) => DisplayPictureScreen(
-                                          imagePath: localImageFilePath,
+                                          imagePath: localImageFilePath!,
                                           from: widget.from,
                                         ),
                                       ),

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 final cameraServiceProvider = ChangeNotifierProvider((ref) => CameraService());
@@ -71,26 +73,30 @@ class CameraService extends ChangeNotifier {
     return false;
   }
 
-  Future<String> saveFile(XFile tempImageFile) async {
-    // Directory directory;
+  Future<String?> saveFile(XFile tempImageFile) async {
+    final String fileName = basename(tempImageFile.path);
     try {
       if (Platform.isAndroid) {
-        // if (await _requestPermission(Permission.storage)) {
-        // final appDir = await getExternalStorageDirectory();
-        // final myImagePath = '${appDir!.path}/CameraImages';
-        final myImgDir = await Directory("storage/emulated/0/Pictures/Notebook").create();
-        final String fileName = tempImageFile.path.split('/').last;
-        File localImageFile = await File(tempImageFile.path).copy('${myImgDir.path}/$fileName');
+        // Saving the images in backup directory
+        final backupImgDir = await Directory("storage/emulated/0/Pictures/Notebook").create(recursive: true);
+        File backupImageFile = await File(tempImageFile.path).copy('${backupImgDir.path}/$fileName');
 
-        return localImageFile.path;
+        // Saving the images in directory for use
+        final Directory? externalDirectory = await getExternalStorageDirectory();
+        final imageDirectory = await Directory(join(externalDirectory!.path, "images")).create(recursive: true);
+        final imageFile = File(join(imageDirectory.path, fileName));
+        if (!await imageFile.exists()) {
+          imageFile.create(recursive: true);
+          await File(tempImageFile.path).copy("${imageDirectory.path}/$fileName");
+        }
+
+        return imageFile.path;
       } else {
-        return "";
+        // return "";
       }
     } catch (e) {
       debugPrint(e.toString());
     }
-
-    debugPrint("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
     return "Permission Denied on SaveFile";
   }
 

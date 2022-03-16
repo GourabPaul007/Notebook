@@ -31,7 +31,7 @@ class _SubjectListPageState extends ConsumerState<SubjectListPage> {
     }
 
     // set subject data that will be used inside SingleSubject
-    ref.read(subjectServiceProvider).setSubject(subject);
+    // ref.read(subjectServiceProvider).setSubject(subject);
     // ref.read(subjectServiceProvider).setSubjectName(subject.name);
     // ref.read(subjectServiceProvider).setSubjectRowId(subject.rowId!);
     // ref.read(subjectServiceProvider).setSubjectDescription(subject.description);

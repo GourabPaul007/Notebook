@@ -5,9 +5,7 @@ import 'package:frontend/screens/subject_list_page/edit_subject_dialog.dart';
 import 'package:frontend/services/subject_service.dart';
 
 class SubjectEditButton extends ConsumerWidget {
-  const SubjectEditButton({
-    Key? key,
-  }) : super(key: key);
+  const SubjectEditButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

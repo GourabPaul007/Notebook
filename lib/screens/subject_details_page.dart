@@ -118,7 +118,7 @@ class SubjectDetailsPage extends ConsumerWidget {
                               style: Theme.of(context).textTheme.headline4,
                             ),
                             Text(
-                              subject.description,
+                              subject.description == "" ? "No Description Provided" : subject.description,
                               style: Theme.of(context).textTheme.bodyText1,
                             ),
                           ],

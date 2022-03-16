@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/subject_model.dart';
 import 'package:frontend/screens/single_subject_page/each_message.dart';
 import 'package:frontend/screens/single_subject_page/edit_message_dialog.dart';
 import 'package:frontend/screens/single_subject_page/input_area.dart';
@@ -42,15 +43,39 @@ class _SingleSubjectState extends ConsumerState<SingleSubject> {
             messageService.showHoldMessageIcons ? const MessageDeleteButton() : const SizedBox(),
             // Edit Button
             messageService.selectedMessages.length == 1 ? const MessageEditButton() : const SizedBox(),
+
+            // Popup Menu Button
             Padding(
               padding: const EdgeInsets.only(right: 6),
               child: Material(
                 shape: const CircleBorder(),
                 clipBehavior: Clip.hardEdge,
                 color: Colors.transparent,
-                child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.more_vert, size: 26.0),
+                child: PopupMenuTheme(
+                  data: Theme.of(context).popupMenuTheme,
+                  child: PopupMenuButton(
+                    iconSize: 26.0,
+                    onSelected: (result) {
+                      switch (result) {
+                        case 1:
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SubjectDetailsPage()),
+                          );
+                          break;
+                        default:
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Text(
+                          "Topic Info",
+                          style: Theme.of(context).textTheme.headline3!.copyWith(fontSize: 16),
+                        ),
+                        value: 1,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -164,7 +189,9 @@ class SubjectTitle extends ConsumerWidget {
                   ),
                 ),
                 onTap: () {
-                  // ref.read(subjectServiceProvider).selectSubject();
+                  // List<Subject> selectedSubjects = ref.watch(subjectServiceProvider).selectedSubjects;
+                  // ref.read(subjectServiceProvider).setSubject(selectedSubjects[0]);
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const SubjectDetailsPage()),

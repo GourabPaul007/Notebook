@@ -36,29 +36,29 @@ class _HoldSubjectDialogState extends ConsumerState<HoldSubjectDialog> {
           ref.watch(subjectServiceProvider).selectedSubjects.length == 1
               ? const Expanded(child: SubjectEditButton())
               : const SizedBox(),
-          Expanded(
-            child: Material(
-              color: Colors.transparent,
-              clipBehavior: Clip.hardEdge,
-              child: InkWell(
-                onTap: () {},
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.more_horiz),
-                      const SizedBox(height: 4),
-                      Text(
-                        "More",
-                        style: Theme.of(context).textTheme.headline3,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // Expanded(
+          //   child: Material(
+          //     color: Colors.transparent,
+          //     clipBehavior: Clip.hardEdge,
+          //     child: InkWell(
+          //       onTap: () {},
+          //       child: Padding(
+          //         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+          //         child: Column(
+          //           mainAxisSize: MainAxisSize.min,
+          //           children: [
+          //             const Icon(Icons.more_horiz),
+          //             const SizedBox(height: 4),
+          //             Text(
+          //               "More",
+          //               style: Theme.of(context).textTheme.headline3,
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

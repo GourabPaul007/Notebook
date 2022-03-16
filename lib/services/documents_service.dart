@@ -98,7 +98,7 @@ class PdfService extends ChangeNotifier {
         imageFile.create(recursive: true);
       }
 
-      // saving the image in directory
+      // getting the image from pdf
       final document = await PdfDocument.openFile(file.path);
       final page = await document.getPage(1);
       final pageImage = await page.render(height: 120, width: 90);

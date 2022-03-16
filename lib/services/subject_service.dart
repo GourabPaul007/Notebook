@@ -21,7 +21,10 @@ class SubjectService extends ChangeNotifier {
   List<Subject> selectedSubjects = [];
   bool subjectsOnHold = false;
 
+  /// for getting the current selected(single) subject
   Subject get getSubject => subject;
+
+  /// for setting the current selected(single) subject, needed for edit operations
   void setSubject(Subject s) {
     subject = s;
     notifyListeners();
@@ -71,10 +74,10 @@ class SubjectService extends ChangeNotifier {
   Future<void> editSubject(int rowId, String name, String description) async {
     int timeUpdated = DateTime.now().millisecondsSinceEpoch;
     int status = await SubjectRepository().updateSubjectFromLocalDatabase(rowId, name, description, timeUpdated);
-    // int status = await ref.read(subjectRepositoryProvider).updateSubject(rowId, name, about, timeUpdated);
+    // update the data in memory if the database operation is successful
     if (status == 1) {
-      selectedSubjects[0].name = name;
-      selectedSubjects[0].description = description;
+      subject.name = name;
+      subject.description = description;
     }
     // clean up
     selectedSubjects = [];
@@ -111,6 +114,7 @@ class SubjectService extends ChangeNotifier {
   /// When you tap on the already selected subject, it should unselect, not go inside the page.
   bool subjectOnTap(Subject subject) {
     if (selectedSubjects.isEmpty) {
+      setSubject(subject);
       return false;
     } else if (selectedSubjects.isNotEmpty && !selectedSubjects.contains(subject)) {
       selectedSubjects.add(subject);

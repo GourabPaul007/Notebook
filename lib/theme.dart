@@ -119,7 +119,7 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   // primarySwatch: Colors.deepPurple,
   backgroundColor: const Color(0xFF121212),
   // splashColor: const Color(0xFF1d1830),
-  splashColor: Colors.deepPurple[900],
+  splashColor: Colors.deepPurpleAccent,
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: Colors.deepPurpleAccent,
     foregroundColor: Colors.white,
