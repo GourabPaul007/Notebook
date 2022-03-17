@@ -10,9 +10,9 @@ import 'package:path/path.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 class ReceiveSharedIntentPage extends StatefulWidget {
-  List<SharedMediaFile>? sharedFiles;
+  final List<SharedMediaFile>? sharedFiles;
   final Function clearIntentData;
-  ReceiveSharedIntentPage({
+  const ReceiveSharedIntentPage({
     Key? key,
     required this.sharedFiles,
     required this.clearIntentData,
